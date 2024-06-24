@@ -64,15 +64,12 @@ const Base = () => {
             </a>
           </li>
           <li className="nav-item">
-            <a href="#" className="text-decoration-none px-3 py-2 d-block">
+            <a
+              href="/requestedAdvance"
+              className="text-decoration-none px-3 py-2 d-block"
+            >
               <i className="bi bi-cassette-fill customicon"></i>{" "}
-              <span className="icontext">Request Advance</span>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="text-decoration-none px-3 py-2 d-block">
-              <i className="bi bi-bookmark-dash-fill customicon"></i>{" "}
-              <span className="icontext">History</span>
+              <span className="icontext">Requested Advance</span>
             </a>
           </li>
         </ul>
@@ -113,10 +110,10 @@ const Base = () => {
 
             <div className="collapse navbar-collapse justify-content-end me-5">
               <span>
-                <button type="button" class="btn btn-info">
+                <button type="button" className="btn btn-info">
                   <i className="bi bi-bell"></i>
                 </button>
-                <span class="badge">5</span>
+                <span className="badge">5</span>
               </span>
 
               <img

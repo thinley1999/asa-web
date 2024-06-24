@@ -72,38 +72,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// <div className="addUser">
-//   <h3>Login</h3>
-//   <form className="addUserForm">
-//     <div className="inputGroup">
-//       <label htmlFor="name">Email:</label>
-//       <input
-//         type="email"
-//         id="email"
-//         autoComplete="off"
-//         placeholder="Enter your email"
-//       />
-//       <label htmlFor="name">Password:</label>
-//       <input
-//         type="password"
-//         id="password"
-//         autoComplete="off"
-//         placeholder="Enter your password"
-//       />
-//       <button
-//         type="submit"
-//         class="btn btn-primary"
-//         style={{ marginTop: 10 }}
-//       >
-//         Login
-//       </button>
-//     </div>
-//   </form>
-//   <div className="login">
-//     <p>Don't have Account ?</p>
-//     <Link to="/signup" type="submit" class="btn btn-success">
-//       Signup
-//     </Link>
-//   </div>
-// </div>

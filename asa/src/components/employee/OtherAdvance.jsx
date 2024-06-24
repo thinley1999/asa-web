@@ -124,7 +124,7 @@ const OtherAdvance = () => {
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
               <textarea
-                class="form-control"
+                className="form-control"
                 name="purpose"
                 rows="3"
                 disabled
@@ -133,7 +133,7 @@ const OtherAdvance = () => {
           </div>
         </div>
         <div className="bg-white px-4 pb-3 text-center">
-          <button type="button" className="btn btn-primary">
+          <button type="button" className="btn btn-primary px-5">
             Submit
           </button>
         </div>

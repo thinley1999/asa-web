@@ -99,9 +99,12 @@ const EmployeeDashboard = () => {
               <p className="textsubheading text-success">Pending</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <button type="button" className="btn btn-outline-primary">
+              <a
+                href="/viewCurrentApplication"
+                className="btn btn-outline-primary"
+              >
                 View Details
-              </button>
+              </a>
             </div>
           </div>
           <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
@@ -134,9 +137,12 @@ const EmployeeDashboard = () => {
               <p className="textsubheading text-success">Pending</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <button type="button" className="btn btn-outline-primary">
+              <a
+                href="/viewCurrentApplication"
+                className="btn btn-outline-primary"
+              >
                 View Details
-              </button>
+              </a>
             </div>
           </div>
           <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
@@ -169,9 +175,12 @@ const EmployeeDashboard = () => {
               <p className="textsubheading text-success">Pending</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <button type="button" className="btn btn-outline-primary">
+              <a
+                href="/viewCurrentApplication"
+                className="btn btn-outline-primary"
+              >
                 View Details
-              </button>
+              </a>
             </div>
           </div>
           <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
@@ -204,9 +213,12 @@ const EmployeeDashboard = () => {
               <p className="textsubheading text-success">Pending</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <button type="button" className="btn btn-outline-primary">
+              <a
+                href="/viewCurrentApplication"
+                className="btn btn-outline-primary"
+              >
                 View Details
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -250,9 +262,12 @@ const EmployeeDashboard = () => {
               <p className="textsubheading text-success">Pending</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <button type="button" className="btn btn-outline-primary">
+              <a
+                href="/viewPreviousApplication"
+                className="btn btn-outline-primary"
+              >
                 View Details
-              </button>
+              </a>
             </div>
           </div>
           <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
@@ -285,9 +300,12 @@ const EmployeeDashboard = () => {
               <p className="textsubheading text-success">Pending</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <button type="button" className="btn btn-outline-primary">
+              <a
+                href="/viewPreviousApplication"
+                className="btn btn-outline-primary"
+              >
                 View Details
-              </button>
+              </a>
             </div>
           </div>
           <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
@@ -320,9 +338,12 @@ const EmployeeDashboard = () => {
               <p className="textsubheading text-success">Pending</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <button type="button" className="btn btn-outline-primary">
+              <a
+                href="/viewPreviousApplication"
+                className="btn btn-outline-primary"
+              >
                 View Details
-              </button>
+              </a>
             </div>
           </div>
           <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
@@ -355,9 +376,12 @@ const EmployeeDashboard = () => {
               <p className="textsubheading text-success">Pending</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <button type="button" className="btn btn-outline-primary">
+              <a
+                href="/viewPreviousApplication"
+                className="btn btn-outline-primary"
+              >
                 View Details
-              </button>
+              </a>
             </div>
           </div>
         </div>

@@ -294,7 +294,7 @@ const TourAdvance = () => {
                   />
                 </div>
               </div>
-              <button type="button" class="btn">
+              <button type="button" className="btn">
                 <i className="bi bi-plus-square-fill fs-4 text-primary"></i>
               </button>
             </div>
@@ -314,7 +314,7 @@ const TourAdvance = () => {
                 <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                   <label className="form-label">Purpose of advance</label>
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     name="purpose"
                     rows="3"
                     disabled
@@ -337,7 +337,7 @@ const TourAdvance = () => {
                 <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
                   <label className="form-label">Remarks</label>
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     name="rmarks"
                     rows="6"
                     disabled
@@ -347,7 +347,7 @@ const TourAdvance = () => {
             </div>
 
             <div className="bg-white px-4 pb-3 text-center">
-              <button type="button" className="btn btn-primary">
+              <button type="button" className="btn btn-primary px-5">
                 Submit
               </button>
             </div>
@@ -461,7 +461,7 @@ const TourAdvance = () => {
               </div>
             </div>
             <div className="bg-white px-4 pb-3 text-center">
-              <button type="button" className="btn btn-primary">
+              <button type="button" className="btn btn-primary px-5">
                 Submit
               </button>
             </div>

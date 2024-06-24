@@ -1,7 +1,7 @@
 import React from "react";
 import "../../assets/css/main.css";
 
-const SalaryAdvance = () => {
+const ViewRequestedAdvance = () => {
   return (
     <div className="my-3">
       <form action="">
@@ -130,6 +130,19 @@ const SalaryAdvance = () => {
               />
             </div>
 
+            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+              <label className="form-label">Download Attchment</label>
+              <div className="d-flex">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ borderRadius: "0" }}
+                >
+                  <span>Download</span> <i className="bi bi-download"></i>
+                </button>
+              </div>
+            </div>
+
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
               <textarea
@@ -141,14 +154,29 @@ const SalaryAdvance = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white px-4 pb-3 text-center">
-          <button type="button" className="btn btn-primary px-5">
-            Submit
-          </button>
+        <div className="d-flex justify-content-center bg-white">
+          <div className="px-4 pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-success px-5"
+            >
+              Approve
+            </button>
+          </div>
+          <div className="pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-danger px-5"
+            >
+              Reject
+            </button>
+          </div>
         </div>
       </form>
     </div>
   );
 };
 
-export default SalaryAdvance;
+export default ViewRequestedAdvance;

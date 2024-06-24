@@ -71,16 +71,16 @@ const Profile = () => {
           <div className="px-4">
             <div className="px-2 ">
               <p className="detailhead p-0 m-0">Freelancer</p>
-              <div class="row">
-                <div class="col-6 d-flex align-items-center">
+              <div className="row">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Create Freelancer</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Permission Update</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Update Freelancer</span>
                 </div>
@@ -91,16 +91,16 @@ const Profile = () => {
           <div className="px-4">
             <div className="px-2 ">
               <p className="detailhead p-0 m-0">Role</p>
-              <div class="row">
-                <div class="col-6 d-flex align-items-center">
+              <div className="row">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Permission Read</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Permission Update</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Update</span>
                 </div>
@@ -111,8 +111,8 @@ const Profile = () => {
           <div className="px-4">
             <div className="px-2 ">
               <p className="detailhead p-0 m-0">Team Board</p>
-              <div class="row">
-                <div class="col-6 d-flex align-items-center">
+              <div className="row">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Read</span>
                 </div>
@@ -123,28 +123,28 @@ const Profile = () => {
           <div className="px-4">
             <div className="px-2 ">
               <p className="detailhead p-0 m-0">Team</p>
-              <div class="row">
-                <div class="col-6 d-flex align-items-center">
+              <div className="row">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Add member</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Create</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Group member</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Read</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Update</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Update group user</span>
                 </div>
@@ -155,16 +155,16 @@ const Profile = () => {
           <div className="px-4">
             <div className="px-2 ">
               <p className="detailhead p-0 m-0">Task</p>
-              <div class="row">
-                <div class="col-6 d-flex align-items-center">
+              <div className="row">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Create</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Delete</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Update</span>
                 </div>
@@ -175,12 +175,12 @@ const Profile = () => {
           <div className="px-4">
             <div className="px-2 ">
               <p className="detailhead p-0 m-0">Time Tackers</p>
-              <div class="row">
-                <div class="col-6 d-flex align-items-center">
+              <div className="row">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Create</span>
                 </div>
-                <div class="col-6 d-flex align-items-center">
+                <div className="col-6 d-flex align-items-center">
                   <i className="bi bi-check2 text-success fs-5"></i>
                   <span className="px-2">Read</span>
                 </div>
