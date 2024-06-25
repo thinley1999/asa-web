@@ -43,7 +43,6 @@ body {
 /* base page */
 .main-container {
   background: #eef4f5;
-  display: flex;
 }
 
 .sidebar {
@@ -55,13 +54,6 @@ body {
   margin-bottom: 5px;
   margin-left: 5px;
   border-radius: 5px;
-}
-
-.header-box {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 15px;
-  padding-bottom: 15px;
 }
 
 .content {

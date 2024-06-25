@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import logoImage from "../assets/img/rma-logo-white.png";
 import profileImage from "../assets/img/Thinley.jpeg";
 import { Outlet } from "react-router-dom";
@@ -6,6 +6,7 @@ import { Toast } from "bootstrap";
 
 const Base = () => {
   const toastRef = useRef(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   useEffect(() => {
     const toastEl = toastRef.current;
@@ -15,22 +16,8 @@ const Base = () => {
     };
 
     const btn = document.getElementById("showToastBtn");
-    const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
-    const sideNav = document.getElementById("side_nav");
-    const closeBtn = document.getElementById("sidebarCloseBtn");
-
     if (btn) {
       btn.addEventListener("click", showToast);
-    }
-
-    if (sidebarToggleBtn && sideNav && closeBtn) {
-      sidebarToggleBtn.addEventListener("click", () => {
-        sideNav.classList.toggle("d-none");
-      });
-
-      closeBtn.addEventListener("click", () => {
-        sideNav.classList.add("d-none");
-      });
     }
 
     // Cleanup event listener on component unmount
@@ -38,115 +25,109 @@ const Base = () => {
       if (btn) {
         btn.removeEventListener("click", showToast);
       }
-
-      if (sidebarToggleBtn && sideNav && closeBtn) {
-        sidebarToggleBtn.removeEventListener("click", () => {
-          sideNav.classList.toggle("d-none");
-        });
-
-        closeBtn.removeEventListener("click", () => {
-          sideNav.classList.add("d-none");
-        });
-      }
     };
   }, []);
+
+  const handleSidebarToggle = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
 
   return (
     <div className="main-container d-flex">
       {/* side bar */}
-      <div className="sidebar d-none d-md-block" id="side_nav">
-        <div className="header-box px-2 pt-3 pb-4 d-flex justify-content-between">
-          <div className="spancontainer">
-            <span>
-              <img
-                src={logoImage}
-                alt=""
-                className="img-fluid d-block mx-auto"
-                style={{ width: "13vh" }}
-              />
-            </span>
-            <span>
-              <p className="customheading2">RMA ASA</p>
-            </span>
+      {isSidebarVisible && (
+        <div className="sidebar d-none d-md-block">
+          <div className="header-box px-2 pt-3 pb-4 d-flex justify-content-between">
+            <div className="spancontainer">
+              <span>
+                <img
+                  src={logoImage}
+                  alt=""
+                  className="img-fluid d-block mx-auto"
+                  style={{ width: "13vh" }}
+                />
+              </span>
+              <span>
+                <p className="customheading2">RMA ASA</p>
+              </span>
+            </div>
           </div>
-          <button
-            className="btn d-md-none d-block close-btn px-1 py-0 text-white"
-            id="sidebarCloseBtn"
-          >
-            <i className="fal fa-list"></i>
-          </button>
-        </div>
 
-        <ul className="list-unstyled px-2">
-          <li className="active">
-            <a
-              href="/dashboard"
-              className="text-decoration-none px-3 py-2 d-block"
-            >
-              <i className="bi bi-house-door-fill customicon"></i>{" "}
-              <span className="icontext">Dashboard</span>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              href="/salaryAdvance"
-              className="text-decoration-none px-3 py-2 d-block"
-            >
-              <i className="bi bi-cash-stack customicon"></i>{" "}
-              <span className="icontext">Salary Advance</span>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              href="/otherAdvance"
-              className="text-decoration-none px-3 py-2 d-block"
-            >
-              <i className="bi bi-briefcase-fill customicon"></i>{" "}
-              <span className="icontext">Other Advance</span>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              href="/tourAdvance"
-              className="text-decoration-none px-3 py-2 d-block"
-            >
-              <i className="bi bi-car-front-fill customicon"></i>{" "}
-              <span className="icontext">Tour Advance</span>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              href="/requestedAdvance"
-              className="text-decoration-none px-3 py-2 d-block"
-            >
-              <i className="bi bi-cassette-fill customicon"></i>{" "}
-              <span className="icontext">Requested Advance</span>
-            </a>
-          </li>
-        </ul>
+          <ul className="list-unstyled px-2">
+            <li className="active">
+              <a
+                href="/dashboard"
+                className="text-decoration-none px-3 py-2 d-block"
+              >
+                <i className="bi bi-house-door-fill customicon"></i>{" "}
+                <span className="icontext">Dashboard</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                href="/salaryAdvance"
+                className="text-decoration-none px-3 py-2 d-block"
+              >
+                <i className="bi bi-cash-stack customicon"></i>{" "}
+                <span className="icontext">Salary Advance</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                href="/otherAdvance"
+                className="text-decoration-none px-3 py-2 d-block"
+              >
+                <i className="bi bi-briefcase-fill customicon"></i>{" "}
+                <span className="icontext">Other Advance</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                href="/tourAdvance"
+                className="text-decoration-none px-3 py-2 d-block"
+              >
+                <i className="bi bi-car-front-fill customicon"></i>{" "}
+                <span className="icontext">Tour Advance</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                href="/requestedAdvance"
+                className="text-decoration-none px-3 py-2 d-block"
+              >
+                <i className="bi bi-cassette-fill customicon"></i>{" "}
+                <span className="icontext">Requested Advance</span>
+              </a>
+            </li>
+          </ul>
 
-        <div className="signoutbtn">
-          <button type="button" className="btn btn-danger">
-            <i className="bi bi-box-arrow-right"></i> <span>Sign Out</span>
-          </button>
+          <div className="signoutbtn">
+            <button type="button" className="btn btn-danger">
+              <i className="bi bi-box-arrow-right"></i> <span>Sign Out</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
       {/* end of side bar */}
 
-      {/* nav bar */}
       <div className="content">
+        {/* nav bar */}
         <nav className="navbar navbar-expand-md">
           <div className="container-fluid">
             <div className="d-flex justify-content-between d-md-none d-block">
-              <button className="btn px-1 py-0 open-btn" id="sidebarToggleBtn">
+              <button className="btn px-1 py-0 btn1">
                 <i className="bi bi-card-list"></i>
               </button>
               <a className="customtag" href="#">
-                DASHBOARD
+                DASHBOARD1
               </a>
             </div>
 
-            <button className="p-0 border-0 d-none d-sm-block" type="button">
+            <button
+              className="p-0 border-0 d-none d-sm-block btn2"
+              type="button"
+              onClick={handleSidebarToggle}
+            >
               <i className="bi bi-card-list"></i>
             </button>
             <button className="p-0 border-0 btn-responsive" type="button">
@@ -156,7 +137,7 @@ const Base = () => {
             <div className="collapse navbar-collapse justify-content-start">
               <div className="navbar-nav mb-2 mb-lg-0">
                 <a className="customtag" href="#">
-                  DASHBOARD
+                  DASHBOARD2
                 </a>
               </div>
             </div>
@@ -187,12 +168,12 @@ const Base = () => {
             </div>
           </div>
         </nav>
+        {/* end of nav bar */}
 
-        <div className="px-1 pt-2">
+        <div className="px-1 pt-2 outlet">
           <Outlet />
         </div>
       </div>
-      {/* nav bar */}
 
       {/* Toast element */}
       <div
