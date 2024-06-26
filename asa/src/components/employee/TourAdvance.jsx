@@ -9,7 +9,7 @@ const TourAdvance = () => {
   };
 
   return (
-    <div className="row">
+    <div>
       {/* Tabs navs */}
       <ul className="nav nav-tabs mb-2 col-12 mynav" id="ex1" role="tablist">
         <li className="nav-item col-6 text-center tablist" role="presentation">

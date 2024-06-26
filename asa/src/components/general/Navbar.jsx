@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
-const Navbar = ({ handleSidebarToggle, profileImage }) => {
+const Navbar = ({ handleSidebarToggle, profileImage, isSidebarVisible }) => {
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -23,7 +23,11 @@ const Navbar = ({ handleSidebarToggle, profileImage }) => {
   };
 
   return (
-    <nav className="navbar navbar-expand-md">
+    <nav
+      className={`navbar navbar-expand-md fixed-top bg-white ${
+        isSidebarVisible ? "navbar-shift" : ""
+      }`}
+    >
       <div className="container-fluid">
         <div className="d-flex justify-content-between d-md-none d-block">
           <button className="btn px-1 py-0 btn1" onClick={handleSidebarToggle}>

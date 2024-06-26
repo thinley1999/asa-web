@@ -3,7 +3,7 @@ import "../../assets/css/main.css";
 
 const OtherAdvance = () => {
   return (
-    <div className="my-3">
+    <div className="mb-3">
       <form action="">
         <div className="bg-white px-4 py-4">
           <div className="row w-100 ">

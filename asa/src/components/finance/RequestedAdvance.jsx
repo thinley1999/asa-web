@@ -94,7 +94,7 @@ const RequestedAdvance = () => {
   };
 
   return (
-    <div className="my-2">
+    <div className="mb-3">
       <div className="d-flex bg-white py-3 justify-content-center">
         <div className="filterdiv d-flex p-1 px-4">
           <i className="bi bi-funnel-fill fs-6"></i>
