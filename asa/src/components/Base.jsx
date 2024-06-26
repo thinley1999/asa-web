@@ -35,15 +35,25 @@ const Base = () => {
   };
 
   return (
-    <div className="main-container d-flex">
-      {/* side bar */}
-      { isSidebarVisible && <SideBar/> }
+    <div className="d-flex">
+      {/* Sidebar */}
+      {isSidebarVisible && (
+        <div className="d-none d-md-block">
+          <SideBar />
+        </div>
+      )}
 
-      <div className="content">
-        {/* nav bar */}
-        <Navbar handleSidebarToggle={handleSidebarToggle} profileImage={profileImage}/>
+      <div className={`flex-grow-1 ${isSidebarVisible ? "content-shift" : ""}`}>
+        {/* Navbar */}
+        <div className="ms-1" style={{ marginLeft: "10px" }}>
+          <Navbar
+            handleSidebarToggle={handleSidebarToggle}
+            profileImage={profileImage}
+            isSidebarVisible={isSidebarVisible}
+          />
+        </div>
 
-        <div className="px-1 pt-2 outlet">
+        <div className="px-2 pt-2 outlet">
           <Outlet />
         </div>
       </div>
@@ -53,7 +63,7 @@ const Base = () => {
         className="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
         style={{ zIndex: 1055 }}
       >
-        <Notifications toastRef={toastRef} profileImage={profileImage}/>
+        <Notifications toastRef={toastRef} profileImage={profileImage} />
       </div>
     </div>
   );

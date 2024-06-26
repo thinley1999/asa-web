@@ -2,7 +2,7 @@ import React from "react";
 
 const ViewCurrentApplication = () => {
   return (
-    <div className="my-3">
+    <div className="mb-3">
       <div className="bg-white px-4 pt-4">
         <div className="row w-100 ">
           <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
