@@ -7,6 +7,10 @@ const MyApplications = ({
   profileImage,
   title,
 }) => {
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
   return (
     <div
       className={`tab-pane fade ${activeTab === title ? "show active" : ""}`}
@@ -41,11 +45,13 @@ const MyApplications = ({
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
               <p className="textheading">Application Date</p>
-              <p className="textsubheading">{application.created_at}</p>
+              <p className="textsubheading">{formatDate(application.created_at)}</p>
             </div>
             <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
               <p className="textheading">Status</p>
-              <p className="textsubheading text-success">{application.status}</p>
+              <p className="textsubheading text-success">
+                {application.status}
+              </p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
               <a

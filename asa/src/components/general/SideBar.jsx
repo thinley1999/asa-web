@@ -1,10 +1,13 @@
 import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import logoImage from "../../assets/img/rma-logo-white.png";
+import AuthServices from "../services/AuthServices";
+import { useNavigate } from "react-router-dom";
 
 const SideBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const navigate = useNavigate();
 
   const isActive = (path) => (currentPath === path ? "active" : "");
 
@@ -23,6 +26,15 @@ const SideBar = () => {
       label: "Requested Advance",
     },
   ];
+
+  const handleLogout = async () => {
+    try {
+      await AuthServices.logout();
+      navigate("/");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
   return (
     <div className="sidebar fixed-sidebar d-none d-md-block">
@@ -53,7 +65,7 @@ const SideBar = () => {
         ))}
       </ul>
 
-      <div className="signoutbtn">
+      <div className="signoutbtn" onClick={handleLogout}>
         <button type="button" className="btn btn-danger">
           <i className="bi bi-box-arrow-right"></i> <span>Sign Out</span>
         </button>
