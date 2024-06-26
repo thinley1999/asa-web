@@ -16,15 +16,16 @@ const Login = () => {
 
     try {
       const response = await AuthServices.login(username, password);
-      
-      if (response.status === 200) {
+  
+      if (response && response.status === 200) {
+        const token = response.headers.authorization;
+        localStorage.setItem("token", token);
         navigate("/dashboard");
-      } 
-      else {
-        setError("Internal Server Issue")
+      } else {
+        setError("Internal Server Issue");
       }
     } catch (error) {
-      setError(error.response.data);
+      setError(error.response?.data || "An error occurred");
     }
   };
 

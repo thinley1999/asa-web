@@ -1,13 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../assets/css/main.css";
 import profileImage from "../../assets/img/Thinley.jpeg";
+import AdvanceServices from "../services/AdvanceServices";
 
 const EmployeeDashboard = () => {
   const [activeTab, setActiveTab] = useState("currentapplication");
+  const [currentapplication, setCurrentApplications] = useState([]);
+  const [previousapplication, setPreviousApplications] = useState([]);
+  const all_advance = [
+    "ex_country_tour_advance",
+    "in_country_tour_advance",
+    "other_advance",
+    "salary_advance",
+  ];
+  const preParams = {
+          status: ["confirmed","dispatched","closed"],
+          advance_type: all_advance,
+          type: "my_advance",
+  }
+
+  const currentParams = {
+          status: ["pending", "rejected","verified"],
+          advance_type: all_advance,
+          type: "my_advance",
+  }
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
   };
+
+  const fetchCurrentApplications = async () => {
+    try {
+      const response = await AdvanceServices.get(currentParams);
+      setCurrentApplications(response.data);
+    } catch (error) {
+      console.error("Error fetching current applications:", error);
+    }
+  };
+
+  const fetchPreviousApplications = async () => {
+    try {
+      const response = await AdvanceServices.get(preParams);
+      setPreviousApplications(response.data);
+    } catch (error) {
+      console.error("Error fetching previous applications:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "currentapplication") {
+      fetchCurrentApplications();
+    } else if (activeTab === "previousapplication") {
+      fetchPreviousApplications();
+    }
+  }, [activeTab]);
+
+  console.log('current', currentapplication);
+  console.log('previous', previousapplication);
 
   return (
     <div className="row">
