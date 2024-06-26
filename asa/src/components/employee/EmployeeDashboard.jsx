@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../../assets/css/main.css";
 import profileImage from "../../assets/img/Thinley.jpeg";
 import AdvanceServices from "../services/AdvanceServices";
+import MyApplications from "../general/MyApplications";
 
 const EmployeeDashboard = () => {
   const [activeTab, setActiveTab] = useState("currentapplication");
@@ -14,16 +15,16 @@ const EmployeeDashboard = () => {
     "salary_advance",
   ];
   const preParams = {
-          status: ["confirmed","dispatched","closed"],
-          advance_type: all_advance,
-          type: "my_advance",
-  }
+    status: ["confirmed", "dispatched", "closed"],
+    advance_type: all_advance,
+    type: "my_advance",
+  };
 
   const currentParams = {
-          status: ["pending", "rejected","verified"],
-          advance_type: all_advance,
-          type: "my_advance",
-  }
+    status: ["pending", "rejected", "verified"],
+    advance_type: all_advance,
+    type: "my_advance",
+  };
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
@@ -55,8 +56,8 @@ const EmployeeDashboard = () => {
     }
   }, [activeTab]);
 
-  console.log('current', currentapplication);
-  console.log('previous', previousapplication);
+  console.log("current", currentapplication);
+  console.log("previous", previousapplication);
 
   return (
     <div>
@@ -109,331 +110,20 @@ const EmployeeDashboard = () => {
 
       {/* Tabs content */}
       <div className="tab-content col-12">
-        <div
-          className={`tab-pane fade ${
-            activeTab === "currentapplication" ? "show active" : ""
-          }`}
-          id="currentapplication"
-          role="tabpanel"
-          aria-labelledby="ex1-tab-1"
-        >
-          <h6 className="custon-h6 py-2">My Applications</h6>
-          <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-            <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "8vh" }}
-                alt="Profile"
-              />
-              <div>
-                <p className="textheading">Thinley Yoezer</p>
-                <p className="textsubheading">Asst. ICT Officer</p>
-              </div>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.20,000</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
-              <p className="textsubheading">Salary Advance</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Application Date</p>
-              <p className="textsubheading">19/06/2024</p>
-            </div>
-            <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-              <p className="textheading">Status</p>
-              <p className="textsubheading text-success">Pending</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <a
-                href="/viewCurrentApplication"
-                className="btn btn-outline-primary"
-              >
-                View Details
-              </a>
-            </div>
-          </div>
-          <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-            <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "8vh" }}
-                alt="Profile"
-              />
-              <div>
-                <p className="textheading">Thinley Yoezer</p>
-                <p className="textsubheading">Asst. ICT Officer</p>
-              </div>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.20,000</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
-              <p className="textsubheading">Salary Advance</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Application Date</p>
-              <p className="textsubheading">19/06/2024</p>
-            </div>
-            <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-              <p className="textheading">Status</p>
-              <p className="textsubheading text-success">Pending</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <a
-                href="/viewCurrentApplication"
-                className="btn btn-outline-primary"
-              >
-                View Details
-              </a>
-            </div>
-          </div>
-          <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-            <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "8vh" }}
-                alt="Profile"
-              />
-              <div>
-                <p className="textheading">Thinley Yoezer</p>
-                <p className="textsubheading">Asst. ICT Officer</p>
-              </div>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.20,000</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
-              <p className="textsubheading">Salary Advance</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Application Date</p>
-              <p className="textsubheading">19/06/2024</p>
-            </div>
-            <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-              <p className="textheading">Status</p>
-              <p className="textsubheading text-success">Pending</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <a
-                href="/viewCurrentApplication"
-                className="btn btn-outline-primary"
-              >
-                View Details
-              </a>
-            </div>
-          </div>
-          <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-            <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "8vh" }}
-                alt="Profile"
-              />
-              <div>
-                <p className="textheading">Thinley Yoezer</p>
-                <p className="textsubheading">Asst. ICT Officer</p>
-              </div>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.20,000</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
-              <p className="textsubheading">Salary Advance</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Application Date</p>
-              <p className="textsubheading">19/06/2024</p>
-            </div>
-            <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-              <p className="textheading">Status</p>
-              <p className="textsubheading text-success">Pending</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <a
-                href="/viewCurrentApplication"
-                className="btn btn-outline-primary"
-              >
-                View Details
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div
-          className={`tab-pane fade ${
-            activeTab === "previousapplication" ? "show active" : ""
-          }`}
-          id="previousapplication"
-          role="tabpanel"
-          aria-labelledby="ex1-tab-2"
-        >
-          <h6 className="custon-h6 py-2">Previous Applications</h6>
-          <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-            <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "8vh" }}
-                alt="Profile"
-              />
-              <div>
-                <p className="textheading">Thinley Yoezer</p>
-                <p className="textsubheading">Asst. ICT Officer</p>
-              </div>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.20,000</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
-              <p className="textsubheading">Salary Advance</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Application Date</p>
-              <p className="textsubheading">19/06/2024</p>
-            </div>
-            <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-              <p className="textheading">Status</p>
-              <p className="textsubheading text-success">Pending</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <a
-                href="/viewPreviousApplication"
-                className="btn btn-outline-primary"
-              >
-                View Details
-              </a>
-            </div>
-          </div>
-          <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-            <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "8vh" }}
-                alt="Profile"
-              />
-              <div>
-                <p className="textheading">Thinley Yoezer</p>
-                <p className="textsubheading">Asst. ICT Officer</p>
-              </div>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.20,000</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
-              <p className="textsubheading">Salary Advance</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Application Date</p>
-              <p className="textsubheading">19/06/2024</p>
-            </div>
-            <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-              <p className="textheading">Status</p>
-              <p className="textsubheading text-success">Pending</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <a
-                href="/viewPreviousApplication"
-                className="btn btn-outline-primary"
-              >
-                View Details
-              </a>
-            </div>
-          </div>
-          <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-            <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "8vh" }}
-                alt="Profile"
-              />
-              <div>
-                <p className="textheading">Thinley Yoezer</p>
-                <p className="textsubheading">Asst. ICT Officer</p>
-              </div>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.20,000</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
-              <p className="textsubheading">Salary Advance</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Application Date</p>
-              <p className="textsubheading">19/06/2024</p>
-            </div>
-            <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-              <p className="textheading">Status</p>
-              <p className="textsubheading text-success">Pending</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <a
-                href="/viewPreviousApplication"
-                className="btn btn-outline-primary"
-              >
-                View Details
-              </a>
-            </div>
-          </div>
-          <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-            <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "8vh" }}
-                alt="Profile"
-              />
-              <div>
-                <p className="textheading">Thinley Yoezer</p>
-                <p className="textsubheading">Asst. ICT Officer</p>
-              </div>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.20,000</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
-              <p className="textsubheading">Salary Advance</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Application Date</p>
-              <p className="textsubheading">19/06/2024</p>
-            </div>
-            <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-              <p className="textheading">Status</p>
-              <p className="textsubheading text-success">Pending</p>
-            </div>
-            <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-              <a
-                href="/viewPreviousApplication"
-                className="btn btn-outline-primary"
-              >
-                View Details
-              </a>
-            </div>
-          </div>
-        </div>
+        <MyApplications
+          heading={"Current Applications"}
+          applications={currentapplication}
+          activeTab={activeTab}
+          profileImage={profileImage}
+          title={"currentapplication"}
+        />
+        <MyApplications
+          heading={"Previous Applications"}
+          applications={previousapplication}
+          activeTab={activeTab}
+          profileImage={profileImage}
+          title={"previousapplication"}
+        />
       </div>
       {/* Tabs content */}
     </div>
