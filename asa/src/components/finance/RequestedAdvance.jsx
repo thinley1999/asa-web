@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import "../../assets/css/main.css";
+import AdvanceServices from "../services/AdvanceServices";
 
 const RequestedAdvance = () => {
   const customStyles = {
@@ -26,8 +27,8 @@ const RequestedAdvance = () => {
       sortable: true,
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">{row.name}</p>
-          <p className="datasubheading p-0 m-0">{row.email}</p>
+          <p className="dataheading p-0 m-0">{row.user.name}</p>
+          <p className="datasubheading p-0 m-0">{row.user.email}</p>
         </div>
       ),
     },
@@ -35,8 +36,8 @@ const RequestedAdvance = () => {
       name: "Status",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading1 p-0 m-0 text-success">pending</p>
-          <p className="datasubheading p-0 m-0">Application date: 19/06/2024</p>
+          <p className="dataheading1 p-0 m-0 text-success">{row.status}</p>
+          <p className="datasubheading p-0 m-0">Application date: {formatDate(row.created_at)}</p>
         </div>
       ),
     },
@@ -44,7 +45,7 @@ const RequestedAdvance = () => {
       name: "Advance Type",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">{row.address.street}</p>
+          <p className="dataheading p-0 m-0">{row.advance_type}</p>
         </div>
       ),
     },
@@ -52,7 +53,7 @@ const RequestedAdvance = () => {
       name: "Amount",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">1000</p>
+          <p className="dataheading p-0 m-0">{row.amount}</p>
           <p className="datasubheading p-0 m-0 text-end">NU</p>
         </div>
       ),
@@ -63,28 +64,48 @@ const RequestedAdvance = () => {
         <div>
           <span className="datasubheading">
             <a href="/viewRequestedAdvance">View More</a>
-          </span>{" "}
-          <i className="bi bi-three-dots-vertical"></i>
+          </span>
         </div>
       ),
     },
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      axios
-        .get("https://jsonplaceholder.typicode.com/users")
-        .then((res) => {
-          setRecords(res.data);
-          setFilterRecords(res.data);
-        })
-        .catch((err) => console.log(err));
-    };
-    fetchData();
-  }, []);
+  const all_advance = [
+    "ex_country_tour_advance",
+    "in_country_tour_advance",
+    "other_advance",
+    "salary_advance",
+  ];
+
+  const advanceParams = {
+    status: ["pending"],
+    advance_type: all_advance,
+    type: "other_advance",
+  };
 
   const [records, setRecords] = useState([]);
   const [filterRecords, setFilterRecords] = useState([]);
+
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const fetchAdvances = async () => {
+    try {
+      const response = await AdvanceServices.get(advanceParams);
+      setRecords(response.data.advances);
+      setFilterRecords(response.data.advances);
+    } catch (error) {
+      console.error("Error fetching current applications:", error);
+    }
+  };
+
+  console.log('response', records);
+
+  useEffect(() => {
+    fetchAdvances();
+  }, []);
 
   const handleFilter = (event) => {
     const newData = filterRecords.filter((row) =>
@@ -108,7 +129,7 @@ const RequestedAdvance = () => {
             <input
               className="form-control"
               type="text"
-              placeholder="Search..."
+              placeholder="Search application by email"
               onChange={handleFilter}
             />
           </div>
@@ -119,7 +140,6 @@ const RequestedAdvance = () => {
         data={records}
         customStyles={customStyles}
         pagination
-        selectableRows
       ></DataTable>
     </div>
   );
