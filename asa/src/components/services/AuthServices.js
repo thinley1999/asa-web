@@ -23,6 +23,7 @@ const logout = async () => {
     try {
         const response = await axios.delete(`${API_URL}/users/sign_out`);
         localStorage.removeItem("token");
+        localStorage.removeItem("id");
         return response;
       } catch (error) {
         throw error;

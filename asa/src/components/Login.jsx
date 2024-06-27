@@ -16,10 +16,13 @@ const Login = () => {
 
     try {
       const response = await AuthServices.login(username, password);
-  
+
       if (response && response.status === 200) {
         const token = response.headers.authorization;
+        const user = response.data.user;
+
         localStorage.setItem("token", token);
+        localStorage.setItem("id", user.id);
         navigate("/dashboard");
       } else {
         setError("Internal Server Issue");
@@ -55,7 +58,10 @@ const Login = () => {
               <p className="customheading">Login to your account</p>
             </div>
             <div className="d-flex flex-column align-items-center justify-content-center h-custom-2 px-5 ms-xl-4">
-              <form style={{ maxWidth: "23rem", width: "100%" }} onSubmit={handleLogin}>
+              <form
+                style={{ maxWidth: "23rem", width: "100%" }}
+                onSubmit={handleLogin}
+              >
                 <div className="form-outline mb-4">
                   <label className="form-label customlabel">Employee ID</label>
                   <input
@@ -77,10 +83,7 @@ const Login = () => {
                   />
                 </div>
                 <div className="form-outline mb-4">
-                  <button
-                    type="submit"
-                    className="btn custombutton w-100"
-                  >
+                  <button type="submit" className="btn custombutton w-100">
                     Login
                   </button>
                 </div>

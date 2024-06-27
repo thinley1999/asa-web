@@ -16,10 +16,10 @@ const all_status = [
   "closed",
 ];
 
+const token = localStorage.getItem("token");
+
 const get = async (params) => {
   try {
-    const token = localStorage.getItem("token");
-
     const response = await axios.get(`${API_URL}/api/advances`, {
       params: {
         "advance[status][]": params.status,
@@ -31,7 +31,7 @@ const get = async (params) => {
       },
     });
 
-    return response; 
+    return response;
   } catch (error) {
     throw error;
   }
@@ -39,7 +39,36 @@ const get = async (params) => {
 
 const showDetail = async () => {};
 
-const create = async () => {};
+const create = async (params) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/advances`,
+      {
+        advance: {
+          advance_type: params.advance_type,
+          status: "pending",
+          amount: parseFloat(params.advanceAmount), // Convert amount to number
+          purpose: params.purpose,
+        },
+        salary_advance: {
+          duration: params.duration,
+          deduction: params.deduction,
+          status: "pending",
+          completion_month: params.completion_month,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const update = async () => {};
 
