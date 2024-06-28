@@ -63,7 +63,7 @@ const RequestedAdvance = () => {
       selector: (row) => (
         <div>
           <span className="datasubheading">
-            <a href="/viewRequestedAdvance">View More</a>
+            <a href={`/viewRequestedAdvance/${row.id}`}>View More</a>
           </span>
         </div>
       ),

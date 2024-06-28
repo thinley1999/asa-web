@@ -37,7 +37,22 @@ const get = async (params) => {
   }
 };
 
-const showDetail = async () => {};
+const showDetail = async (id) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/api/advances/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const create = async (params) => {
   try {

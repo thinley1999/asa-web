@@ -28,7 +28,7 @@ const routes = createBrowserRouter([
       { path: "viewCurrentApplication", element: <ViewCurrentApplication /> },
       { path: "financeDashboard", element: <FinanceDashboard /> },
       { path: "requestedAdvance", element: <RequestedAdvance /> },
-      { path: "viewRequestedAdvance", element: <ViewRequestedAdvance /> },
+      { path: "viewRequestedAdvance/:id", element: <ViewRequestedAdvance /> },
     ],
   },
 ]);
