@@ -1,7 +1,12 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
-const Navbar = ({ handleSidebarToggle, profileImage, isSidebarVisible }) => {
+const Navbar = ({
+  handleSidebarToggle,
+  handleMobileSidebarToggle,
+  profileImage,
+  isSidebarVisible,
+}) => {
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -30,8 +35,11 @@ const Navbar = ({ handleSidebarToggle, profileImage, isSidebarVisible }) => {
     >
       <div className="container-fluid">
         <div className="d-flex justify-content-between d-md-none d-block">
-          <button className="btn px-1 py-0 btn1" onClick={handleSidebarToggle}>
-            <i className="bi bi-card-list"></i>
+          <button
+            className="btn px-1 py-0 btn1"
+            onClick={handleMobileSidebarToggle}
+          >
+            <i className="bi bi-list"></i>
           </button>
           <a className="customtag" href="#">
             {getHeading()}
@@ -39,13 +47,13 @@ const Navbar = ({ handleSidebarToggle, profileImage, isSidebarVisible }) => {
         </div>
 
         <button
-          className="p-0 border-0 d-none d-sm-block btn2"
+          className="p-0 border-0 d-none d-sm-block btn btn2"
           type="button"
           onClick={handleSidebarToggle}
         >
-          <i className="bi bi-card-list"></i>
+          <i className="bi bi-list"></i>
         </button>
-        <button className="p-0 border-0 btn-responsive" type="button">
+        <button className="p-0 border-0 btn-responsive btn" type="button">
           <i className="bi bi-caret-down-fill"></i>
         </button>
 

@@ -5,10 +5,12 @@ import { Toast } from "bootstrap";
 import Notifications from "./general/Notifications";
 import SideBar from "./general/SideBar";
 import Navbar from "./general/Navbar";
+import SideBar2 from "./general/SideBar2";
 
 const Base = () => {
   const toastRef = useRef(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [isMobileSidebarVisible, setIsMobileSidebarVisible] = useState(false);
 
   useEffect(() => {
     const toastEl = toastRef.current;
@@ -34,6 +36,14 @@ const Base = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
 
+  const handleMobileSidebarToggle = () => {
+    setIsMobileSidebarVisible(!isMobileSidebarVisible);
+  };
+
+  const handleCloseSidebar = () => {
+    setIsMobileSidebarVisible(false);
+  };
+
   return (
     <div className="d-flex">
       {/* Sidebar */}
@@ -48,6 +58,7 @@ const Base = () => {
         <div className="ms-1" style={{ marginLeft: "10px" }}>
           <Navbar
             handleSidebarToggle={handleSidebarToggle}
+            handleMobileSidebarToggle={handleMobileSidebarToggle}
             profileImage={profileImage}
             isSidebarVisible={isSidebarVisible}
           />
@@ -56,6 +67,16 @@ const Base = () => {
         <div className="px-2 pt-2 outlet">
           <Outlet />
         </div>
+      </div>
+
+      {/* Mobile Sidebar */}
+      <div
+        className={`mobile-sidebar-overlay d-block d-md-none ${
+          isMobileSidebarVisible ? "" : "hidden"
+        }`}
+        onClick={handleMobileSidebarToggle}
+      >
+        <SideBar2 handleCloseSidebar={handleCloseSidebar} />
       </div>
 
       {/* Toast element */}
