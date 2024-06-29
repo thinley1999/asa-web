@@ -3,29 +3,51 @@ import { useLocation, Link } from "react-router-dom";
 import logoImage from "../../assets/img/rma-logo-white.png";
 import AuthServices from "../services/AuthServices";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { usePermissions } from "../../contexts/PermissionsContext";
 
 const SideBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const navigate = useNavigate();
-
   const isActive = (path) => (currentPath === path ? "active" : "");
+  const {permissions, permissionsError} = usePermissions();
+  const [dashboardPermission, setDashboardPermission] = useState([]);
+  const [requestedAdvancePermission, setRequestedAdvancePermission] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
 
-  const menuItems = [
-    { path: "/dashboard", icon: "bi-house-door-fill", label: "Dashboard" },
-    { path: "/salaryAdvance", icon: "bi-cash-stack", label: "Salary Advance" },
-    {
-      path: "/otherAdvance",
-      icon: "bi-briefcase-fill",
-      label: "Other Advance",
-    },
-    { path: "/tourAdvance", icon: "bi-car-front-fill", label: "Tour Advance" },
-    {
-      path: "/requestedAdvance",
-      icon: "bi-cassette-fill",
-      label: "Requested Advance",
-    },
-  ];
+  const getMenuItems = () => {
+    const items = [
+      { path: dashboardPermission?.actions?.view ? "/financeDashboard" : "/dashboard", icon: "bi-house-door-fill", label: "Dashboard" },
+      { path: "/salaryAdvance", icon: "bi-cash-stack", label: "Salary Advance" },
+      { path: "/otherAdvance", icon: "bi-briefcase-fill", label: "Other Advance" },
+      { path: "/tourAdvance", icon: "bi-car-front-fill", label: "Tour Advance" },
+    ];
+
+    if (requestedAdvancePermission?.actions?.view) {
+      items.push({ path: "/requestedAdvance", icon: "bi-cassette-fill", label: "Requested Advance" });
+    }
+
+    return items;
+  };
+
+  useEffect(() => {
+    if (permissions) {
+      const dashboardPerm= permissions.find(
+        (permission) => permission.resource === "dashboard"
+      );
+
+      const requestedPerm= permissions.find(
+        (permission) => permission.resource === "requested_advance"
+      );
+      setDashboardPermission(dashboardPerm);
+      setRequestedAdvancePermission(requestedPerm);
+    }
+    setMenuItems(getMenuItems());
+  }, [permissions]);
+
+  console.log('dashboardPermission', dashboardPermission);
+  console.log('requestedAdvancePermission', requestedAdvancePermission);
 
   const handleLogout = async () => {
     try {

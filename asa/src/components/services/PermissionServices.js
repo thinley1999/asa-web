@@ -2,13 +2,11 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
-const get = async () => {};
-
-const showDetail = async () => {
+const get = async () => {
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
   try {
-    const response = await axios.get(`${API_URL}/api/users/${id}`, {
+    const response = await axios.get(`${API_URL}/api/permissions`, {
       headers: {
         Authorization: `${token}`,
       },
@@ -20,13 +18,15 @@ const showDetail = async () => {
   }
 };
 
+const show = async () => {};
+
 const create = async () => {};
 
 const update = async () => {};
 
 export default {
   get,
-  showDetail,
+  show,
   create,
   update,
 };

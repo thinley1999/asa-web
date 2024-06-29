@@ -16,9 +16,8 @@ const all_status = [
   "closed",
 ];
 
-const token = localStorage.getItem("token");
-
 const get = async (params) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.get(`${API_URL}/api/advances`, {
       params: {
@@ -38,12 +37,13 @@ const get = async (params) => {
 };
 
 const showDetail = async (id) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.get(
       `${API_URL}/api/advances/${id}`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
       }
     );
@@ -55,6 +55,7 @@ const showDetail = async (id) => {
 };
 
 const create = async (params) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.post(
       `${API_URL}/api/advances`,
@@ -74,7 +75,7 @@ const create = async (params) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `${token}`,
         },
       }
     );
