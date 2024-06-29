@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import UserServices from "../services/UserServices";
 
 const Navbar = ({
   handleSidebarToggle,
@@ -9,6 +10,11 @@ const Navbar = ({
 }) => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
 
   const getHeading = () => {
     switch (currentPath) {
@@ -24,6 +30,17 @@ const Navbar = ({
         return "Requested Advance";
       default:
         return "Dashboard";
+    }
+  };
+
+  const fetchUserDetails = async () => {
+    try {
+      const response = await UserServices.showDetail();
+      if (response && response.status === 200) {
+        setUser(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
     }
   };
 
@@ -81,8 +98,8 @@ const Navbar = ({
           />
           <div>
             <a className="profilelink text-decoration-none" href="/profile">
-              <p className="username">Thinley Yoezer</p>
-              <p className="userrole">User</p>
+              <p className="username">{user.name}</p>
+              {user.role && <p className="userrole">{user.role.name}</p>}
             </a>
           </div>
         </div>

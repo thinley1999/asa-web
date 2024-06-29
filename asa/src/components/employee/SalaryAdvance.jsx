@@ -3,11 +3,13 @@ import "../../assets/css/main.css";
 import CustomInput from "../general/CustomInput";
 import UserServices from "../services/UserServices";
 import AdvanceServices from "../services/AdvanceServices";
-import { formToJSON } from "axios";
+import SuccessMessage from "../general/SuccessMessage";
+import ErrorMessage from "../general/ErrorMessage";
 
 const SalaryAdvance = () => {
   const [user, setUser] = useState([]);
-  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
     firstName: " - ",
     middleName: " - ",
@@ -105,7 +107,7 @@ const SalaryAdvance = () => {
     return Object.keys(errors).length === 0;
   };
 
-  console.log('error', formErrors);
+  console.log("error", formErrors);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,14 +118,22 @@ const SalaryAdvance = () => {
         console.log("response", response);
 
         if (response && response.status === 201) {
-          alert("Advance created successfully");
+          setSuccessMessage("Advance created successfully");
         } else {
-          setError("Internal Server Issue");
+          setErrorMessage("Internal Server Error");
         }
       } catch (error) {
-        setError(error.response?.data || "An error occurred");
+        setErrorMessage(error.response?.data || "An error occurred");
       }
     }
+  };
+
+  const handleCloseSuccessMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const handleCloseErrorMessage = () => {
+    setErrorMessage("");
   };
 
   useEffect(() => {
@@ -141,6 +151,19 @@ const SalaryAdvance = () => {
 
   return (
     <div className="mb-3 ">
+      {successMessage && (
+        <SuccessMessage
+          message={successMessage}
+          onClose={handleCloseSuccessMessage}
+        />
+      )}
+      {errorMessage && (
+        <ErrorMessage
+          message={errorMessage}
+          onClose={handleCloseErrorMessage}
+        />
+      )}
+
       <form onSubmit={handleSubmit}>
         <div className="bg-white px-4 py-4">
           <div className="row w-100 ">
@@ -230,13 +253,19 @@ const SalaryAdvance = () => {
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
               <textarea
-                className={`form-control ${formErrors.purpose ? 'is-invalid' : ''}`}
+                className={`form-control ${
+                  formErrors.purpose ? "is-invalid" : ""
+                }`}
                 name="purpose"
                 rows="4"
                 value={formData.purpose}
-                onChange={handleChange}            
+                onChange={handleChange}
               ></textarea>
-              {formErrors.purpose && <div className="invalid-feedback" style={{ display: "block" }}>{formErrors.purpose}</div>}
+              {formErrors.purpose && (
+                <div className="invalid-feedback" style={{ display: "block" }}>
+                  {formErrors.purpose}
+                </div>
+              )}
             </div>
           </div>
         </div>

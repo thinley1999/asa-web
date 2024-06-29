@@ -1,8 +1,61 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../../assets/css/main.css";
 import profileImage from "../../assets/img/Thinley.jpeg";
+import UserServices from "../services/UserServices";
 
 const Profile = () => {
+  const [user, setUser] = useState([]);
+  const [userPermissions, setUserPermissions] = useState([]);
+
+  useEffect(() => {
+    fetchUserDetails();
+    fetchUserPermissions();
+  }, []);
+
+  const fetchUserDetails = async () => {
+    try {
+      const response = await UserServices.showDetail();
+      if (response && response.status === 200) {
+        setUser(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const fetchUserPermissions = async () => {
+    try {
+      const response = await UserServices.getUserPermission();
+      if (response && response.status === 200) {
+        setUserPermissions(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching user permission:", error);
+    }
+  };
+
+  // Function to convert resource names
+  const getResourceDisplayName = (resource) => {
+    switch (resource) {
+      case "salary_advance":
+        return "Salary Advance";
+      case "tour_advance":
+        return "Tour Advance";
+      case "other_advance":
+        return "Other Advance";
+      case "dashboard":
+        return "Dashboard";
+      case "requested_advance":
+        return "Requested Advance";
+      default:
+        return resource; // Return original resource name if not matched
+    }
+  };
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
     <div className="d-flex flex-wrap">
       <div className="col-lg-5 mb-1 col-xl-5 col-12">
@@ -23,9 +76,11 @@ const Profile = () => {
 
           <div className="d-flex justify-content-center align-items-center mt-5">
             <div className="stats">
-              <h5 className="mb-0">Thinley Yoezer</h5>
-              <p className="p-0 m-0">EID: 2023003</p>
-              <p className="p-0 m-0">Asst. ICT Officer</p>
+              <h5 className="mb-0">{user.name}</h5>
+              <p className="p-0 m-0">EID: {user.username}</p>
+              {user.grade && (
+                <p className="p-0 m-0">{user.grade.position_title}</p>
+              )}
             </div>
           </div>
 
@@ -35,22 +90,26 @@ const Profile = () => {
             <h5>Basic Details</h5>
             <div className="mt-2">
               <p className="p-0 m-0 detailhead">Name</p>
-              <p className="p-0 m-0 detailtail">Thinley Yoezer</p>
+              <p className="p-0 m-0 detailtail">{user.name}</p>
             </div>
 
             <div className="mt-2">
               <p className="p-0 m-0 detailhead">Email</p>
-              <p className="p-0 m-0 detailtail">tyoezer@rma.org.bt</p>
+              <p className="p-0 m-0 detailtail">{user.email}</p>
             </div>
 
             <div className="mt-2">
               <p className="p-0 m-0 detailhead">Mobile Number</p>
-              <p className="p-0 m-0 detailtail">+975 17479380</p>
+              <p className="p-0 m-0 detailtail">+975 {user.mobile_number}</p>
             </div>
 
             <div className="mt-2">
               <p className="p-0 m-0 detailhead">Role</p>
-              <p className="p-0 m-0 detailtail">Asst. ICT Officer</p>
+              {user.grade && (
+                <p className="p-0 m-0 detailtail">
+                  {user.grade.position_title}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -68,131 +127,35 @@ const Profile = () => {
             </div>
             <p className="px-4">Here you can find your permissions</p>
           </div>
-          <div className="px-4">
-            <div className="px-2 ">
-              <p className="detailhead p-0 m-0">Freelancer</p>
-              <div className="row">
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Create Freelancer</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Permission Update</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Update Freelancer</span>
+
+          {userPermissions.map((permission, index) => (
+            <div key={index} className="px-4">
+              <div className="px-2 ">
+                <p className="detailhead p-0 m-0">
+                  {getResourceDisplayName(permission.resource)}
+                </p>
+                <div className="row">
+                  {Object.entries(permission.actions).map(
+                    ([action, value], idx) => (
+                      <div
+                        key={idx}
+                        className="col-6 d-flex align-items-center"
+                      >
+                        {value ? (
+                          <i className="bi bi-check2 text-success fs-5"></i>
+                        ) : (
+                          <i className="bi bi-x text-danger fs-4"></i>
+                        )}
+                        <span className="px-2">
+                          {capitalizeFirstLetter(action)}
+                        </span>
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="px-4">
-            <div className="px-2 ">
-              <p className="detailhead p-0 m-0">Role</p>
-              <div className="row">
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Permission Read</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Permission Update</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Update</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="px-4">
-            <div className="px-2 ">
-              <p className="detailhead p-0 m-0">Team Board</p>
-              <div className="row">
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Read</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="px-4">
-            <div className="px-2 ">
-              <p className="detailhead p-0 m-0">Team</p>
-              <div className="row">
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Add member</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Create</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Group member</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Read</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Update</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Update group user</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="px-4">
-            <div className="px-2 ">
-              <p className="detailhead p-0 m-0">Task</p>
-              <div className="row">
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Create</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Delete</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Update</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="px-4">
-            <div className="px-2 ">
-              <p className="detailhead p-0 m-0">Time Tackers</p>
-              <div className="row">
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Create</span>
-                </div>
-                <div className="col-6 d-flex align-items-center">
-                  <i className="bi bi-check2 text-success fs-5"></i>
-                  <span className="px-2">Read</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="px-4">
-            <div className="px-2 ">
-              <p className="detailhead p-0 m-0">Current Orders and Tasks</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
