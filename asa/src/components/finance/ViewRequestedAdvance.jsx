@@ -1,136 +1,147 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../assets/css/main.css";
+import CustomInput from "../general/CustomInput";
+import { useParams } from "react-router-dom";
+import AdvanceServices from "../services/AdvanceServices";
 
 const ViewRequestedAdvance = () => {
+  const { id } = useParams();
+  const [advance, setAdvance] = useState({});
+
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const processUserName = (name) => {
+    if (!name) {
+      return "-";
+    }
+    const nameParts = name.split(" ");
+    let firstName;
+    let middleName;
+    let lastName;
+
+    if (nameParts.length === 2) {
+      [firstName, lastName] = nameParts;
+    } else if (nameParts.length === 3) {
+      [firstName, middleName, lastName] = nameParts;
+    } else if (nameParts.length === 1) {
+      firstName = nameParts[0];
+      middleName = "";
+      lastName = "";
+    }
+    return { firstName, middleName, lastName };
+  };
+
+  const fetchAdvance = async () => {
+    try {
+      const response = await AdvanceServices.showDetail(id);
+      setAdvance(response.data);
+      console.log("response", response.data);
+    } catch (error) {
+      console.error("Error fetching current applications:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdvance();
+  }, []);
+
   return (
     <div className="mb-3">
       <form action="">
         <div className="bg-white px-4 py-4">
           <div className="row w-100 ">
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">First Name</label>
-              <input
-                className="form-control"
-                type="text"
-                name="firstName"
-                value="Thinley"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="First Name"
+              type="text"
+              name="firstName"
+              value={processUserName(advance?.user?.name).firstName}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Middle Name</label>
-              <input
-                className="form-control"
-                type="text"
-                name="middleName"
-                value="None"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Middel Name"
+              type="text"
+              name="middleName"
+              value={processUserName(advance?.user?.name).middleName}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Last Name</label>
-              <input
-                className="form-control"
-                type="text"
-                name="lastName"
-                value="Yoezer"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Last Name"
+              type="text"
+              name="lastName"
+              value={processUserName(advance?.user?.name).lastName}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Employee ID</label>
-              <input
-                className="form-control"
-                type="text"
-                name="employeeid"
-                value="2023003"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Employee ID"
+              type="text"
+              name="employeeid"
+              value={advance?.user?.username}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Date</label>
-              <input
-                className="form-control"
-                type="date"
-                name="date"
-                value="2024-06-19"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Date"
+              type="text"
+              name="date"
+              value={formatDate(advance?.created_at)}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3s">
-              <label className="form-label">Department</label>
-              <input
-                className="form-control"
-                type="text"
-                name="department"
-                value="DIT"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Department"
+              type="text"
+              name="department"
+              value="IT Department"
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Designation</label>
-              <input
-                className="form-control"
-                type="text"
-                name="designation"
-                value="Asst. ICT Officer"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Designation"
+              type="text"
+              name="designation"
+              value={advance?.grade?.position_title}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Advance Amount (Nu)*</label>
-              <input
-                className="form-control"
-                type="text"
-                name="advanceAmount"
-                value="Nu. 40,000"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Advance Amount"
+              type="text"
+              name="advanceAmount"
+              value={advance?.amount}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">
-                Threshold Amount (Netpay * 2)
-              </label>
-              <input
-                className="form-control"
-                type="text"
-                name="thresholdAmount"
-                value="Nu. 50,000"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Threshold Amount (Netpay * 2)"
+              type="text"
+              name="thresholdAmount"
+              value={parseFloat(advance?.grade?.basic_pay) * 2}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Duration in months*</label>
-              <input
-                className="form-control"
-                type="number"
-                name="duration"
-                value="3"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Duration in months"
+              type="number"
+              name="duration"
+              value={advance?.advance_detail?.duration}
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Monthly deduction</label>
-              <input
-                className="form-control"
-                type="text"
-                name="deduction"
-                value="Nu. 5,000"
-                disabled
-              />
-            </div>
+            <CustomInput
+              label="Monthly deduction"
+              type="text"
+              name="deduction"
+              value="Nu. 5,000"
+              isDisable={true}
+            />
 
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+            {/* <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
               <label className="form-label">Download Attchment</label>
               <div className="d-flex">
                 <button
@@ -141,13 +152,14 @@ const ViewRequestedAdvance = () => {
                   <span>Download</span> <i className="bi bi-download"></i>
                 </button>
               </div>
-            </div>
+            </div> */}
 
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
               <textarea
                 className="form-control"
                 name="purpose"
+                value={advance?.purpose}
                 rows="3"
                 disabled
               ></textarea>

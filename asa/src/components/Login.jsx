@@ -24,6 +24,7 @@ const Login = () => {
         localStorage.setItem("token", token);
         localStorage.setItem("id", user.id);
         navigate("/dashboard");
+        window.location.reload();
       } else {
         setError("Internal Server Issue");
       }

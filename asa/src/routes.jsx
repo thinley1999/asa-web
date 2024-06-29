@@ -19,7 +19,7 @@ const routes = createBrowserRouter([
     path: "/",
     element: <Base />,
     children: [
-      { path: "dashboard", element: <EmployeeDashboard /> },
+      { path: "dashboard", element: <FinanceDashboard /> },
       { path: "profile", element: <Profile /> },
       { path: "salaryAdvance", element: <SalaryAdvance /> },
       { path: "otherAdvance", element: <OtherAdvance /> },
@@ -28,7 +28,7 @@ const routes = createBrowserRouter([
       { path: "viewCurrentApplication", element: <ViewCurrentApplication /> },
       { path: "financeDashboard", element: <FinanceDashboard /> },
       { path: "requestedAdvance", element: <RequestedAdvance /> },
-      { path: "viewRequestedAdvance", element: <ViewRequestedAdvance /> },
+      { path: "viewRequestedAdvance/:id", element: <ViewRequestedAdvance /> },
     ],
   },
 ]);
