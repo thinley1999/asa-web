@@ -1,9 +1,7 @@
-import React from "react";
-import { useLocation, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import logoImage from "../../assets/img/rma-logo-white.png";
 import AuthServices from "../services/AuthServices";
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { usePermissions } from "../../contexts/PermissionsContext";
 
 const SideBar = () => {
@@ -11,43 +9,52 @@ const SideBar = () => {
   const currentPath = location.pathname;
   const navigate = useNavigate();
   const isActive = (path) => (currentPath === path ? "active" : "");
-  const {permissions, permissionsError} = usePermissions();
-  const [dashboardPermission, setDashboardPermission] = useState([]);
-  const [requestedAdvancePermission, setRequestedAdvancePermission] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
-
-  const getMenuItems = () => {
-    const items = [
-      { path: dashboardPermission?.actions?.view ? "/financeDashboard" : "/dashboard", icon: "bi-house-door-fill", label: "Dashboard" },
-      { path: "/salaryAdvance", icon: "bi-cash-stack", label: "Salary Advance" },
-      { path: "/otherAdvance", icon: "bi-briefcase-fill", label: "Other Advance" },
-      { path: "/tourAdvance", icon: "bi-car-front-fill", label: "Tour Advance" },
-    ];
-
-    if (requestedAdvancePermission?.actions?.view) {
-      items.push({ path: "/requestedAdvance", icon: "bi-cassette-fill", label: "Requested Advance" });
-    }
-
-    return items;
-  };
+  const { permissions } = usePermissions();
+  const [dashboardPermission, setDashboardPermission] = useState(null);
+  const [requestedAdvancePermission, setRequestedAdvancePermission] =
+    useState(null);
+  const [menuItems, setMenuItems] = useState([
+    { path: "/dashboard", icon: "bi-house-door-fill", label: "Dashboard" },
+    { path: "/salaryAdvance", icon: "bi-cash-stack", label: "Salary Advance" },
+    {
+      path: "/otherAdvance",
+      icon: "bi-briefcase-fill",
+      label: "Other Advance",
+    },
+    { path: "/tourAdvance", icon: "bi-car-front-fill", label: "Tour Advance" },
+  ]);
 
   useEffect(() => {
     if (permissions) {
-      const dashboardPerm= permissions.find(
+      const dashboardPerm = permissions.find(
         (permission) => permission.resource === "dashboard"
       );
-
-      const requestedPerm= permissions.find(
+      const requestedPerm = permissions.find(
         (permission) => permission.resource === "requested_advance"
       );
+
       setDashboardPermission(dashboardPerm);
       setRequestedAdvancePermission(requestedPerm);
-    }
-    setMenuItems(getMenuItems());
-  }, [permissions]);
 
-  console.log('dashboardPermission', dashboardPermission);
-  console.log('requestedAdvancePermission', requestedAdvancePermission);
+      setMenuItems((prevItems) => {
+        // Check if the path already exists in the menuItems array
+        const pathExists = prevItems.some(
+          (item) => item.path === "/requestedAdvance"
+        );
+        if (!pathExists && requestedPerm?.actions?.view) {
+          return [
+            ...prevItems,
+            {
+              path: "/requestedAdvance",
+              icon: "bi-cassette-fill",
+              label: "Requested Advance",
+            },
+          ];
+        }
+        return prevItems;
+      });
+    }
+  }, [permissions]);
 
   const handleLogout = async () => {
     try {
