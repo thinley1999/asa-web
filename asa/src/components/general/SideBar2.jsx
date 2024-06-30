@@ -9,6 +9,7 @@ import { IoBag } from "react-icons/io5";
 import { FaCar } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaRegCreditCard } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 
 const SideBar2 = ({ handleCloseSidebar }) => {
   const location = useLocation();
@@ -70,7 +71,7 @@ const SideBar2 = ({ handleCloseSidebar }) => {
               right: "10px",
             }}
           >
-            <i className="bi bi-x-lg"></i>
+            <IoMdClose size={22} />
           </button>
         </span>
         <div className="spancontainer">
