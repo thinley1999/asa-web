@@ -3,6 +3,12 @@ import { useLocation, Link } from "react-router-dom";
 import logoImage from "../../assets/img/rma-logo-white.png";
 import AuthServices from "../services/AuthServices";
 import { useNavigate } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
+import { BsCash } from "react-icons/bs";
+import { IoBag } from "react-icons/io5";
+import { FaCar } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
+import { FaRegCreditCard } from "react-icons/fa";
 
 const SideBar2 = ({ handleCloseSidebar }) => {
   const location = useLocation();
@@ -12,17 +18,21 @@ const SideBar2 = ({ handleCloseSidebar }) => {
   const isActive = (path) => (currentPath === path ? "active" : "");
 
   const menuItems = [
-    { path: "/dashboard", icon: "bi-house-door-fill", label: "Dashboard" },
-    { path: "/salaryAdvance", icon: "bi-cash-stack", label: "Salary Advance" },
+    { path: "/dashboard", icon: <FaHome size={24} />, label: "Dashboard" },
+    {
+      path: "/salaryAdvance",
+      icon: <BsCash size={24} />,
+      label: "Salary Advance",
+    },
     {
       path: "/otherAdvance",
-      icon: "bi-briefcase-fill",
+      icon: <IoBag size={24} />,
       label: "Other Advance",
     },
-    { path: "/tourAdvance", icon: "bi-car-front-fill", label: "Tour Advance" },
+    { path: "/tourAdvance", icon: <FaCar size={24} />, label: "Tour Advance" },
     {
       path: "/requestedAdvance",
-      icon: "bi-cassette-fill",
+      icon: <FaRegCreditCard size={24} />,
       label: "Requested Advance",
     },
   ];
@@ -82,7 +92,7 @@ const SideBar2 = ({ handleCloseSidebar }) => {
         {menuItems.map(({ path, icon, label }) => (
           <li key={path} className={isActive(path)}>
             <Link to={path} className="text-decoration-none px-3 py-2 d-block">
-              <i className={`bi ${icon} customicon`}></i>
+              {icon}
               <span className="icontext">{label}</span>
             </Link>
           </li>
@@ -91,7 +101,7 @@ const SideBar2 = ({ handleCloseSidebar }) => {
 
       <div className="signoutbtn" onClick={handleLogout}>
         <button type="button" className="btn btn-danger">
-          <i className="bi bi-box-arrow-right"></i> <span>Sign Out</span>
+          <FaSignOutAlt size={18} /> <span>Sign Out</span>
         </button>
       </div>
     </div>

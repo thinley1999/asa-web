@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "../../assets/css/main.css";
 import profileImage from "../../assets/img/Thinley.jpeg";
 import UserServices from "../services/UserServices";
+import { FaCheck } from "react-icons/fa6";
+import { IoMdClose } from "react-icons/io";
 
 const Profile = () => {
   const [user, setUser] = useState([]);
@@ -142,9 +144,9 @@ const Profile = () => {
                         className="col-6 d-flex align-items-center"
                       >
                         {value ? (
-                          <i className="bi bi-check2 text-success fs-5"></i>
+                          <FaCheck size={15} color="green" />
                         ) : (
-                          <i className="bi bi-x text-danger fs-4"></i>
+                          <IoMdClose size={18} color="red" />
                         )}
                         <span className="px-2">
                           {capitalizeFirstLetter(action)}

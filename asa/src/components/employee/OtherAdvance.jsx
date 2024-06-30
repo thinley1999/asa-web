@@ -1,5 +1,6 @@
 import React from "react";
 import "../../assets/css/main.css";
+import { FaCloudDownloadAlt } from "react-icons/fa";
 
 const OtherAdvance = () => {
   return (
@@ -114,8 +115,7 @@ const OtherAdvance = () => {
                   className="btn btn-primary"
                   style={{ borderRadius: "0" }}
                 >
-                  <i className="bi bi-cloud-check-fill fs-6"></i>{" "}
-                  <span>Upload File</span>
+                  <FaCloudDownloadAlt size={20} /> <span>Upload File</span>
                 </button>
                 <span className="textwithbtn">Max file size 10 MB</span>
               </div>

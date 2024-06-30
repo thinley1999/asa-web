@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import UserServices from "../services/UserServices";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { CiBellOn } from "react-icons/ci";
+import { FaChevronDown } from "react-icons/fa";
 
 const Navbar = ({
   handleSidebarToggle,
@@ -56,7 +59,7 @@ const Navbar = ({
             className="btn px-1 py-0 btn1"
             onClick={handleMobileSidebarToggle}
           >
-            <i className="bi bi-list"></i>
+            <RxHamburgerMenu size={24} />
           </button>
           <a className="customtag" href="#">
             {getHeading()}
@@ -68,10 +71,10 @@ const Navbar = ({
           type="button"
           onClick={handleSidebarToggle}
         >
-          <i className="bi bi-list"></i>
+          <RxHamburgerMenu size={24} />
         </button>
         <button className="p-0 border-0 btn-responsive btn" type="button">
-          <i className="bi bi-caret-down-fill"></i>
+          <FaChevronDown size={24} />
         </button>
 
         <div className="collapse navbar-collapse justify-content-start">
@@ -85,7 +88,7 @@ const Navbar = ({
         <div className="collapse navbar-collapse justify-content-end me-5">
           <span>
             <button type="button" className="btn btn-info" id="showToastBtn">
-              <i className="bi bi-bell"></i>
+              <CiBellOn size={24} />
             </button>
             <span className="badge">5</span>
           </span>

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import "../../assets/css/main.css";
+import { FaCloudDownloadAlt } from "react-icons/fa";
+import { FaCar } from "react-icons/fa";
+import { MdFlight } from "react-icons/md";
 
 const TourAdvance = () => {
   const [activeTab, setActiveTab] = useState("incountrytour");
@@ -26,7 +29,7 @@ const TourAdvance = () => {
             style={{ color: activeTab === "incountrytour" ? "blue" : "" }}
           >
             <span>
-              <i className="bi bi-car-front-fill customicon"></i>
+              <FaCar size={24} />
             </span>
             <span> In Country Tour</span>
           </a>
@@ -45,7 +48,7 @@ const TourAdvance = () => {
             style={{ color: activeTab === "excountrytour" ? "blue" : "" }}
           >
             <span>
-              <i className="bi bi-airplane-fill customicon"></i>
+              <MdFlight size={24} />
             </span>
             <span> Ex Country Tour</span>
           </a>
@@ -153,8 +156,7 @@ const TourAdvance = () => {
                       className="btn btn-primary"
                       style={{ borderRadius: "0" }}
                     >
-                      <i className="bi bi-cloud-check-fill fs-6"></i>{" "}
-                      <span>Upload File</span>
+                      <FaCloudDownloadAlt size={20} /> <span>Upload File</span>
                     </button>
                     <span className="textwithbtn">Max file size 10 MB</span>
                   </div>
@@ -328,8 +330,7 @@ const TourAdvance = () => {
                       className="btn btn-primary"
                       style={{ borderRadius: "0" }}
                     >
-                      <i className="bi bi-cloud-check-fill fs-6"></i>{" "}
-                      <span>Upload File</span>
+                      <FaCloudDownloadAlt size={20} /> <span>Upload File</span>
                     </button>
                     <span className="textwithbtn">Max file size 10 MB</span>
                   </div>

@@ -1,4 +1,6 @@
 import React from "react";
+import { GoDownload } from "react-icons/go";
+import { FaCloudDownloadAlt } from "react-icons/fa";
 
 const ViewCurrentApplication = () => {
   return (
@@ -101,7 +103,7 @@ const ViewCurrentApplication = () => {
                 className="btn btn-primary"
                 style={{ borderRadius: "0" }}
               >
-                <span>Download</span> <i className="bi bi-download"></i>
+                <span>Download</span> <GoDownload size={20} />
               </button>
             </div>
           </div>
@@ -331,8 +333,7 @@ const ViewCurrentApplication = () => {
                 className="btn btn-primary"
                 style={{ borderRadius: "0" }}
               >
-                <i className="bi bi-cloud-check-fill fs-6"></i>{" "}
-                <span>Upload File</span>
+                <FaCloudDownloadAlt size={20} /> <span>Upload File</span>
               </button>
               <span className="textwithbtn">Max file size 10 MB</span>
             </div>

@@ -5,6 +5,10 @@ import "../../assets/css/main.css";
 import profileImage from "../../assets/img/Thinley.jpeg";
 import { usePermissions } from "../../contexts/PermissionsContext";
 import EmployeeDashboard from "../employee/EmployeeDashboard";
+import { CiChat2 } from "react-icons/ci";
+import { FaCheck } from "react-icons/fa6";
+import { CiBookmarkRemove } from "react-icons/ci";
+import { BsCartCheckFill } from "react-icons/bs";
 
 const FinanceDashboard = () => {
   const barChartRef = useRef(null);
@@ -132,7 +136,6 @@ const FinanceDashboard = () => {
       }
     };
   }, []);
-  
 
   console.log("dashboard permission...", dashboardPermission);
   console.log("dashboard permission...", dashboardPermission === null);
@@ -151,7 +154,7 @@ const FinanceDashboard = () => {
                     <h6 className="mb-0 c-details">Pending Application</h6>
                   </div>
                   <div className="dashboardicon1">
-                    <i className="bi bi-chat-square-dots-fill"></i>
+                    <CiChat2 size={24} />
                   </div>
                 </div>
                 <div className="text-center">
@@ -167,7 +170,7 @@ const FinanceDashboard = () => {
                     <h6 className="mb-0 c-details">Verified Application</h6>
                   </div>
                   <div className="dashboardicon2">
-                    <i className="bi bi-check"></i>
+                    <FaCheck size={24} />
                   </div>
                 </div>
                 <div className="text-center">
@@ -183,7 +186,7 @@ const FinanceDashboard = () => {
                     <h6 className="mb-0 c-details">Rejected Application</h6>
                   </div>
                   <div className="dashboardicon3">
-                    <i className="bi bi-bookmark-x-fill"></i>
+                    <CiBookmarkRemove size={24} />
                   </div>
                 </div>
                 <div className="text-center">
@@ -199,7 +202,7 @@ const FinanceDashboard = () => {
                     <h6 className="mb-0 c-details">Approved Application</h6>
                   </div>
                   <div className="dashboardicon4">
-                    <i className="bi bi-cart-check-fill"></i>
+                    <BsCartCheckFill size={24} />
                   </div>
                 </div>
                 <div className="text-center">

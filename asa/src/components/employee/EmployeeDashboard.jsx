@@ -3,6 +3,7 @@ import "../../assets/css/main.css";
 import profileImage from "../../assets/img/Thinley.jpeg";
 import AdvanceServices from "../services/AdvanceServices";
 import MyApplications from "../general/MyApplications";
+import { IoBagCheck } from "react-icons/io5";
 
 const EmployeeDashboard = () => {
   const [activeTab, setActiveTab] = useState("currentapplication");
@@ -79,7 +80,7 @@ const EmployeeDashboard = () => {
             style={{ color: activeTab === "currentapplication" ? "blue" : "" }}
           >
             <span>
-              <i className="bi bi-bag-check-fill"></i>
+              <IoBagCheck size={24} />
             </span>
             <span> Current Application</span>
           </a>
@@ -100,7 +101,7 @@ const EmployeeDashboard = () => {
             style={{ color: activeTab === "previousapplication" ? "blue" : "" }}
           >
             <span>
-              <i className="bi bi-bag-check-fill"></i>
+              <IoBagCheck size={24} />
             </span>
             <span> Previous Application</span>
           </a>
