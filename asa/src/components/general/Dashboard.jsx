@@ -1,0 +1,37 @@
+import React, { useState, useEffect } from "react";
+import "chartjs-plugin-datalabels";
+import "../../assets/css/main.css";
+import { usePermissions } from "../../contexts/PermissionsContext";
+import EmployeeDashboard from "../employee/EmployeeDashboard";
+import FinanceDashboard from "../finance/FinanceDashboard";
+
+const Dashboard = () => {
+  const { permissions } = usePermissions();
+  const [dashboardPermission, setDashboardPermission] = useState(null);
+
+  useEffect(() => {
+    if (permissions) {
+      const dashboardPerm = permissions.find(
+        (permission) => permission.resource === "dashboard"
+      );
+      setDashboardPermission(dashboardPerm);
+    }
+  }, [permissions]);
+
+  console.log("dashboard permission...", dashboardPermission);
+  console.log("dashboard permission...", dashboardPermission === null);
+
+  return (
+    <div>
+      {dashboardPermission === null ? (
+        <div>Loading...</div>
+      ) : dashboardPermission?.actions?.view ? (
+        <FinanceDashboard />
+      ) : (
+        <EmployeeDashboard />
+      )}
+    </div>
+  );
+};
+
+export default Dashboard;

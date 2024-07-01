@@ -3,8 +3,6 @@ import Chart from "chart.js/auto";
 import "chartjs-plugin-datalabels";
 import "../../assets/css/main.css";
 import profileImage from "../../assets/img/Thinley.jpeg";
-import { usePermissions } from "../../contexts/PermissionsContext";
-import EmployeeDashboard from "../employee/EmployeeDashboard";
 import { CiChat2 } from "react-icons/ci";
 import { FaCheck } from "react-icons/fa6";
 import { CiBookmarkRemove } from "react-icons/ci";
@@ -15,17 +13,6 @@ const FinanceDashboard = () => {
   const barChartInstanceRef = useRef(null);
   const pieChartRef = useRef(null);
   const pieChartInstanceRef = useRef(null);
-  const { permissions } = usePermissions();
-  const [dashboardPermission, setDashboardPermission] = useState(null);
-
-  useEffect(() => {
-    if (permissions) {
-      const dashboardPerm = permissions.find(
-        (permission) => permission.resource === "dashboard"
-      );
-      setDashboardPermission(dashboardPerm);
-    }
-  }, [permissions]);
 
   useEffect(() => {
     if (barChartRef.current && barChartRef.current.getContext("2d")) {
@@ -137,141 +124,130 @@ const FinanceDashboard = () => {
     };
   }, []);
 
-  console.log("dashboard permission...", dashboardPermission);
-  console.log("dashboard permission...", dashboardPermission === null);
-
   return (
     <div>
-      {dashboardPermission === null ? (
-        <div>Loading...</div>
-      ) : dashboardPermission?.actions?.view ? (
-        <>
-          <div className="row my-2">
-            <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-              <div className="card pt-3 pe-2 mb-2 pb-4">
-                <div className="d-flex justify-content-between">
-                  <div className="ms-3">
-                    <h6 className="mb-0 c-details">Pending Application</h6>
-                  </div>
-                  <div className="dashboardicon1">
-                    <CiChat2 size={24} />
-                  </div>
-                </div>
-                <div className="text-center">
-                  <h1 className="cardheading">20</h1>
-                </div>
+      <div className="row my-2">
+        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+          <div className="card pt-3 pe-2 mb-2 pb-4">
+            <div className="d-flex justify-content-between">
+              <div className="ms-3">
+                <h6 className="mb-0 c-details">Pending Application</h6>
+              </div>
+              <div className="dashboardicon1">
+                <CiChat2 size={24} />
               </div>
             </div>
-
-            <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-              <div className="card pt-3 pe-2 mb-2 pb-4">
-                <div className="d-flex justify-content-between">
-                  <div className="ms-3">
-                    <h6 className="mb-0 c-details">Verified Application</h6>
-                  </div>
-                  <div className="dashboardicon2">
-                    <FaCheck size={24} />
-                  </div>
-                </div>
-                <div className="text-center">
-                  <h1 className="cardheading">200</h1>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-              <div className="card pt-3 pe-2 mb-2 pb-4">
-                <div className="d-flex justify-content-between">
-                  <div className="ms-3">
-                    <h6 className="mb-0 c-details">Rejected Application</h6>
-                  </div>
-                  <div className="dashboardicon3">
-                    <CiBookmarkRemove size={24} />
-                  </div>
-                </div>
-                <div className="text-center">
-                  <h1 className="cardheading">30</h1>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-              <div className="card pt-3 pe-2 mb-2 pb-4">
-                <div className="d-flex justify-content-between">
-                  <div className="ms-3">
-                    <h6 className="mb-0 c-details">Approved Application</h6>
-                  </div>
-                  <div className="dashboardicon4">
-                    <BsCartCheckFill size={24} />
-                  </div>
-                </div>
-                <div className="text-center">
-                  <h1 className="cardheading">300</h1>
-                </div>
-              </div>
+            <div className="text-center">
+              <h1 className="cardheading">20</h1>
             </div>
           </div>
+        </div>
 
-          <div className="row my-2">
-            <div className="col-xl-7 col-lg-7 col-md-7 col-12">
-              <h6 className="custon-h6 py-2">Monthly Activity</h6>
-              <div className="bargraph bg-white">
-                <canvas id="chartjs-bar" ref={barChartRef}></canvas>
+        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+          <div className="card pt-3 pe-2 mb-2 pb-4">
+            <div className="d-flex justify-content-between">
+              <div className="ms-3">
+                <h6 className="mb-0 c-details">Verified Application</h6>
+              </div>
+              <div className="dashboardicon2">
+                <FaCheck size={24} />
               </div>
             </div>
-            <div className="col-xl-5 col-lg-5 col-md-5 col-12">
-              <h6 className="custon-h6 py-2">Type of Advance</h6>
-              <div className="bargraph bg-white">
-                <canvas id="chartjs-pie" ref={pieChartRef}></canvas>
-              </div>
+            <div className="text-center">
+              <h1 className="cardheading">200</h1>
             </div>
           </div>
+        </div>
 
-          <div>
-            <h6 className="custon-h6 py-2">My Applications</h6>
-            <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-              <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-                <img
-                  src={profileImage}
-                  className="rounded-circle me-2"
-                  style={{ width: "8vh" }}
-                  alt="Profile"
-                />
-                <div>
-                  <p className="textheading">Thinley Yoezer</p>
-                  <p className="textsubheading">Asst. ICT Officer</p>
-                </div>
+        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+          <div className="card pt-3 pe-2 mb-2 pb-4">
+            <div className="d-flex justify-content-between">
+              <div className="ms-3">
+                <h6 className="mb-0 c-details">Rejected Application</h6>
               </div>
-              <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-                <p className="textheading">Advance Claim</p>
-                <p className="textsubheading">Nu.20,000</p>
-              </div>
-              <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-                <p className="textheading">Advance Type</p>
-                <p className="textsubheading">Salary Advance</p>
-              </div>
-              <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-                <p className="textheading">Application Date</p>
-                <p className="textsubheading">19/06/2024</p>
-              </div>
-              <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-                <p className="textheading">Status</p>
-                <p className="textsubheading text-success">Pending</p>
-              </div>
-              <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-                <a
-                  href="/viewCurrentApplication"
-                  className="btn btn-outline-primary"
-                >
-                  View Details
-                </a>
+              <div className="dashboardicon3">
+                <CiBookmarkRemove size={24} />
               </div>
             </div>
+            <div className="text-center">
+              <h1 className="cardheading">30</h1>
+            </div>
           </div>
-        </>
-      ) : (
-        <EmployeeDashboard />
-      )}
+        </div>
+
+        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+          <div className="card pt-3 pe-2 mb-2 pb-4">
+            <div className="d-flex justify-content-between">
+              <div className="ms-3">
+                <h6 className="mb-0 c-details">Approved Application</h6>
+              </div>
+              <div className="dashboardicon4">
+                <BsCartCheckFill size={24} />
+              </div>
+            </div>
+            <div className="text-center">
+              <h1 className="cardheading">300</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row my-2">
+        <div className="col-xl-7 col-lg-7 col-md-7 col-12">
+          <h6 className="custon-h6 py-2">Monthly Activity</h6>
+          <div className="bargraph bg-white">
+            <canvas id="chartjs-bar" ref={barChartRef}></canvas>
+          </div>
+        </div>
+        <div className="col-xl-5 col-lg-5 col-md-5 col-12">
+          <h6 className="custon-h6 py-2">Type of Advance</h6>
+          <div className="bargraph bg-white">
+            <canvas id="chartjs-pie" ref={pieChartRef}></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h6 className="custon-h6 py-2">My Applications</h6>
+        <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
+          <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
+            <img
+              src={profileImage}
+              className="rounded-circle me-2"
+              style={{ width: "8vh" }}
+              alt="Profile"
+            />
+            <div>
+              <p className="textheading">Thinley Yoezer</p>
+              <p className="textsubheading">Asst. ICT Officer</p>
+            </div>
+          </div>
+          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
+            <p className="textheading">Advance Claim</p>
+            <p className="textsubheading">Nu.20,000</p>
+          </div>
+          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
+            <p className="textheading">Advance Type</p>
+            <p className="textsubheading">Salary Advance</p>
+          </div>
+          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
+            <p className="textheading">Application Date</p>
+            <p className="textsubheading">19/06/2024</p>
+          </div>
+          <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
+            <p className="textheading">Status</p>
+            <p className="textsubheading text-success">Pending</p>
+          </div>
+          <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
+            <a
+              href="/viewCurrentApplication"
+              className="btn btn-outline-primary"
+            >
+              View Details
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
