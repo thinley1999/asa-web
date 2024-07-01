@@ -39,14 +39,11 @@ const get = async (params) => {
 const showDetail = async (id) => {
   const token = localStorage.getItem("token");
   try {
-    const response = await axios.get(
-      `${API_URL}/api/advances/${id}`,
-      {
-        headers: {
-          Authorization: `${token}`,
-        },
-      }
-    );
+    const response = await axios.get(`${API_URL}/api/advances/${id}`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
 
     return response;
   } catch (error) {
@@ -88,9 +85,41 @@ const create = async (params) => {
 
 const update = async () => {};
 
+const statusCount = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`${API_URL}/api/advances/status_counts`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const typeCount = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`${API_URL}/api/advances/type_counts`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   get,
   showDetail,
   create,
   update,
+  statusCount,
+  typeCount,
 };
