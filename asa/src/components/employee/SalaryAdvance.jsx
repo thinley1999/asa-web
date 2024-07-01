@@ -5,11 +5,13 @@ import UserServices from "../services/UserServices";
 import AdvanceServices from "../services/AdvanceServices";
 import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
+import { formatDate } from "../utils/DateUtils";
 
-const SalaryAdvance = () => {
+const SalaryAdvance = ({ data }) => {
   const [user, setUser] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
   const [formData, setFormData] = useState({
     firstName: " - ",
     middleName: " - ",
@@ -28,6 +30,30 @@ const SalaryAdvance = () => {
 
   const [formErrors, setFormErrors] = useState({});
 
+  useEffect(() => {
+    if (data) {
+      const { firstName, middleName, lastName } = processUserName(
+        data.user.name
+      );
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        firstName: firstName || " - ",
+        middleName: middleName || " - ",
+        lastName: lastName || "- ",
+        date: formatDate(data.created_at) || " -",
+        department: data.department || "IT Department",
+        designation: data.grade.position_title || " ",
+        advanceAmount: data.amount || 0,
+        thresholdAmount: data.grade.basic_pay * 2 || " ",
+        duration: data.advance_detail.duration || 0,
+        deduction: data.advance_detail.deduction || 0.0,
+        purpose: data.purpose || " ",
+        advance_type: data.advance_type || "salary_advance",
+        completion_month: data.advance_detail.completion_month || "june 2023",
+      }));
+    }
+  }, [data]);
+
   const fetchUserDetails = async () => {
     try {
       const response = await UserServices.showDetail();
@@ -40,17 +66,16 @@ const SalaryAdvance = () => {
     }
   };
 
-  console.log("formData", formData);
   const updateFormDataWithUserName = (user) => {
     const { firstName, middleName, lastName } = processUserName(user.name);
-    setFormData({
-      ...formData,
-      firstName: firstName || formData.firstName,
-      middleName: middleName || formData.middleName,
-      lastName: lastName || formData.lastName,
-      designation: user.grade.position_title || formData.designation,
-      thresholdAmount: user.grade.basic_pay * 2 || formData.thresholdAmount,
-    });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      firstName: firstName || prevFormData.firstName,
+      middleName: middleName || prevFormData.middleName,
+      lastName: lastName || prevFormData.lastName,
+      designation: user.grade.position_title || prevFormData.designation,
+      thresholdAmount: user.grade.basic_pay * 2 || prevFormData.thresholdAmount,
+    }));
   };
 
   const processUserName = (name) => {
@@ -77,15 +102,18 @@ const SalaryAdvance = () => {
       return 0;
     }
     const deduction = parseFloat(advanceAmount) / parseFloat(duration);
-    setFormData({ ...formData, deduction: deduction });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      deduction: deduction,
+    }));
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
-    });
+    }));
   };
 
   const validateForm = () => {
@@ -107,15 +135,11 @@ const SalaryAdvance = () => {
     return Object.keys(errors).length === 0;
   };
 
-  console.log("error", formErrors);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
         const response = await AdvanceServices.create(formData);
-
-        console.log("response", response);
 
         if (response && response.status === 201) {
           setSuccessMessage("Advance created successfully");
@@ -138,9 +162,6 @@ const SalaryAdvance = () => {
 
   useEffect(() => {
     fetchUserDetails();
-    if (formData.advanceAmount && formData.duration) {
-      calculateDeduction();
-    }
   }, []);
 
   useEffect(() => {
@@ -193,7 +214,7 @@ const SalaryAdvance = () => {
             />
             <CustomInput
               label="Date"
-              type="date"
+              type="text"
               value={formData.date}
               name="date"
               isDisable={true}
@@ -220,7 +241,7 @@ const SalaryAdvance = () => {
               type="number"
               value={formData.advanceAmount}
               name="advanceAmount"
-              isDisable={false}
+              isDisable={data ? true : false}
               onChange={handleChange}
               error={formErrors.advanceAmount}
             />
@@ -237,7 +258,7 @@ const SalaryAdvance = () => {
               type="number"
               value={formData.duration}
               name="duration"
-              isDisable={false}
+              isDisable={data ? true : false}
               onChange={handleChange}
               error={formErrors.duration}
             />
@@ -260,6 +281,7 @@ const SalaryAdvance = () => {
                 rows="4"
                 value={formData.purpose}
                 onChange={handleChange}
+                disabled={data ? true : false}
               ></textarea>
               {formErrors.purpose && (
                 <div className="invalid-feedback" style={{ display: "block" }}>
@@ -270,9 +292,11 @@ const SalaryAdvance = () => {
           </div>
         </div>
         <div className="bg-white px-4 pb-3 text-center">
-          <button type="submit" className="btn btn-primary px-5">
-            Submit
-          </button>
+          {!data && (
+            <button type="submit" className="btn btn-primary px-5">
+              Submit
+            </button>
+          )}
         </div>
       </form>
     </div>

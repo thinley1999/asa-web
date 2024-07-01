@@ -13,6 +13,7 @@ import Dashboard from "./components/general/Dashboard";
 import FinanceDashboard from "./components/finance/FinanceDashboard";
 import RequestedAdvance from "./components/finance/RequestedAdvance";
 import ViewRequestedAdvance from "./components/finance/ViewRequestedAdvance";
+import AdvanceDetail from "./components/general/AdvanceDetail";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -25,8 +26,10 @@ const routes = createBrowserRouter([
       { path: "salaryAdvance", element: <SalaryAdvance /> },
       { path: "otherAdvance", element: <OtherAdvance /> },
       { path: "tourAdvance", element: <TourAdvance /> },
-      { path: "viewPreviousApplication", element: <ViewPreviousApplication /> },
-      { path: "viewCurrentApplication", element: <ViewCurrentApplication /> },
+      { path: "/advanceDetail/:id", element: <AdvanceDetail /> },
+
+      { path: "viewPerviousApplication", element: <ViewPreviousApplication /> },
+      { path: "viewApplication/:id", element: <ViewCurrentApplication /> },
       { path: "financeDashboard", element: <FinanceDashboard /> },
       { path: "requestedAdvance", element: <RequestedAdvance /> },
       { path: "viewRequestedAdvance/:id", element: <ViewRequestedAdvance /> },
