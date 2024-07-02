@@ -9,6 +9,7 @@ import { IoBag } from "react-icons/io5";
 import { FaCar } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaRegCreditCard } from "react-icons/fa";
+import { FaFolderOpen } from "react-icons/fa";
 
 const SideBar = () => {
   const location = useLocation();
@@ -20,18 +21,30 @@ const SideBar = () => {
   const [requestedAdvancePermission, setRequestedAdvancePermission] =
     useState(null);
   const [menuItems, setMenuItems] = useState([
-    { path: "/dashboard", icon: <FaHome size={24} />, label: "Dashboard" },
+    {
+      path: "/dashboard",
+      icon: <FaHome size={24} />,
+      label: "Dashboard",
+      value: 1,
+    },
     {
       path: "/salaryAdvance",
       icon: <BsCash size={24} />,
       label: "Salary Advance",
+      value: 3,
     },
     {
       path: "/otherAdvance",
       icon: <IoBag size={24} />,
       label: "Other Advance",
+      value: 4,
     },
-    { path: "/tourAdvance", icon: <FaCar size={24} />, label: "Tour Advance" },
+    {
+      path: "/tourAdvance",
+      icon: <FaCar size={24} />,
+      label: "Tour Advance",
+      value: 5,
+    },
   ]);
 
   useEffect(() => {
@@ -52,16 +65,28 @@ const SideBar = () => {
           (item) => item.path === "/requestedAdvance"
         );
         if (!pathExists && requestedPerm?.actions?.view) {
-          return [
+          const updatedItems = [
+            {
+              path: "/myApplications",
+              icon: <FaFolderOpen size={24} />,
+              label: "My Applications",
+              value: 2,
+            },
             ...prevItems,
             {
               path: "/requestedAdvance",
               icon: <FaRegCreditCard size={24} />,
               label: "Requested Advance",
+              value: 6,
             },
           ];
+
+          // Sort the updated items by value before returning
+          return updatedItems.sort((a, b) => a.value - b.value);
         }
-        return prevItems;
+
+        // Sort the existing items by value before returning
+        return prevItems.sort((a, b) => a.value - b.value);
       });
     }
   }, [permissions]);
