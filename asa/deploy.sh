@@ -15,4 +15,4 @@ echo 'Building the app...'
 npm run build
 
 echo 'Deploying the app on the server...'
-scp -r build/* user@192.168.0.144:/var/www/asa-web/
+scp -r dist/* user@192.168.0.144:/var/www/asa-web/
