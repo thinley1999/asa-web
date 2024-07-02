@@ -7,12 +7,57 @@ import { CiChat2 } from "react-icons/ci";
 import { FaCheck } from "react-icons/fa6";
 import { CiBookmarkRemove } from "react-icons/ci";
 import { BsCartCheckFill } from "react-icons/bs";
+import AdvanceServices from "../services/AdvanceServices";
 
 const FinanceDashboard = () => {
   const barChartRef = useRef(null);
   const barChartInstanceRef = useRef(null);
   const pieChartRef = useRef(null);
   const pieChartInstanceRef = useRef(null);
+  const [statusCount, setStatusCount] = useState({
+    status_count: {
+      pending: 0,
+      verified: 0,
+      rejected: 0,
+      approved: 0,
+    },
+  });
+
+  const [typeCount, setTypeCount] = useState({
+    advance_type_count: {
+      salary_advance: 0,
+      other_advance: 0,
+      in_country_tour_advance: 0,
+      ex_country_tour_advance: 0,
+    },
+  });
+
+  useEffect(() => {
+    fetchStatusCount();
+    fetchTypeCount();
+  }, []);
+
+  const fetchStatusCount = async () => {
+    try {
+      const response = await AdvanceServices.statusCount();
+      if (response && response.status == 200) {
+        setStatusCount(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const fetchTypeCount = async () => {
+    try {
+      const response = await AdvanceServices.typeCount();
+      if (response && response.status == 200) {
+        setTypeCount(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
 
   useEffect(() => {
     if (barChartRef.current && barChartRef.current.getContext("2d")) {
@@ -80,7 +125,12 @@ const FinanceDashboard = () => {
           ],
           datasets: [
             {
-              data: [260, 125, 54, 146],
+              data: [
+                typeCount.advance_type_count.salary_advance,
+                typeCount.advance_type_count.other_advance,
+                typeCount.advance_type_count.in_country_tour_advance,
+                typeCount.advance_type_count.ex_country_tour_advance,
+              ],
               backgroundColor: [
                 window.theme?.primary || "rgba(3, 104, 250)",
                 window.theme?.success || "rgba(40, 167, 69)",
@@ -122,7 +172,7 @@ const FinanceDashboard = () => {
         pieChartInstanceRef.current.destroy();
       }
     };
-  }, []);
+  }, [typeCount]);
 
   return (
     <div>
@@ -138,7 +188,13 @@ const FinanceDashboard = () => {
               </div>
             </div>
             <div className="text-center">
-              <h1 className="cardheading">20</h1>
+              {statusCount.status_count.pending ? (
+                <h1 className="cardheading">
+                  {statusCount.status_count.pending}
+                </h1>
+              ) : (
+                <h1 className="cardheading">0</h1>
+              )}
             </div>
           </div>
         </div>
@@ -154,7 +210,13 @@ const FinanceDashboard = () => {
               </div>
             </div>
             <div className="text-center">
-              <h1 className="cardheading">200</h1>
+              {statusCount.status_count.verified ? (
+                <h1 className="cardheading">
+                  {statusCount.status_count.verified}
+                </h1>
+              ) : (
+                <h1 className="cardheading">0</h1>
+              )}
             </div>
           </div>
         </div>
@@ -170,7 +232,13 @@ const FinanceDashboard = () => {
               </div>
             </div>
             <div className="text-center">
-              <h1 className="cardheading">30</h1>
+              {statusCount.status_count.rejected ? (
+                <h1 className="cardheading">
+                  {statusCount.status_count.rejected}
+                </h1>
+              ) : (
+                <h1 className="cardheading">0</h1>
+              )}
             </div>
           </div>
         </div>
@@ -186,7 +254,13 @@ const FinanceDashboard = () => {
               </div>
             </div>
             <div className="text-center">
-              <h1 className="cardheading">300</h1>
+              {statusCount.status_count.approved ? (
+                <h1 className="cardheading">
+                  {statusCount.status_count.approved}
+                </h1>
+              ) : (
+                <h1 className="cardheading">0</h1>
+              )}
             </div>
           </div>
         </div>
