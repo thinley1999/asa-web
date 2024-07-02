@@ -175,7 +175,7 @@ const FinanceDashboard = () => {
   }, [typeCount]);
 
   return (
-    <div>
+    <div className="container">
       <div className="row my-2">
         <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
           <div className="card pt-3 pe-2 mb-2 pb-4">
@@ -188,13 +188,13 @@ const FinanceDashboard = () => {
               </div>
             </div>
             <div className="text-center">
-              {statusCount.status_count.pending ? (
-                <h1 className="cardheading">
-                  {statusCount.status_count.pending}
-                </h1>
-              ) : (
-                <h1 className="cardheading">0</h1>
-              )}
+              <h1 className="cardheading">
+                {statusCount &&
+                statusCount.status_count &&
+                statusCount.status_count.pending
+                  ? statusCount.status_count.pending
+                  : 0}
+              </h1>
             </div>
           </div>
         </div>
@@ -210,13 +210,13 @@ const FinanceDashboard = () => {
               </div>
             </div>
             <div className="text-center">
-              {statusCount.status_count.verified ? (
-                <h1 className="cardheading">
-                  {statusCount.status_count.verified}
-                </h1>
-              ) : (
-                <h1 className="cardheading">0</h1>
-              )}
+              <h1 className="cardheading">
+                {statusCount &&
+                statusCount.status_count &&
+                statusCount.status_count.verified
+                  ? statusCount.status_count.verified
+                  : 0}
+              </h1>
             </div>
           </div>
         </div>
@@ -232,13 +232,13 @@ const FinanceDashboard = () => {
               </div>
             </div>
             <div className="text-center">
-              {statusCount.status_count.rejected ? (
-                <h1 className="cardheading">
-                  {statusCount.status_count.rejected}
-                </h1>
-              ) : (
-                <h1 className="cardheading">0</h1>
-              )}
+              <h1 className="cardheading">
+                {statusCount &&
+                statusCount.status_count &&
+                statusCount.status_count.rejected
+                  ? statusCount.status_count.rejected
+                  : 0}
+              </h1>
             </div>
           </div>
         </div>
@@ -254,13 +254,13 @@ const FinanceDashboard = () => {
               </div>
             </div>
             <div className="text-center">
-              {statusCount.status_count.approved ? (
-                <h1 className="cardheading">
-                  {statusCount.status_count.approved}
-                </h1>
-              ) : (
-                <h1 className="cardheading">0</h1>
-              )}
+              <h1 className="cardheading">
+                {statusCount &&
+                statusCount.status_count &&
+                statusCount.status_count.approved
+                  ? statusCount.status_count.approved
+                  : 0}
+              </h1>
             </div>
           </div>
         </div>
@@ -277,48 +277,6 @@ const FinanceDashboard = () => {
           <h6 className="custon-h6 py-2">Type of Advance</h6>
           <div className="bargraph bg-white">
             <canvas id="chartjs-pie" ref={pieChartRef}></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h6 className="custon-h6 py-2">My Applications</h6>
-        <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-          <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-            <img
-              src={profileImage}
-              className="rounded-circle me-2"
-              style={{ width: "8vh" }}
-              alt="Profile"
-            />
-            <div>
-              <p className="textheading">Thinley Yoezer</p>
-              <p className="textsubheading">Asst. ICT Officer</p>
-            </div>
-          </div>
-          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-            <p className="textheading">Advance Claim</p>
-            <p className="textsubheading">Nu.20,000</p>
-          </div>
-          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-            <p className="textheading">Advance Type</p>
-            <p className="textsubheading">Salary Advance</p>
-          </div>
-          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-            <p className="textheading">Application Date</p>
-            <p className="textsubheading">19/06/2024</p>
-          </div>
-          <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-            <p className="textheading">Status</p>
-            <p className="textsubheading text-success">Pending</p>
-          </div>
-          <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-            <a
-              href="/viewCurrentApplication"
-              className="btn btn-outline-primary"
-            >
-              View Details
-            </a>
           </div>
         </div>
       </div>
