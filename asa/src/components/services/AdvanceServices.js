@@ -115,6 +115,21 @@ const typeCount = async () => {
   }
 };
 
+const monthlyCount = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`${API_URL}/api/advances/monthly_counts`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   get,
   showDetail,
@@ -122,4 +137,5 @@ export default {
   update,
   statusCount,
   typeCount,
+  monthlyCount,
 };

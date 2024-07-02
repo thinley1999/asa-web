@@ -32,9 +32,14 @@ const FinanceDashboard = () => {
     },
   });
 
+  const [monthlycount, setMonthlyCount] = useState([]);
+
+  const [applicationDetails, setApplicationDetails] = useState([]);
+
   useEffect(() => {
     fetchStatusCount();
     fetchTypeCount();
+    fetchMonthlyCount();
   }, []);
 
   const fetchStatusCount = async () => {
@@ -44,7 +49,7 @@ const FinanceDashboard = () => {
         setStatusCount(response.data);
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      console.error("Error:", error);
     }
   };
 
@@ -55,7 +60,18 @@ const FinanceDashboard = () => {
         setTypeCount(response.data);
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      console.error("Error:", error);
+    }
+  };
+
+  const fetchMonthlyCount = async () => {
+    try {
+      const response = await AdvanceServices.monthlyCount();
+      if (response && response.status == 200) {
+        setMonthlyCount(response.data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 
@@ -67,16 +83,19 @@ const FinanceDashboard = () => {
         barChartInstanceRef.current.destroy();
       }
 
+      const labels = monthlycount.map((item) => item.month);
+      const data = monthlycount.map((item) => item.count);
+
       barChartInstanceRef.current = new Chart(barCtx, {
         type: "bar",
         data: {
-          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+          labels: labels,
           datasets: [
             {
               backgroundColor: window.theme?.primary || "rgba(3, 104, 250)",
               hoverBackgroundColor:
                 window.theme?.primary || "rgba(0,123,255,0.7)",
-              data: [54, 42, 41, 55, 33, 45, 55],
+              data: data,
               barPercentage: 0.75,
               categoryPercentage: 0.5,
               borderRadius: 10,
@@ -277,48 +296,6 @@ const FinanceDashboard = () => {
           <h6 className="custon-h6 py-2">Type of Advance</h6>
           <div className="bargraph bg-white">
             <canvas id="chartjs-pie" ref={pieChartRef}></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h6 className="custon-h6 py-2">My Applications</h6>
-        <div className="d-flex flex-wrap align-items-center py-3 px-2 mb-2 employeediv w-100">
-          <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
-            <img
-              src={profileImage}
-              className="rounded-circle me-2"
-              style={{ width: "8vh" }}
-              alt="Profile"
-            />
-            <div>
-              <p className="textheading">Thinley Yoezer</p>
-              <p className="textsubheading">Asst. ICT Officer</p>
-            </div>
-          </div>
-          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-            <p className="textheading">Advance Claim</p>
-            <p className="textsubheading">Nu.20,000</p>
-          </div>
-          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-            <p className="textheading">Advance Type</p>
-            <p className="textsubheading">Salary Advance</p>
-          </div>
-          <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-            <p className="textheading">Application Date</p>
-            <p className="textsubheading">19/06/2024</p>
-          </div>
-          <div className="details py-1 col-lg-1 col-xl-1 col-md-4 col-6">
-            <p className="textheading">Status</p>
-            <p className="textsubheading text-success">Pending</p>
-          </div>
-          <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
-            <a
-              href="/viewCurrentApplication"
-              className="btn btn-outline-primary"
-            >
-              View Details
-            </a>
           </div>
         </div>
       </div>
