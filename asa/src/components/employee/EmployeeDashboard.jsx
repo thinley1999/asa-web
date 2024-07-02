@@ -5,7 +5,7 @@ import AdvanceServices from "../services/AdvanceServices";
 import MyApplications from "../general/MyApplications";
 import { IoBagCheck } from "react-icons/io5";
 
-const EmployeeDashboard = () => {
+const EmployeeApplications = () => {
   const [activeTab, setActiveTab] = useState("currentapplication");
   const [currentapplication, setCurrentApplications] = useState([]);
   const [previousapplication, setPreviousApplications] = useState([]);
@@ -131,4 +131,4 @@ const EmployeeDashboard = () => {
   );
 };
 
-export default EmployeeDashboard;
+export default EmployeeApplications;

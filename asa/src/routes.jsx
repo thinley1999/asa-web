@@ -27,7 +27,7 @@ const routes = createBrowserRouter([
       { path: "otherAdvance", element: <OtherAdvance /> },
       { path: "tourAdvance", element: <TourAdvance /> },
       { path: "/advanceDetail/:id", element: <AdvanceDetail /> },
-
+      { path: "/myApplications", element: <EmployeeDashboard /> },
       { path: "viewPerviousApplication", element: <ViewPreviousApplication /> },
       { path: "viewApplication/:id", element: <ViewCurrentApplication /> },
       { path: "financeDashboard", element: <FinanceDashboard /> },
