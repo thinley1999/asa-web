@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const MyApplications = ({
   heading,
@@ -7,10 +8,16 @@ const MyApplications = ({
   profileImage,
   title,
 }) => {
+  const navigate = useNavigate();
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  const handleDetails = (id) => {
+    navigate(`/advanceDetail/${id}`);
+  };
+
   return (
     <div
       className={`tab-pane fade ${activeTab === title ? "show active" : ""}`}
@@ -60,7 +67,7 @@ const MyApplications = ({
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
               <a
-                href="/viewCurrentApplication"
+                onClick={() => handleDetails(application.id)}
                 className="btn btn-outline-primary"
               >
                 View Details
