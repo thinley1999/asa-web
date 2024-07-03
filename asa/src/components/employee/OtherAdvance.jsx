@@ -4,9 +4,12 @@ import CustomInput from "../general/CustomInput";
 import CustomFileInput from "../general/CustomFileInput"; // Import CustomFileInput
 import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
+import AdvanceServices from "../services/AdvanceServices";
 
 const OtherAdvance = ({ data }) => {
   const [user, setUser] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     firstName: " - ",
