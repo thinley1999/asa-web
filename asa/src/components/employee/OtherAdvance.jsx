@@ -87,6 +87,10 @@ const OtherAdvance = ({ data }) => {
     if (!formData.purpose.trim()) {
       errors.purpose = "Purpose is required.";
     }
+
+    if (!formData.files.length) {
+      errors.file_error = "Please upload relevant documents.";
+    }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -208,6 +212,7 @@ const OtherAdvance = ({ data }) => {
               files={formData.files}
               handleFileChange={handleFileChange} 
               removeFile={removeFile}
+              error={formErrors.file_error}
             />
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>

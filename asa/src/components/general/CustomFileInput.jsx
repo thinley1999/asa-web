@@ -2,7 +2,7 @@ import React from "react";
 import { FaCloudDownloadAlt, FaTimes } from "react-icons/fa";
 import "../../assets/css/main.css";
 
-const CustomFileInput = ({ label, name, files, handleFileChange, removeFile }) => {
+const CustomFileInput = ({ label, name, files, handleFileChange, removeFile, error }) => {
   return (
     <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
       <label className="form-label">{label}</label>
@@ -34,6 +34,11 @@ const CustomFileInput = ({ label, name, files, handleFileChange, removeFile }) =
           </div>
         ))}
       </div>
+      {error && (
+                <div className="invalid-feedback" style={{ display: "block" }}>
+                  {error}
+                </div>
+              )}
     </div>
   );
 };
