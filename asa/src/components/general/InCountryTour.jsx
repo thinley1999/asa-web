@@ -6,9 +6,12 @@ import TravelItinerary from "./TravelItinerary";
 import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
 import RateServices from "../services/RateServices";
+import AdvanceServices from "../services/AdvanceServices";
 
 const InCountryTour = () => {
   const [user, setUser] = useState([]);
+  const [successMessage,setSuccessMessage] = useState("");
+  const [errorMessage,setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState([]); 
   const [formData, setFormData] = useState({
     firstName: " - ",
@@ -40,8 +43,8 @@ const InCountryTour = () => {
   const getNumberOfDays = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const differenceInTime = end.getTime() - start.getTime(); // Difference in milliseconds
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24); // Convert milliseconds to days
+    const differenceInTime = end.getTime() - start.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24); 
     return differenceInDays + 1;
   };
 
@@ -146,12 +149,23 @@ const InCountryTour = () => {
     return !hasErrors;
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const isFormValid = validateForm();
     const isTravelItineraryValid = validateTravelItinerary();
+    console.log('im here', isFormValid && isTravelItineraryValid )
     if (isFormValid && isTravelItineraryValid) {
-      setFormErrors([]);
+      try {
+        const response = await AdvanceServices.create(formData, rows);
+
+        if (response && response.status === 201) {
+          setSuccessMessage("Advance created successfully");
+        } else {
+          setErrorMessage("Internal Server Error");
+        }
+      } catch (error) {
+        setErrorMessage(error.response?.data || "An error occurred");
+      }
     }
   };
 
