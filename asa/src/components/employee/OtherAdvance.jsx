@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../../assets/css/main.css";
-import { FaCloudDownloadAlt } from "react-icons/fa";
 import CustomInput from "../general/CustomInput";
 import CustomFileInput from "../general/CustomFileInput"; // Import CustomFileInput
 import UserServices from "../services/UserServices";
@@ -21,7 +20,24 @@ const OtherAdvance = ({ data }) => {
     purpose: " ",
     other_advance_type: "",
     advance_type: "other_advance",
+    files: [],
   });
+
+  const handleFileChange = (event) => {
+    const newFiles = Array.from(event.target.files); 
+  
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      files: [...prevFormData.files, ...newFiles],
+    }));
+  };
+
+  const removeFile = (indexToRemove) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      files: prevFormData.files.filter((_, index) => index !== indexToRemove),
+    }));
+  };
 
   const fetchUserDetails = async () => {
     try {
@@ -59,16 +75,50 @@ const OtherAdvance = ({ data }) => {
     }));
   };
 
+  const validateForm = () => {
+    let errors = {};
+    if ( formData.advanceAmount <= 0) {
+      errors.advanceAmount =
+        "Advance amount should be more than 0!";
+    }
+    if (!formData.other_advance_type.trim()) {
+      errors.other_advance_type = "Select advance type!";
+    }
+    if (!formData.purpose.trim()) {
+      errors.purpose = "Purpose is required.";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      try {
+        const response = await AdvanceServices.create(formData);
+
+        if (response && response.status === 201) {
+          setSuccessMessage("Advance created successfully");
+        } else {
+          setErrorMessage("Internal Server Error");
+        }
+      } catch (error) {
+        setErrorMessage(error.response?.data || "An error occurred");
+      }
+    }
+  };
+
   useEffect(() => {
     fetchUserDetails();
   }, []);
+
   console.log("formData ....", formData);
 
   return (
     <div className="mb-3">
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <div className="bg-white px-4 py-4">
-          <div className="row w-100 ">
+          <div className="row w-100">
             <CustomInput
               label="First Name"
               type="text"
@@ -146,12 +196,19 @@ const OtherAdvance = ({ data }) => {
                 <option value="medical_advance">Medical Advance</option>
                 <option value="study_advance">Study Advance</option>
               </select>
+              {formErrors.other_advance_type && (
+                <div className="invalid-feedback" style={{ display: "block" }}>
+                  {formErrors.other_advance_type}
+                </div>
+              )}
             </div>
             <CustomFileInput
               label="Relevant Documents"
               name="relevantDocument"
-            />{" "}
-            {/* Use CustomFileInput here */}
+              files={formData.files}
+              handleFileChange={handleFileChange} 
+              removeFile={removeFile}
+            />
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
               <textarea
@@ -161,11 +218,16 @@ const OtherAdvance = ({ data }) => {
                 value={formData.purpose}
                 onChange={handleChange}
               ></textarea>
+               {formErrors.purpose && (
+                <div className="invalid-feedback" style={{ display: "block" }}>
+                  {formErrors.purpose}
+                </div>
+              )}
             </div>
           </div>
         </div>
         <div className="bg-white px-4 pb-3 text-center">
-          <button type="button" className="btn btn-primary px-5">
+          <button type="submit" className="btn btn-primary px-5">
             Submit
           </button>
         </div>
