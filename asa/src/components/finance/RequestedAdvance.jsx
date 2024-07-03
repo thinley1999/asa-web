@@ -3,6 +3,8 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 import "../../assets/css/main.css";
 import AdvanceServices from "../services/AdvanceServices";
+import { FaFilter } from "react-icons/fa6";
+import { FaSearch } from "react-icons/fa";
 
 const RequestedAdvance = () => {
   const customStyles = {
@@ -37,7 +39,9 @@ const RequestedAdvance = () => {
       selector: (row) => (
         <div className="tabledetails">
           <p className="dataheading1 p-0 m-0 text-success">{row.status}</p>
-          <p className="datasubheading p-0 m-0">Application date: {formatDate(row.created_at)}</p>
+          <p className="datasubheading p-0 m-0">
+            Application date: {formatDate(row.created_at)}
+          </p>
         </div>
       ),
     },
@@ -101,7 +105,7 @@ const RequestedAdvance = () => {
     }
   };
 
-  console.log('response', records);
+  console.log("response", records);
 
   useEffect(() => {
     fetchAdvances();
@@ -118,13 +122,15 @@ const RequestedAdvance = () => {
     <div className="mb-3">
       <div className="d-flex bg-white py-3 justify-content-center">
         <div className="filterdiv d-flex p-1 px-4">
-          <i className="bi bi-funnel-fill fs-6"></i>
+          <span>
+            <FaFilter />
+          </span>
           <span className="ms-2">Filter</span>
         </div>
         <div className="ms-2">
           <div className="input-group">
             <span className="input-group-text">
-              <i className="bi bi-search"></i>
+              <FaSearch />
             </span>
             <input
               className="form-control"

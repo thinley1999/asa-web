@@ -32,9 +32,14 @@ const FinanceDashboard = () => {
     },
   });
 
+  const [monthlycount, setMonthlyCount] = useState([]);
+
+  const [applicationDetails, setApplicationDetails] = useState([]);
+
   useEffect(() => {
     fetchStatusCount();
     fetchTypeCount();
+    fetchMonthlyCount();
   }, []);
 
   const fetchStatusCount = async () => {
@@ -44,7 +49,7 @@ const FinanceDashboard = () => {
         setStatusCount(response.data);
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      console.error("Error:", error);
     }
   };
 
@@ -55,7 +60,18 @@ const FinanceDashboard = () => {
         setTypeCount(response.data);
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      console.error("Error:", error);
+    }
+  };
+
+  const fetchMonthlyCount = async () => {
+    try {
+      const response = await AdvanceServices.monthlyCount();
+      if (response && response.status == 200) {
+        setMonthlyCount(response.data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 
@@ -67,16 +83,19 @@ const FinanceDashboard = () => {
         barChartInstanceRef.current.destroy();
       }
 
+      const labels = monthlycount.map((item) => item.month);
+      const data = monthlycount.map((item) => item.count);
+
       barChartInstanceRef.current = new Chart(barCtx, {
         type: "bar",
         data: {
-          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+          labels: labels,
           datasets: [
             {
               backgroundColor: window.theme?.primary || "rgba(3, 104, 250)",
               hoverBackgroundColor:
                 window.theme?.primary || "rgba(0,123,255,0.7)",
-              data: [54, 42, 41, 55, 33, 45, 55],
+              data: data,
               barPercentage: 0.75,
               categoryPercentage: 0.5,
               borderRadius: 10,

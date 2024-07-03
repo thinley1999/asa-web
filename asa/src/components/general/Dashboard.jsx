@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "chartjs-plugin-datalabels";
 import "../../assets/css/main.css";
 import { usePermissions } from "../../contexts/PermissionsContext";
-import EmployeeDashboard from "../employee/EmployeeDashboard";
+import EmployeeApplications from "../employee/EmployeeDashboard";
 import FinanceDashboard from "../finance/FinanceDashboard";
 
 const Dashboard = () => {
@@ -28,7 +28,7 @@ const Dashboard = () => {
       ) : dashboardPermission?.actions?.view ? (
         <FinanceDashboard />
       ) : (
-        <EmployeeDashboard />
+        <EmployeeApplications/>
       )}
     </div>
   );
