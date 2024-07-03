@@ -527,3 +527,43 @@ a {
   text-decoration: none;
   color: #858489;
 }
+
+/* input type file */
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type="file"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  background: white;
+  cursor: inherit;
+  display: block;
+}
+.file-names {
+  margin-top: 10px;
+  background: #eeeceb;
+}
+
+.file-names.padded {
+  padding: 10px;
+}
+
+.file-name {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+.remove-icon {
+  margin-left: 10px;
+  cursor: pointer;
+  color: red;
+}
