@@ -51,17 +51,28 @@ const showDetail = async (id) => {
   }
 };
 
-const create = async (params) => {
-  const token = localStorage.getItem("token");
+const create = async (params, travel_itinerary = []) => {
   try {
+    const token = localStorage.getItem("token");
+
+    const convertedArray = travel_itinerary.map(item => ({
+      start_date: item.startDate,
+      end_date: item.endDate,
+      from: item.from,
+      to: item.to,
+      mode: item.mode,
+      amount: item.rate 
+    }));
+
     const response = await axios.post(
       `${API_URL}/api/advances`,
       {
         advance: {
           advance_type: params.advance_type,
           status: "pending",
-          amount: parseFloat(params.advanceAmount), // Convert amount to number
+          amount: parseFloat(params.advanceAmount), 
           purpose: params.purpose,
+          remark: params.remark ? params.remark : params.other_advance_type,
         },
         salary_advance: {
           duration: params.duration,
@@ -69,17 +80,20 @@ const create = async (params) => {
           status: "pending",
           completion_month: params.completion_month,
         },
+        travel_itinerary: convertedArray,
+        files: params.files,
       },
       {
         headers: {
-          Authorization: `${token}`,
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`, 
         },
       }
     );
 
-    return response;
+    return response.data; 
   } catch (error) {
-    throw error;
+    throw error; 
   }
 };
 
