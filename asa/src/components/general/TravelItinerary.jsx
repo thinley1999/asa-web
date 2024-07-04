@@ -8,6 +8,7 @@ const TravelItinerary = ({
   handleTravelItinerary,
   removeRow,
   error,
+  data
 }) => {
   const [from, setFrom] = useState([]);
   const [to, setTo] = useState([]);
@@ -35,6 +36,8 @@ const TravelItinerary = ({
     fetchCountry();
   }, []);
 
+  console.log('data', data);
+
   return (
     <div className="bg-white px-4">
       <label className="form-label">Travel Itinerary</label>
@@ -46,7 +49,8 @@ const TravelItinerary = ({
               className="form-control"
               type="date"
               name="startDate"
-              value={row.startDate}
+              value={data ? row.start_date : row.startDate }
+              disabled = {data ? true: false}
               onChange={(e) =>
                 handleTravelItinerary(index, "startDate", e.target.value)
               }
@@ -58,7 +62,8 @@ const TravelItinerary = ({
               className="form-control"
               type="date"
               name="endDate"
-              value={row.endDate}
+              disabled = {data ? true: false}
+              value={ data ? row.end_date : row.endDate}
               onChange={(e) =>
                 handleTravelItinerary(index, "endDate", e.target.value)
               }
@@ -70,6 +75,7 @@ const TravelItinerary = ({
               className="form-select"
               name="from"
               value={row.from}
+              disabled = {data ? true: false}
               onChange={(e) =>
                 handleTravelItinerary(index, "from", e.target.value)
               }
@@ -90,6 +96,7 @@ const TravelItinerary = ({
               className="form-select"
               name="to"
               value={row.to}
+              disabled = {data ? true: false}
               onChange={(e) =>
                 handleTravelItinerary(index, "to", e.target.value)
               }
@@ -109,6 +116,7 @@ const TravelItinerary = ({
             <select
               className="form-select"
               name="mode"
+              disabled = {data ? true: false}
               value={row.mode}
               onChange={(e) =>
                 handleTravelItinerary(index, "mode", e.target.value)
@@ -129,13 +137,14 @@ const TravelItinerary = ({
               type="text"
               name="rate"
               disabled
-              value={row.rate}
+              value={data ? row.amount : row.rate}
             />
           </div>
           <div className="col-xl-1 col-lg-1 col-md-2 col-12 mb-3 d-flex align-items-end justify-content-center">
             <button
               type="button"
               className="btn btn-danger"
+              disabled = {data ? true: false}
               onClick={() => removeRow(index)}
             >
               <FaTimes size={18} />
@@ -148,7 +157,7 @@ const TravelItinerary = ({
           {error}
         </div>
       )}
-      <button type="button" className="btn btn-primary" onClick={addRow}>
+      <button type="button" className="btn btn-primary" onClick={addRow} disabled = {data ? true: false}>
         <FaPlus size={18} />
       </button>
     </div>
