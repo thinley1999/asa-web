@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import AdvanceServices from "../services/AdvanceServices";
 import SalaryAdvance from "../employee/SalaryAdvance";
+import InCountryTour from "./InCountryTour";
 import OtherAdvance from "../employee/OtherAdvance";
 import TourAdvance from "../employee/TourAdvance";
 
@@ -29,6 +30,12 @@ const AdvanceDetail = () => {
   return <div>
     {
       advanceData?.advance_type === "salary_advance" ? <SalaryAdvance data={advanceData} /> : null
+    }
+    {
+      advanceData?.advance_type === "in_country_tour_advance" ? <InCountryTour data={advanceData} /> : null
+    }
+    {
+      advanceData?.advance_type === "other_advance" ? <OtherAdvance data={advanceData} /> : null
     }
     </div>;
 };

@@ -7,12 +7,14 @@ import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
 import RateServices from "../services/RateServices";
 import AdvanceServices from "../services/AdvanceServices";
+import FileServices from "../services/FileServices";
+import CustomFileInput from "./CustomFileInput";
 
-const InCountryTour = () => {
+const InCountryTour = ({ data }) => {
   const [user, setUser] = useState([]);
-  const [successMessage,setSuccessMessage] = useState("");
-  const [errorMessage,setErrorMessage] = useState("");
-  const [formErrors, setFormErrors] = useState([]); 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [formErrors, setFormErrors] = useState([]);
   const [formData, setFormData] = useState({
     firstName: " - ",
     middleName: " - ",
@@ -24,6 +26,7 @@ const InCountryTour = () => {
     purpose: " ",
     remark: " ",
     advance_type: "in_country_tour_advance",
+    files: [],
   });
   const [rate, setRate] = useState([]);
 
@@ -32,7 +35,8 @@ const InCountryTour = () => {
       const response = await RateServices.getRate(from, to);
       if (response) {
         const updatedRows = [...rows];
-        updatedRows[index].rate = (getNumberOfDays(startDate, endDate) *response.rate); 
+        updatedRows[index].rate =
+          getNumberOfDays(startDate, endDate) * response.rate;
         setRows(updatedRows);
       }
     } catch (error) {
@@ -44,16 +48,19 @@ const InCountryTour = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const differenceInTime = end.getTime() - start.getTime();
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24); 
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
     return differenceInDays + 1;
   };
 
   const [rows, setRows] = useState([
-    { startDate: "", endDate: "", from: "", to: "", mode: "", rate: "" }
+    { startDate: "", endDate: "", from: "", to: "", mode: "", rate: "" },
   ]);
 
   const addRow = () => {
-    setRows([...rows, { startDate: "", endDate: "", from: "", to: "", mode: "", rate: "" }]);
+    setRows([
+      ...rows,
+      { startDate: "", endDate: "", from: "", to: "", mode: "", rate: "" },
+    ]);
   };
 
   const removeRow = (index) => {
@@ -66,7 +73,7 @@ const InCountryTour = () => {
     console.log("ffdfs", rows);
     rows.forEach((row) => {
       if (row.rate) {
-        total += parseFloat(row.rate); 
+        total += parseFloat(row.rate);
       }
     });
 
@@ -76,17 +83,40 @@ const InCountryTour = () => {
     }));
   };
 
+  const handleFileChange = (event) => {
+    const newFiles = Array.from(event.target.files);
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      files: [...prevFormData.files, ...newFiles],
+    }));
+  };
+
+  const removeFile = (indexToRemove) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      files: prevFormData.files.filter((_, index) => index !== indexToRemove),
+    }));
+  };
+
   const handleTravelItinerary = (index, field, value) => {
     const updatedRows = [...rows];
     updatedRows[index][field] = value;
 
-    if (field === "from" || field === "to" || field === "startDate" || field === "endDate") {
-      const {  startDate, endDate, from, to } = updatedRows[index];
+    if (
+      field === "from" ||
+      field === "to" ||
+      field === "startDate" ||
+      field === "endDate"
+    ) {
+      const { startDate, endDate, from, to } = updatedRows[index];
 
       if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
-          travelItinerary: `Start date must be earlier than end date for row ${index + 1}`
+          travelItinerary: `Start date must be earlier than end date for row ${
+            index + 1
+          }`,
         }));
       } else {
         setFormErrors((prevErrors) => {
@@ -127,17 +157,25 @@ const InCountryTour = () => {
     if (!formData.purpose.trim()) {
       errors.purpose = "Purpose is required.";
     }
+
+    if (!formData.files.length) {
+      errors.file_error = "Please upload relevant documents.";
+    }
+
     setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
     return Object.keys(errors).length === 0;
   };
 
   const validateTravelItinerary = () => {
-    const hasErrors = rows.some((row) => !row.startDate || !row.endDate || !row.from || !row.to || !row.mode);
+    const hasErrors = rows.some(
+      (row) =>
+        !row.startDate || !row.endDate || !row.from || !row.to || !row.mode
+    );
 
     if (hasErrors) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
-        travelItinerary: "Complete the Travel Itinerary"
+        travelItinerary: "Complete the Travel Itinerary",
       }));
     } else {
       setFormErrors((prevErrors) => {
@@ -153,24 +191,35 @@ const InCountryTour = () => {
     e.preventDefault();
     const isFormValid = validateForm();
     const isTravelItineraryValid = validateTravelItinerary();
-    console.log('im here', isFormValid && isTravelItineraryValid )
+
     if (isFormValid && isTravelItineraryValid) {
       try {
-        const response = await AdvanceServices.create(formData, rows);
+        const advanceResponse = await AdvanceServices.create(formData, rows);
+        if (advanceResponse) {
+          const fileResponse = await FileServices.create(
+            advanceResponse.id,
+            formData.files
+          );
 
-        if (response && response.status === 201) {
-          setSuccessMessage("Advance created successfully");
+          if (fileResponse && fileResponse.status === 201) {
+            setSuccessMessage("Advance created successfully");
+          } else {
+            setErrorMessage("File creation failed");
+          }
         } else {
-          setErrorMessage("Internal Server Error");
+          setErrorMessage("Advance creation failed");
         }
       } catch (error) {
-        setErrorMessage(error.response?.data || "An error occurred");
+        setErrorMessage("An error occurred");
       }
     }
   };
 
   const updateFormDataWithUserName = (user) => {
-    const { firstName, middleName, lastName } = processUserName(formData, user.name);
+    const { firstName, middleName, lastName } = processUserName(
+      formData,
+      user.name
+    );
     setFormData((prevFormData) => ({
       ...prevFormData,
       firstName: firstName || prevFormData.firstName,
@@ -187,10 +236,11 @@ const InCountryTour = () => {
   }, []);
 
   useEffect(() => {
-    totalAmount(); 
+    totalAmount();
   }, [rows]);
 
-  console.log('rows',rows);
+  console.log("rows", rows);
+  console.log("formdata", formData);
   return (
     <form>
       <div className="bg-white px-4 py-4">
@@ -251,34 +301,29 @@ const InCountryTour = () => {
             isDisable={true}
             onChange={handleChange}
           />
-          <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-            <label className="form-label">
-              Office order & revalent documents
-            </label>
-            <div className="d-flex">
-              <button
-                type="button"
-                className="btn btn-primary"
-                style={{ borderRadius: "0" }}
-              >
-                <FaCloudDownloadAlt size={20} /> <span>Upload File</span>
-              </button>
-              <span className="textwithbtn">Max file size 10 MB</span>
-            </div>
-          </div>
+          <CustomFileInput
+            label="Relevant Documents"
+            name="relevantDocument"
+            files={formData.files}
+            handleFileChange={handleFileChange}
+            removeFile={removeFile}
+            error={formErrors.file_error}
+            data={data?.files}
+          />
         </div>
       </div>
 
-      <TravelItinerary rows={rows} 
-        addRow={addRow} 
+      <TravelItinerary
+        rows={rows}
+        addRow={addRow}
         handleTravelItinerary={handleTravelItinerary}
-        removeRow = {removeRow}
-        error = {formErrors.travelItinerary}
-        />
+        removeRow={removeRow}
+        error={formErrors.travelItinerary}
+      />
 
       <div className="bg-white px-4">
         <div className="row w-100 ">
-        <CustomInput
+          <CustomInput
             label="Total Amount"
             type="text"
             value={formData.advanceAmount}
@@ -296,10 +341,10 @@ const InCountryTour = () => {
               onChange={handleChange}
             ></textarea>
             {formErrors.purpose && (
-                <div className="invalid-feedback" style={{ display: "block" }}>
-                  {formErrors.purpose}
-                </div>
-              )}
+              <div className="invalid-feedback" style={{ display: "block" }}>
+                {formErrors.purpose}
+              </div>
+            )}
           </div>
           <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
             <label className="form-label">Remarks</label>
@@ -315,7 +360,11 @@ const InCountryTour = () => {
       </div>
 
       <div className="bg-white px-4 pb-3 text-center">
-        <button type="submit" className="btn btn-primary px-5" onClick={handleSubmit}>
+        <button
+          type="submit"
+          className="btn btn-primary px-5"
+          onClick={handleSubmit}
+        >
           Submit
         </button>
       </div>
