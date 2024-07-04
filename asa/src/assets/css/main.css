@@ -604,3 +604,10 @@ a {
     left: 50%;
   }
 }
+
+.preview-btn {
+  border-radius: 10px;
+  color: white;
+  padding-right: 5px !important;
+  padding-left: 5px !important;
+}
