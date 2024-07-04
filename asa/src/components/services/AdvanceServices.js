@@ -51,7 +51,7 @@ const showDetail = async (id) => {
   }
 };
 
-const create = async (params, travel_itinerary) => {
+const create = async (params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
@@ -72,7 +72,7 @@ const create = async (params, travel_itinerary) => {
           status: "pending",
           amount: parseFloat(params.advanceAmount), 
           purpose: params.purpose,
-          remark: params.remark,
+          remark: params.remark ? params.remark : params.other_advance_type,
         },
         salary_advance: {
           duration: params.duration,
@@ -81,9 +81,11 @@ const create = async (params, travel_itinerary) => {
           completion_month: params.completion_month,
         },
         travel_itinerary: convertedArray,
+        files: params.files,
       },
       {
         headers: {
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`, 
         },
       }

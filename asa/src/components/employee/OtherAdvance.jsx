@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../../assets/css/main.css";
-import { FaCloudDownloadAlt } from "react-icons/fa";
 import CustomInput from "../general/CustomInput";
-import { useState, useEffect } from "react";
+import CustomFileInput from "../general/CustomFileInput"; // Import CustomFileInput
 import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
+import AdvanceServices from "../services/AdvanceServices";
 
-const OtherAdvance = ({data}) => {
+const OtherAdvance = ({ data }) => {
   const [user, setUser] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     firstName: " - ",
@@ -21,7 +23,24 @@ const OtherAdvance = ({data}) => {
     purpose: " ",
     other_advance_type: "",
     advance_type: "other_advance",
+    files: [],
   });
+
+  const handleFileChange = (event) => {
+    const newFiles = Array.from(event.target.files); 
+  
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      files: [...prevFormData.files, ...newFiles],
+    }));
+  };
+
+  const removeFile = (indexToRemove) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      files: prevFormData.files.filter((_, index) => index !== indexToRemove),
+    }));
+  };
 
   const fetchUserDetails = async () => {
     try {
@@ -36,7 +55,10 @@ const OtherAdvance = ({data}) => {
   };
 
   const updateFormDataWithUserName = (user) => {
-    const { firstName, middleName, lastName } = processUserName(formData, user.name);
+    const { firstName, middleName, lastName } = processUserName(
+      formData,
+      user.name
+    );
     setFormData((prevFormData) => ({
       ...prevFormData,
       firstName: firstName || prevFormData.firstName,
@@ -56,16 +78,55 @@ const OtherAdvance = ({data}) => {
     }));
   };
 
+  const validateForm = () => {
+    let errors = {};
+    if ( formData.advanceAmount <= 0) {
+      errors.advanceAmount =
+        "Advance amount should be more than 0!";
+    }
+    if (!formData.other_advance_type.trim()) {
+      errors.other_advance_type = "Select advance type!";
+    }
+    if (!formData.purpose.trim()) {
+      errors.purpose = "Purpose is required.";
+    }
+
+    if (!formData.files.length) {
+      errors.file_error = "Please upload relevant documents.";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      try {
+        const response = await AdvanceServices.create(formData);
+
+        if (response && response.status === 201) {
+          setSuccessMessage("Advance created successfully");
+        } else {
+          setErrorMessage("Internal Server Error");
+        }
+      } catch (error) {
+        setErrorMessage(error.response?.data || "An error occurred");
+      }
+    }
+  };
+
   useEffect(() => {
     fetchUserDetails();
   }, []);
-  console.log('formData ....', formData);
+
+  console.log("formData ....", formData);
+
   return (
     <div className="mb-3">
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <div className="bg-white px-4 py-4">
-          <div className="row w-100 ">
-          <CustomInput
+          <div className="row w-100">
+            <CustomInput
               label="First Name"
               type="text"
               value={formData.firstName}
@@ -130,32 +191,32 @@ const OtherAdvance = ({data}) => {
               onChange={handleChange}
               error={formErrors.advanceAmount}
             />
-
             <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
               <label className="form-label">Advance Type</label>
-              <select className="form-select" name="other_advance_type" onChange={handleChange} value={formData.other_advance_type}>
+              <select
+                className="form-select"
+                name="other_advance_type"
+                onChange={handleChange}
+                value={formData.other_advance_type}
+              >
                 <option>Select Advance Type</option>
-                <option value="medical_advance">
-                  Medical Advance
-                </option>
+                <option value="medical_advance">Medical Advance</option>
                 <option value="study_advance">Study Advance</option>
               </select>
+              {formErrors.other_advance_type && (
+                <div className="invalid-feedback" style={{ display: "block" }}>
+                  {formErrors.other_advance_type}
+                </div>
+              )}
             </div>
-
-            <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-              <label className="form-label">Relavant Documents</label>
-              <div className="d-flex">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  style={{ borderRadius: "0" }}
-                >
-                  <FaCloudDownloadAlt size={20} /> <span>Upload File</span>
-                </button>
-                <span className="textwithbtn">Max file size 10 MB</span>
-              </div>
-            </div>
-
+            <CustomFileInput
+              label="Relevant Documents"
+              name="relevantDocument"
+              files={formData.files}
+              handleFileChange={handleFileChange} 
+              removeFile={removeFile}
+              error={formErrors.file_error}
+            />
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
               <textarea
@@ -165,11 +226,16 @@ const OtherAdvance = ({data}) => {
                 value={formData.purpose}
                 onChange={handleChange}
               ></textarea>
+               {formErrors.purpose && (
+                <div className="invalid-feedback" style={{ display: "block" }}>
+                  {formErrors.purpose}
+                </div>
+              )}
             </div>
           </div>
         </div>
         <div className="bg-white px-4 pb-3 text-center">
-          <button type="button" className="btn btn-primary px-5">
+          <button type="submit" className="btn btn-primary px-5">
             Submit
           </button>
         </div>

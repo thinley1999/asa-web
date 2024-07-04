@@ -1,42 +1,96 @@
-import React from "react";
-import { useLocation, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import logoImage from "../../assets/img/rma-logo-white.png";
 import AuthServices from "../services/AuthServices";
-import { useNavigate } from "react-router-dom";
+import { usePermissions } from "../../contexts/PermissionsContext";
 import { FaHome } from "react-icons/fa";
 import { BsCash } from "react-icons/bs";
 import { IoBag } from "react-icons/io5";
 import { FaCar } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaRegCreditCard } from "react-icons/fa";
+import { FaFolderOpen } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 
 const SideBar2 = ({ handleCloseSidebar }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const navigate = useNavigate();
-
   const isActive = (path) => (currentPath === path ? "active" : "");
-
-  const menuItems = [
-    { path: "/dashboard", icon: <FaHome size={24} />, label: "Dashboard" },
+  const { permissions } = usePermissions();
+  const [dashboardPermission, setDashboardPermission] = useState(null);
+  const [requestedAdvancePermission, setRequestedAdvancePermission] =
+    useState(null);
+  const [menuItems, setMenuItems] = useState([
+    {
+      path: "/dashboard",
+      icon: <FaHome size={24} />,
+      label: "Dashboard",
+      value: 1,
+    },
     {
       path: "/salaryAdvance",
       icon: <BsCash size={24} />,
       label: "Salary Advance",
+      value: 3,
     },
     {
       path: "/otherAdvance",
       icon: <IoBag size={24} />,
       label: "Other Advance",
+      value: 4,
     },
-    { path: "/tourAdvance", icon: <FaCar size={24} />, label: "Tour Advance" },
     {
-      path: "/requestedAdvance",
-      icon: <FaRegCreditCard size={24} />,
-      label: "Requested Advance",
+      path: "/tourAdvance",
+      icon: <FaCar size={24} />,
+      label: "Tour Advance",
+      value: 5,
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    if (permissions) {
+      const dashboardPerm = permissions.find(
+        (permission) => permission.resource === "dashboard"
+      );
+      const requestedPerm = permissions.find(
+        (permission) => permission.resource === "requested_advance"
+      );
+
+      setDashboardPermission(dashboardPerm);
+      setRequestedAdvancePermission(requestedPerm);
+
+      setMenuItems((prevItems) => {
+        // Check if the path already exists in the menuItems array
+        const pathExists = prevItems.some(
+          (item) => item.path === "/requestedAdvance"
+        );
+        if (!pathExists && requestedPerm?.actions?.view) {
+          const updatedItems = [
+            {
+              path: "/myApplications",
+              icon: <FaFolderOpen size={24} />,
+              label: "My Applications",
+              value: 2,
+            },
+            ...prevItems,
+            {
+              path: "/requestedAdvance",
+              icon: <FaRegCreditCard size={24} />,
+              label: "Requested Advance",
+              value: 6,
+            },
+          ];
+
+          // Sort the updated items by value before returning
+          return updatedItems.sort((a, b) => a.value - b.value);
+        }
+
+        // Sort the existing items by value before returning
+        return prevItems.sort((a, b) => a.value - b.value);
+      });
+    }
+  }, [permissions]);
 
   const handleLogout = async () => {
     try {
