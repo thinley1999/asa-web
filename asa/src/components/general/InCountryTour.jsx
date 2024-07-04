@@ -241,6 +241,7 @@ const InCountryTour = ({ data }) => {
 
   console.log("rows", rows);
   console.log("formdata", formData);
+  console.log("trave.....", data);
   return (
     <form>
       <div className="bg-white px-4 py-4">
@@ -314,11 +315,12 @@ const InCountryTour = ({ data }) => {
       </div>
 
       <TravelItinerary
-        rows={rows}
+        rows={data ? data.travel_itinerary : rows}
         addRow={addRow}
         handleTravelItinerary={handleTravelItinerary}
         removeRow={removeRow}
         error={formErrors.travelItinerary}
+        data={data?.travel_itinerary}
       />
 
       <div className="bg-white px-4">
@@ -326,7 +328,7 @@ const InCountryTour = ({ data }) => {
           <CustomInput
             label="Total Amount"
             type="text"
-            value={formData.advanceAmount}
+            value={data ? data.amount : formData.advanceAmount}
             name="advanceAmount"
             isDisable={true}
             onChange={handleChange}
@@ -337,7 +339,8 @@ const InCountryTour = ({ data }) => {
               className="form-control"
               name="purpose"
               rows="4"
-              value={formData.purpose}
+              disabled={data ? true : false}
+              value={data ? data.purpose : formData.purpose}
               onChange={handleChange}
             ></textarea>
             {formErrors.purpose && (
@@ -352,7 +355,8 @@ const InCountryTour = ({ data }) => {
               className="form-control"
               name="remark"
               rows="4"
-              value={formData.remark}
+              disabled={data ? true : false}
+              value={data ? data.remark : formData.remark}
               onChange={handleChange}
             ></textarea>
           </div>
@@ -360,13 +364,11 @@ const InCountryTour = ({ data }) => {
       </div>
 
       <div className="bg-white px-4 pb-3 text-center">
-        <button
-          type="submit"
-          className="btn btn-primary px-5"
-          onClick={handleSubmit}
-        >
-          Submit
-        </button>
+        {!data && (
+          <button type="submit" className="btn btn-primary px-5">
+            Submit
+          </button>
+        )}
       </div>
     </form>
   );
