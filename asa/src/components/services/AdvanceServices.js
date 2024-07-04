@@ -23,7 +23,7 @@ const get = async (params) => {
       params: {
         "advance[status][]": params.status,
         "advance[advance_type][]": params.advance_type,
-        type: params.type,
+        "advance[type]": params.type,
       },
       headers: {
         Authorization: `${token}`,
