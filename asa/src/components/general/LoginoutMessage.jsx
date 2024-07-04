@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
 
-const LoginoutMessage = ({ message }) => {
+const LoginSuccess = ({ message }) => {
   const [show, setShow] = useState(true);
 
   const handleClose = () => {
@@ -37,4 +37,4 @@ const LoginoutMessage = ({ message }) => {
   );
 };
 
-export default LoginoutMessage;
+export default LoginSuccess;
