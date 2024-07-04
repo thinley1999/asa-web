@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { FaCircleCheck } from "react-icons/fa6";
+import React, { useState, useEffect } from "react";
+import { IoMdCloseCircle } from "react-icons/io";
 
-const LoginSuccess = ({ message }) => {
+const ErrorMessageToast = ({ message }) => {
   const [show, setShow] = useState(true);
 
   const handleClose = () => {
@@ -12,7 +12,7 @@ const LoginSuccess = ({ message }) => {
     <>
       {show && (
         <div
-          className="toast align-items-center show login-success-toast"
+          className="toast align-items-center show error-message-toast"
           role="alert"
           aria-live="assertive"
           aria-atomic="true"
@@ -20,7 +20,7 @@ const LoginSuccess = ({ message }) => {
           <div className="d-flex">
             <div className="toast-body fs-6">
               <span className="pe-1 fw-bold">
-                <FaCircleCheck fontSize={20} color="#01a845" />
+                <IoMdCloseCircle fontSize={20} color="#F83C2F" />
               </span>{" "}
               {message}
             </div>
@@ -37,4 +37,4 @@ const LoginSuccess = ({ message }) => {
   );
 };
 
-export default LoginSuccess;
+export default ErrorMessageToast;

@@ -568,7 +568,7 @@ a {
   color: red;
 }
 
-/* login success toast */
+/* loginout message */
 .login-success-toast {
   position: fixed;
   top: 10%;
@@ -577,6 +577,17 @@ a {
   z-index: 1050;
   background: #b6f0d6;
   border-bottom: 5px solid #01a845;
+}
+
+/* error message toast */
+.error-message-toast {
+  position: fixed;
+  top: 10%;
+  left: 55%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  background: #f9dddb;
+  border-bottom: 5px solid #f83c2f;
 }
 
 /* loading page */

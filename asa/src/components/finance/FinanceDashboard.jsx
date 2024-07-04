@@ -7,7 +7,7 @@ import { FaCheck } from "react-icons/fa6";
 import { CiBookmarkRemove } from "react-icons/ci";
 import { BsCartCheckFill } from "react-icons/bs";
 import AdvanceServices from "../services/AdvanceServices";
-import LoginSuccess from "../general/LoginSuccess";
+import LoginoutMessage from "../general/LoginoutMessage";
 
 const FinanceDashboard = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -209,7 +209,7 @@ const FinanceDashboard = () => {
 
   return (
     <div className="container">
-      {isLoggedIn && <LoginSuccess message="Login Successful!!!" />}
+      {isLoggedIn && <LoginoutMessage message="Login Successful!!!" />}
       <div className="row my-2">
         <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
           <div className="card pt-3 pe-2 mb-2 pb-4">

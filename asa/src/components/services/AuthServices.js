@@ -22,6 +22,12 @@ const logout = async () => {
     localStorage.removeItem("token");
     localStorage.removeItem("id");
     localStorage.removeItem("isLoggedIn");
+    localStorage.setItem("isLoggedOut", "true");
+
+    setTimeout(() => {
+      localStorage.removeItem("isLoggedOut");
+    }, 3000);
+
     return response;
   } catch (error) {
     throw error;
