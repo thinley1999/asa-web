@@ -23,7 +23,7 @@ const get = async (params) => {
       params: {
         "advance[status][]": params.status,
         "advance[advance_type][]": params.advance_type,
-        type: params.type,
+        "advance[type]": params.type,
       },
       headers: {
         Authorization: `${token}`,
@@ -61,7 +61,7 @@ const create = async (params, travel_itinerary = []) => {
       from: item.from,
       to: item.to,
       mode: item.mode,
-      amount: item.rate 
+      amount: parseFloat(item.rate) 
     }));
 
     const response = await axios.post(
@@ -70,9 +70,9 @@ const create = async (params, travel_itinerary = []) => {
         advance: {
           advance_type: params.advance_type,
           status: "pending",
-          amount: parseFloat(params.advanceAmount), 
+          amount: parseFloat(params.advanceAmount),
           purpose: params.purpose,
-          remark: params.remark ? params.remark : params.other_advance_type,
+          remark: params.remark || params.other_advance_type,
         },
         salary_advance: {
           duration: params.duration,
@@ -81,19 +81,17 @@ const create = async (params, travel_itinerary = []) => {
           completion_month: params.completion_month,
         },
         travel_itinerary: convertedArray,
-        files: params.files,
       },
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
-    return response.data; 
+    return response.data;
   } catch (error) {
-    throw error; 
+    throw error;
   }
 };
 
