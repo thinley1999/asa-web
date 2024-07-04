@@ -5,7 +5,7 @@ import CustomFileInput from "../general/CustomFileInput"; // Import CustomFileIn
 import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
 import AdvanceServices from "../services/AdvanceServices";
-import FileList from "../general/FileList";
+import FileServices from "../services/FileServices";
 
 const OtherAdvance = ({ data }) => {
   const [user, setUser] = useState(null);
@@ -28,8 +28,8 @@ const OtherAdvance = ({ data }) => {
   });
 
   const handleFileChange = (event) => {
-    const newFiles = Array.from(event.target.files); 
-  
+    const newFiles = Array.from(event.target.files);
+
     setFormData((prevFormData) => ({
       ...prevFormData,
       files: [...prevFormData.files, ...newFiles],
@@ -46,7 +46,7 @@ const OtherAdvance = ({ data }) => {
   const fetchUserDetails = async () => {
     try {
       const response = await UserServices.showDetail();
-      if (response && response.status === 200) {
+      if (response && response.status) {
         setUser(response.data);
         updateFormDataWithUserName(response.data);
       }
@@ -81,9 +81,8 @@ const OtherAdvance = ({ data }) => {
 
   const validateForm = () => {
     let errors = {};
-    if ( formData.advanceAmount <= 0) {
-      errors.advanceAmount =
-        "Advance amount should be more than 0!";
+    if (formData.advanceAmount <= 0) {
+      errors.advanceAmount = "Advance amount should be more than 0!";
     }
     if (!formData.other_advance_type.trim()) {
       errors.other_advance_type = "Select advance type!";
@@ -105,8 +104,16 @@ const OtherAdvance = ({ data }) => {
       try {
         const response = await AdvanceServices.create(formData);
 
-        if (response && response.status === 201) {
-          setSuccessMessage("Advance created successfully");
+        if (response) {
+          const fileResponse = await FileServices.create(
+            response.id,
+            formData.files
+          );
+          if (fileResponse && fileResponse.status === 201) {
+            setSuccessMessage("Advance created successfully");
+          } else {
+            setErrorMessage("File creation failed");
+          }
         } else {
           setErrorMessage("Internal Server Error");
         }
@@ -122,7 +129,7 @@ const OtherAdvance = ({ data }) => {
         ...prevFormData,
         purpose: data.purpose || " - ",
         other_advance_type: data.remark || " - ",
-        advanceAmount: data.amount || " - "
+        advanceAmount: data.amount || " - ",
       }));
     }
   }, [data]);
@@ -226,10 +233,10 @@ const OtherAdvance = ({ data }) => {
               label="Relevant Documents"
               name="relevantDocument"
               files={formData.files}
-              handleFileChange={handleFileChange} 
+              handleFileChange={handleFileChange}
               removeFile={removeFile}
               error={formErrors.file_error}
-              data = {data.files}
+              data={data?.files}
             />
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
@@ -241,7 +248,7 @@ const OtherAdvance = ({ data }) => {
                 value={formData.purpose}
                 onChange={handleChange}
               ></textarea>
-               {formErrors.purpose && (
+              {formErrors.purpose && (
                 <div className="invalid-feedback" style={{ display: "block" }}>
                   {formErrors.purpose}
                 </div>
@@ -250,7 +257,7 @@ const OtherAdvance = ({ data }) => {
           </div>
         </div>
         <div className="bg-white px-4 pb-3 text-center">
-        {!data && (
+          {!data && (
             <button type="submit" className="btn btn-primary px-5">
               Submit
             </button>
