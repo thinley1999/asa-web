@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import vectorImage from "../assets/img/vector.jpg";
 import { useNavigate } from "react-router-dom";
 import logoImage from "../assets/img/rma-logo-white.png";
 import "../assets/css/main.css";
 import AuthServices from "./services/AuthServices";
+import LoginoutMessage from "./general/LoginoutMessage";
+import ErrorMessageToast from "./general/ErrorMessageToast";
 
 const Login = () => {
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const isLoggedOut = localStorage.getItem("isLoggedOut");
+
+    if (isLoggedOut) {
+      setIsLoggedOut(true);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,12 +40,15 @@ const Login = () => {
         setError("Internal Server Issue");
       }
     } catch (error) {
-      setError(error.response?.data || "An error occurred");
+      const errorMessage = error.response?.data?.error || "An error occurred";
+      setError(errorMessage);
     }
   };
 
   return (
     <div className="vh-100">
+      {isLoggedOut && <LoginoutMessage message="Logout Successful!!!" />}
+      {error && <ErrorMessageToast message={error} />}
       <div className="container-fluid">
         <div className="row">
           {/* Image column */}

@@ -4,7 +4,7 @@ import profileImage from "../../assets/img/Thinley.jpeg";
 import AdvanceServices from "../services/AdvanceServices";
 import MyApplications from "../general/MyApplications";
 import { IoBagCheck } from "react-icons/io5";
-import LoginSuccess from "../general/LoginSuccess";
+import LoginoutMessage from "../general/LoginoutMessage";
 
 const EmployeeApplications = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -77,7 +77,7 @@ const EmployeeApplications = () => {
 
   return (
     <div>
-      {isLoggedIn && <LoginSuccess message="Login Successful!!!" />}
+      {isLoggedIn && <LoginoutMessage message="Login Successful!!!" />}
       {/* Tabs navs */}
       <ul className="nav nav-tabs mb-2 col-12 mynav" id="ex1" role="tablist">
         <li className="nav-item col-6 text-center tablist" role="presentation">
