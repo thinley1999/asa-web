@@ -5,6 +5,7 @@ import CustomFileInput from "../general/CustomFileInput"; // Import CustomFileIn
 import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
 import AdvanceServices from "../services/AdvanceServices";
+import FileList from "../general/FileList";
 
 const OtherAdvance = ({ data }) => {
   const [user, setUser] = useState(null);
@@ -116,6 +117,17 @@ const OtherAdvance = ({ data }) => {
   };
 
   useEffect(() => {
+    if (data) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        purpose: data.purpose || " - ",
+        other_advance_type: data.remark || " - ",
+        advanceAmount: data.amount || " - "
+      }));
+    }
+  }, [data]);
+
+  useEffect(() => {
     fetchUserDetails();
   }, []);
 
@@ -197,6 +209,7 @@ const OtherAdvance = ({ data }) => {
                 className="form-select"
                 name="other_advance_type"
                 onChange={handleChange}
+                disabled={data ? true : false}
                 value={formData.other_advance_type}
               >
                 <option>Select Advance Type</option>
@@ -216,6 +229,7 @@ const OtherAdvance = ({ data }) => {
               handleFileChange={handleFileChange} 
               removeFile={removeFile}
               error={formErrors.file_error}
+              data = {data.files}
             />
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
@@ -223,6 +237,7 @@ const OtherAdvance = ({ data }) => {
                 className="form-control"
                 name="purpose"
                 rows="4"
+                disabled={data ? true : false}
                 value={formData.purpose}
                 onChange={handleChange}
               ></textarea>
@@ -235,9 +250,11 @@ const OtherAdvance = ({ data }) => {
           </div>
         </div>
         <div className="bg-white px-4 pb-3 text-center">
-          <button type="submit" className="btn btn-primary px-5">
-            Submit
-          </button>
+        {!data && (
+            <button type="submit" className="btn btn-primary px-5">
+              Submit
+            </button>
+          )}
         </div>
       </form>
     </div>

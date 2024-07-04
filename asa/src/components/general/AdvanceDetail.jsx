@@ -34,6 +34,9 @@ const AdvanceDetail = () => {
     {
       advanceData?.advance_type === "in_country_tour_advance" ? <InCountryTour data={advanceData} /> : null
     }
+    {
+      advanceData?.advance_type === "other_advance" ? <OtherAdvance data={advanceData} /> : null
+    }
     </div>;
 };
 
