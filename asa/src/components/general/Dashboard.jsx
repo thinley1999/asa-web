@@ -4,6 +4,7 @@ import "../../assets/css/main.css";
 import { usePermissions } from "../../contexts/PermissionsContext";
 import EmployeeApplications from "../employee/EmployeeDashboard";
 import FinanceDashboard from "../finance/FinanceDashboard";
+import LoadingPage from "./LoadingPage";
 
 const Dashboard = () => {
   const { permissions } = usePermissions();
@@ -24,11 +25,11 @@ const Dashboard = () => {
   return (
     <div>
       {dashboardPermission === null ? (
-        <div>Loading...</div>
+        <LoadingPage />
       ) : dashboardPermission?.actions?.view ? (
         <FinanceDashboard />
       ) : (
-        <EmployeeApplications/>
+        <EmployeeApplications />
       )}
     </div>
   );

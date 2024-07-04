@@ -4,8 +4,10 @@ import profileImage from "../../assets/img/Thinley.jpeg";
 import AdvanceServices from "../services/AdvanceServices";
 import MyApplications from "../general/MyApplications";
 import { IoBagCheck } from "react-icons/io5";
+import LoginSuccess from "../general/LoginSuccess";
 
 const EmployeeApplications = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("currentapplication");
   const [currentapplication, setCurrentApplications] = useState([]);
   const [previousapplication, setPreviousApplications] = useState([]);
@@ -50,6 +52,19 @@ const EmployeeApplications = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+      if (!isLoggedIn) {
+        localStorage.setItem("isLoggedIn", "true");
+        setIsLoggedIn(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (activeTab === "currentapplication") {
       fetchCurrentApplications();
     } else if (activeTab === "previousapplication") {
@@ -62,6 +77,7 @@ const EmployeeApplications = () => {
 
   return (
     <div>
+      {isLoggedIn && <LoginSuccess message="Login Successful!!!" />}
       {/* Tabs navs */}
       <ul className="nav nav-tabs mb-2 col-12 mynav" id="ex1" role="tablist">
         <li className="nav-item col-6 text-center tablist" role="presentation">

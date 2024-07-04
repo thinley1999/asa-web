@@ -567,3 +567,29 @@ a {
   cursor: pointer;
   color: red;
 }
+
+/* login success toast */
+.login-success-toast {
+  position: fixed;
+  top: 10%;
+  left: 55%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  background: #b6f0d6;
+  border-bottom: 5px solid #01a845;
+}
+
+/* loading page */
+.spinner-border {
+  position: fixed;
+  top: 50%;
+  left: 55%;
+}
+
+@media (max-width: 768px) {
+  .spinner-border {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+  }
+}

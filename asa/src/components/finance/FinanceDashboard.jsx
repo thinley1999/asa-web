@@ -2,14 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import "chartjs-plugin-datalabels";
 import "../../assets/css/main.css";
-import profileImage from "../../assets/img/Thinley.jpeg";
 import { CiChat2 } from "react-icons/ci";
 import { FaCheck } from "react-icons/fa6";
 import { CiBookmarkRemove } from "react-icons/ci";
 import { BsCartCheckFill } from "react-icons/bs";
 import AdvanceServices from "../services/AdvanceServices";
+import LoginSuccess from "../general/LoginSuccess";
 
 const FinanceDashboard = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const barChartRef = useRef(null);
   const barChartInstanceRef = useRef(null);
   const pieChartRef = useRef(null);
@@ -35,6 +36,19 @@ const FinanceDashboard = () => {
   const [monthlycount, setMonthlyCount] = useState([]);
 
   const [applicationDetails, setApplicationDetails] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+      if (!isLoggedIn) {
+        localStorage.setItem("isLoggedIn", "true");
+        setIsLoggedIn(true);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     fetchStatusCount();
@@ -195,6 +209,7 @@ const FinanceDashboard = () => {
 
   return (
     <div className="container">
+      {isLoggedIn && <LoginSuccess message="Login Successful!!!" />}
       <div className="row my-2">
         <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
           <div className="card pt-3 pe-2 mb-2 pb-4">

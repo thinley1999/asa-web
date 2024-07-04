@@ -1,27 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
+import { FaCircleCheck } from "react-icons/fa6";
 
-const LoginSuccess = () => {
+const LoginSuccess = ({ message }) => {
   const [show, setShow] = useState(true);
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
   return (
-    <div
-      className={`toast align-items-center text-white bg-primary border-0 ${
-        show ? "show" : ""
-      }`}
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-    >
-      <div className="d-flex">
-        <div className="toast-body">Hello, world! This is a toast message.</div>
-        <button
-          type="button"
-          className="btn-close btn-close-white me-2 m-auto"
-          data-bs-dismiss="toast"
-          aria-label="Close"
-          onClick={() => setShow(false)}
-        ></button>
-      </div>
-    </div>
+    <>
+      {show && (
+        <div
+          className="toast align-items-center show login-success-toast"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div className="d-flex">
+            <div className="toast-body fs-6">
+              <span className="pe-1 fw-bold">
+                <FaCircleCheck fontSize={20} color="#01a845" />
+              </span>{" "}
+              {message}
+            </div>
+            <button
+              type="button"
+              className="btn-close me-2 m-auto"
+              onClick={handleClose}
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
