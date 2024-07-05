@@ -6,11 +6,12 @@ import SalaryAdvance from "../employee/SalaryAdvance";
 import InCountryTour from "../general/InCountryTour";
 import OutCountryTour from "../general/OutCountryTour";
 import OtherAdvance from "../employee/OtherAdvance";
+import DialogBox from "../general/DialogBox";
 
 const ViewRequestedAdvance = () => {
   const { id } = useParams();
   const [advanceData, setAdvanceData] = useState({});
-  const [showDialog, setShowDialog] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
 
   const fetchAdvance = async () => {
     try {
@@ -22,8 +23,31 @@ const ViewRequestedAdvance = () => {
     }
   };
 
-  const handleDialog = () => {
+  const handleDialogOpen = () => {
+    setShowDialog(true);
+  };
 
+  const handleDialogClose = () => {
+    setShowDialog(false);
+  };
+
+  const handleDialogSubmit = async (e) => {
+    setShowDialog(false);
+    const params = {
+      id: advanceData.id
+    }
+
+    try {
+      const response = await AdvanceServices.updateStatus(params)
+
+      if (response && response.status === 201) {
+        setSuccessMessage("Advance created successfully");
+      } else {
+        setErrorMessage("Internal Server Error");
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data || "An error occurred");
+    }
   };
 
   useEffect(() => {
@@ -32,19 +56,17 @@ const ViewRequestedAdvance = () => {
 
   return (
     <div className="bg-white">
-      {advanceData.advance_type === "salary_advance" && <SalaryAdvance data={advanceData} showButtons={true} />}
-      {advanceData.advance_type === "in_country_tour_advance" && <InCountryTour data={advanceData} showButtons={true} />}
-      {advanceData.advance_type === "other_advance" && <OtherAdvance data={advanceData} showButtons={true} />}
-      {advanceData.advance_type === "out_country_tour_advance" && <OutCountryTour data={advanceData} showButtons={true} />}
+      {advanceData.advance_type === "salary_advance" && <SalaryAdvance data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen} />}
+      {advanceData.advance_type === "in_country_tour_advance" && <InCountryTour data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen}/>}
+      {advanceData.advance_type === "other_advance" && <OtherAdvance data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen} />}
+      {advanceData.advance_type === "out_country_tour_advance" && <OutCountryTour data={advanceData} showButtons={true}  handleDialogOpen={handleDialogOpen}/>}
       {
         showDialog && (
-        <div className="bg-white my-dialog-box">
-          <div className="d-flex flex-column">
-            <div className="d-flex flex-row">
-              
-            </div>
-          </div>
-        </div>
+          <DialogBox
+            isOpen={showDialog}
+            onClose={handleDialogClose}
+            onSubmit={handleDialogSubmit}
+          />
         )
       }
     </div> 

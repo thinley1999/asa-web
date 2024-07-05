@@ -7,7 +7,7 @@ import { processUserName } from "../utils/UserUtils";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
 
-const OtherAdvance = ({ data, showButtons }) => {
+const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -270,6 +270,7 @@ const OtherAdvance = ({ data, showButtons }) => {
               name="approve"
               type="button"
               className="btn btn-success px-5"
+              onClick={handleDialogOpen}
             >
               Approve
             </button>
@@ -279,6 +280,7 @@ const OtherAdvance = ({ data, showButtons }) => {
               name="approve"
               type="button"
               className="btn btn-danger px-5"
+              onClick={handleDialogOpen}
             >
               Reject
             </button>

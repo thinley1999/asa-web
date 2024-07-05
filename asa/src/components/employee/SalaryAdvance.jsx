@@ -7,7 +7,7 @@ import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
 import { formatDate } from "../utils/DateUtils";
 
-const SalaryAdvance = ({ data, showButons }) => {
+const SalaryAdvance = ({ data, showButons, handleDialogOpen }) => {
   const [user, setUser] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -306,6 +306,7 @@ const SalaryAdvance = ({ data, showButons }) => {
               name="approve"
               type="button"
               className="btn btn-success px-5"
+              onClick={handleDialogOpen}
             >
               Approve
             </button>
@@ -315,6 +316,7 @@ const SalaryAdvance = ({ data, showButons }) => {
               name="approve"
               type="button"
               className="btn btn-danger px-5"
+              onClick={handleDialogOpen}
             >
               Reject
             </button>

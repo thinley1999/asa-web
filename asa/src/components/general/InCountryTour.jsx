@@ -10,7 +10,7 @@ import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
 import CustomFileInput from "./CustomFileInput";
 
-const InCountryTour = ({ data, showButtons }) => {
+const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -377,6 +377,7 @@ const InCountryTour = ({ data, showButtons }) => {
              name="approve"
              type="button"
              className="btn btn-success px-5"
+             onClick={handleDialogOpen}
            >
              Approve
            </button>
@@ -386,6 +387,7 @@ const InCountryTour = ({ data, showButtons }) => {
              name="approve"
              type="button"
              className="btn btn-danger px-5"
+             onClick={handleDialogOpen}
            >
              Reject
            </button>

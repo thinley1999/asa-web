@@ -142,6 +142,30 @@ const monthlyCount = async () => {
   }
 };
 
+const updateStatus = async (params) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.post(
+      `${API_URL}/api/advances/update_status`,
+      {
+        id: params.id,
+        status: params.status,
+        message: message,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   get,
   showDetail,
@@ -150,4 +174,5 @@ export default {
   statusCount,
   typeCount,
   monthlyCount,
+  updateStatus,
 };
