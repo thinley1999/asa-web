@@ -611,3 +611,12 @@ a {
   padding-right: 5px !important;
   padding-left: 5px !important;
 }
+
+.my-dialog-box{
+  z-index: 100;
+  position: fixed;
+  top: 50%;
+  left: 55%;
+  padding: 20px;
+  box-shadow: 1px 1px rgb(220, 217, 217);
+}

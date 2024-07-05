@@ -10,7 +10,7 @@ import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
 import CustomFileInput from "./CustomFileInput";
 
-const InCountryTour = ({ data }) => {
+const InCountryTour = ({ data, showButtons }) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -370,6 +370,28 @@ const InCountryTour = ({ data }) => {
           </button>
         )}
       </div>
+      {showButtons && (
+         <div className="d-flex justify-content-center bg-white">
+         <div className="px-4 pb-3 text-center">
+           <button
+             name="approve"
+             type="button"
+             className="btn btn-success px-5"
+           >
+             Approve
+           </button>
+         </div>
+         <div className="pb-3 text-center">
+           <button
+             name="approve"
+             type="button"
+             className="btn btn-danger px-5"
+           >
+             Reject
+           </button>
+         </div>
+       </div>
+      )}
     </form>
   );
 };

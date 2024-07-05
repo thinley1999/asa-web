@@ -7,7 +7,7 @@ import { processUserName } from "../utils/UserUtils";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
 
-const OtherAdvance = ({ data }) => {
+const OtherAdvance = ({ data, showButtons }) => {
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -264,6 +264,26 @@ const OtherAdvance = ({ data }) => {
           )}
         </div>
       </form>
+      {showButtons && ( <div className="d-flex justify-content-center bg-white">
+          <div className="px-4 pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-success px-5"
+            >
+              Approve
+            </button>
+          </div>
+          <div className="pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-danger px-5"
+            >
+              Reject
+            </button>
+          </div>
+        </div>)}
     </div>
   );
 };
