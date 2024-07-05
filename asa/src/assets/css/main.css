@@ -550,10 +550,12 @@ a {
 }
 .file-names {
   margin-top: 10px;
-  background: #eeeceb;
+  background: #e9ecef;
+  border-radius: 3px;
 }
 
 .file-names.padded {
+  border: 1px solid #d4d9de;
   padding: 10px;
 }
 
