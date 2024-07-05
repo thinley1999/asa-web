@@ -1,6 +1,6 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: #eef4f5;
+  background: #f5f6fa;
 }
 
 /* login page */
@@ -278,7 +278,7 @@ body {
 
 .sidebar li.active {
   border-radius: 8px;
-  background-color: #199bcc;
+  background-color: #48a2e1;
   color: white;
 }
 
@@ -427,15 +427,15 @@ a:hoover {
 }
 
 .c-details {
-  color: #6495ed;
+  color: #718ebf;
   font-weight: bolder;
 }
 
 .dashboardicon1 {
   width: 40px;
   height: 40px;
-  color: orange;
-  background-color: #f9efdd;
+  color: #ffbb38;
+  background-color: #fff5d9;
   border-radius: 45px;
   display: flex;
   align-items: center;
@@ -446,8 +446,8 @@ a:hoover {
 .dashboardicon2 {
   width: 40px;
   height: 40px;
-  color: blue;
-  background-color: #dde3f9;
+  color: #396aff;
+  background-color: #e7edff;
   border-radius: 45px;
   display: flex;
   align-items: center;
@@ -458,8 +458,8 @@ a:hoover {
 .dashboardicon3 {
   width: 40px;
   height: 40px;
-  color: #fc00bf;
-  background-color: #f9c9ed;
+  color: #ff82ac;
+  background-color: #ffe0eb;
   border-radius: 45px;
   display: flex;
   align-items: center;
@@ -470,8 +470,8 @@ a:hoover {
 .dashboardicon4 {
   width: 40px;
   height: 40px;
-  color: #03fab3;
-  background-color: #d1faee;
+  color: #16dbcc;
+  background-color: #dcfaf8;
   border-radius: 45px;
   display: flex;
   align-items: center;
@@ -499,10 +499,6 @@ a:hoover {
   border-radius: 5px;
 }
 
-.bi-funnel-fill {
-  color: #928aa2;
-}
-
 .bi-three-dots-vertical {
   font-size: 20px;
 }
@@ -510,6 +506,7 @@ a:hoover {
 .dataheading {
   font-size: 13px;
   font-weight: bold;
+  color: #25213b !important;
 }
 
 .dataheading1 {
@@ -518,14 +515,14 @@ a:hoover {
 }
 
 .datasubheading {
-  color: #858489;
+  color: #6e6893;
   padding-top: 2px !important;
 }
 
 .dataheading,
 a {
   text-decoration: none;
-  color: #858489;
+  color: #6e6893;
 }
 
 /* input type file */

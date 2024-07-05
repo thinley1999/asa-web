@@ -4,11 +4,11 @@ import logoImage from "../../assets/img/rma-logo-white.png";
 import AuthServices from "../services/AuthServices";
 import { usePermissions } from "../../contexts/PermissionsContext";
 import { FaHome } from "react-icons/fa";
-import { BsCash } from "react-icons/bs";
-import { IoBag } from "react-icons/io5";
+import { FaCircleDollarToSlot } from "react-icons/fa6";
+import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { FaCar } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
-import { FaRegCreditCard } from "react-icons/fa";
+import { FaFileInvoiceDollar } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa";
 
 const SideBar = () => {
@@ -29,13 +29,13 @@ const SideBar = () => {
     },
     {
       path: "/salaryAdvance",
-      icon: <BsCash size={24} />,
+      icon: <FaCircleDollarToSlot size={24} />,
       label: "Salary Advance",
       value: 3,
     },
     {
       path: "/otherAdvance",
-      icon: <IoBag size={24} />,
+      icon: <FaMoneyCheckDollar size={24} />,
       label: "Other Advance",
       value: 4,
     },
@@ -75,7 +75,7 @@ const SideBar = () => {
             ...prevItems,
             {
               path: "/requestedAdvance",
-              icon: <FaRegCreditCard size={24} />,
+              icon: <FaFileInvoiceDollar size={24} />,
               label: "Requested Advance",
               value: 6,
             },
