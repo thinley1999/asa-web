@@ -78,7 +78,7 @@ const TourAdvance = () => {
           role="tabpanel"
           aria-labelledby="ex1-tab-2"
         >
-          <OutCountryTour />
+          <OutCountryTour setActiveTab={setActiveTab} />
         </div>
       </div>
       {/* Tabs content */}

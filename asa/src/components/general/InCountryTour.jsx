@@ -1,5 +1,4 @@
 import React from "react";
-import { FaCloudDownloadAlt } from "react-icons/fa";
 import CustomInput from "./CustomInput";
 import { useState, useEffect } from "react";
 import TravelItinerary from "./TravelItinerary";
@@ -9,13 +8,28 @@ import RateServices from "../services/RateServices";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
 import CustomFileInput from "./CustomFileInput";
+import SuccessMessage from "./SuccessMessage";
+import ErrorMessage from "./ErrorMessage";
 
 const InCountryTour = ({ data }) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState([]);
-  const [formData, setFormData] = useState({
+  // const [formData, setFormData] = useState({
+  //   firstName: " - ",
+  //   middleName: " - ",
+  //   lastName: " - ",
+  //   date: new Date().toISOString().slice(0, 10),
+  //   department: "IT Department",
+  //   designation: " ",
+  //   advanceAmount: 0,
+  //   purpose: " ",
+  //   remark: " ",
+  //   advance_type: "in_country_tour_advance",
+  //   files: [],
+  // });
+  const initialFormData = {
     firstName: " - ",
     middleName: " - ",
     lastName: " - ",
@@ -25,9 +39,16 @@ const InCountryTour = ({ data }) => {
     advanceAmount: 0,
     purpose: " ",
     remark: " ",
-    advance_type: "in_country_tour_advance",
+    advance_type: "ex_country_tour_advance",
     files: [],
-  });
+  };
+
+  const initialRows = [
+    { startDate: "", endDate: "", from: "", to: "", mode: "", rate: "" },
+  ];
+
+  const [formData, setFormData] = useState(initialFormData);
+
   const [rate, setRate] = useState([]);
 
   const fetchRate = async (startDate, endDate, from, to, index) => {
@@ -202,17 +223,31 @@ const InCountryTour = ({ data }) => {
           );
 
           if (fileResponse && fileResponse.status === 201) {
-            setSuccessMessage("Advance created successfully");
+            setSuccessMessage(
+              "Your application has been successfully subbmitted."
+            );
+            resetForm();
           } else {
             setErrorMessage("File creation failed");
           }
         } else {
-          setErrorMessage("Advance creation failed");
+          setErrorMessage("Your application subbmission has been failed");
         }
       } catch (error) {
-        setErrorMessage("An error occurred");
+        setErrorMessage("Error:", error);
       }
     }
+  };
+
+  const resetForm = () => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      advanceAmount: initialFormData.advanceAmount,
+      purpose: initialFormData.purpose,
+      remark: initialFormData.remark,
+      files: initialFormData.files,
+    }));
+    setRows(initialRows);
   };
 
   const updateFormDataWithUserName = (user) => {
@@ -239,11 +274,31 @@ const InCountryTour = ({ data }) => {
     totalAmount();
   }, [rows]);
 
+  const handleCloseSuccessMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const handleCloseErrorMessage = () => {
+    setErrorMessage("");
+  };
+
   console.log("rows", rows);
   console.log("formdata", formData);
   console.log("trave.....", data);
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
+      {successMessage && (
+        <SuccessMessage
+          message={successMessage}
+          onClose={handleCloseSuccessMessage}
+        />
+      )}
+      {errorMessage && (
+        <ErrorMessage
+          message={errorMessage}
+          onClose={handleCloseErrorMessage}
+        />
+      )}
       <div className="bg-white px-4 py-4">
         <div className="row w-100 ">
           <CustomInput
