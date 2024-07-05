@@ -16,7 +16,7 @@ const CustomFileInput = ({
     <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
       <label className="form-label">{label}</label>
       {data ? (
-        <FileList data={data} />
+        <FileList files={data} />
       ) : (
         <div className="d-flex">
           <label
