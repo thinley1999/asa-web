@@ -570,10 +570,11 @@ a {
 
 /* loginout message */
 .login-success-toast {
-  position: fixed;
+  position: absolute;
   top: 10%;
-  left: 55%;
+  left: 50%;
   transform: translateX(-50%);
+  animation: slideIn 0.5s ease-out;
   z-index: 1050;
   background: #b6f0d6;
   border-bottom: 5px solid #01a845;
@@ -581,10 +582,11 @@ a {
 
 /* error message toast */
 .error-message-toast {
-  position: fixed;
+  position: absolute;
   top: 10%;
-  left: 55%;
+  left: 50%;
   transform: translateX(-50%);
+  animation: slideIn 0.5s ease-out;
   z-index: 1050;
   background: #f9dddb;
   border-bottom: 5px solid #f83c2f;
@@ -611,3 +613,16 @@ a {
   padding-right: 5px !important;
   padding-left: 5px !important;
 }
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+
