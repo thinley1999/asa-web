@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { PiWarningDiamondFill } from "react-icons/pi";
 
 const DialogBox = ({ isOpen, onClose, onSubmit }) => {
   const [name, setName] = useState("");
@@ -14,9 +15,12 @@ const DialogBox = ({ isOpen, onClose, onSubmit }) => {
   return (
     <div className="modal fade show" tabIndex="-1" style={{ display: "block" }}>
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content">
+        <div className="modal-content customdialog">
           <div className="modal-header">
-            <h5 className="modal-title">Confirmation</h5>
+            <span>
+              <PiWarningDiamondFill fontSize={30} color="#ffc800" />
+            </span>{" "}
+            <h5 className="modal-title ms-3">Confirmation</h5>
             <button
               type="button"
               className="btn-close"
