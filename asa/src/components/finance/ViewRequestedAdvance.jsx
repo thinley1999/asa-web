@@ -7,12 +7,16 @@ import InCountryTour from "../general/InCountryTour";
 import OutCountryTour from "../general/OutCountryTour";
 import OtherAdvance from "../employee/OtherAdvance";
 import DialogBox from "../general/DialogBox";
+import SuccessMessage from "../general/SuccessMessage";
+import ErrorMessage from "../general/ErrorMessage";
 
 const ViewRequestedAdvance = () => {
   const { id } = useParams();
   const [advanceData, setAdvanceData] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const fetchAdvance = async () => {
     try {
@@ -39,16 +43,15 @@ const ViewRequestedAdvance = () => {
       id: advanceData.id,
       status: dialogMessage,
       message: message,
-    }
+    };
 
     try {
-      const response = await AdvanceServices.updateStatus(params)
-      console.log("srtststts", response);
+      const response = await AdvanceServices.updateStatus(params);
 
-      if (response && response.status === 200) {
+      if (response && Response.data == 200) {
         if (dialogMessage === "approved") {
           setSuccessMessage("Advance approved successfully");
-        }else{
+        } else {
           setSuccessMessage("Advance rejected successfully");
         }
       } else {
@@ -59,26 +62,70 @@ const ViewRequestedAdvance = () => {
     }
   };
 
+  const handleCloseSuccessMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const handleCloseErrorMessage = () => {
+    setErrorMessage("");
+  };
+
   useEffect(() => {
     fetchAdvance();
   }, []);
 
   return (
     <div className="bg-white">
-      {advanceData.advance_type === "salary_advance" && <SalaryAdvance data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen} />}
-      {advanceData.advance_type === "in_country_tour_advance" && <InCountryTour data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen}/>}
-      {advanceData.advance_type === "other_advance" && <OtherAdvance data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen} />}
-      {advanceData.advance_type === "out_country_tour_advance" && <OutCountryTour data={advanceData} showButtons={true}  handleDialogOpen={handleDialogOpen}/>}
-      {
-        showDialog && (
-          <DialogBox
-            isOpen={showDialog}
-            onClose={handleDialogClose}
-            onSubmit={handleDialogSubmit}
-          />
-        )
-      }
-    </div> 
+      {successMessage && (
+        <SuccessMessage
+          message={successMessage}
+          onClose={handleCloseSuccessMessage}
+        />
+      )}
+
+      {errorMessage && (
+        <ErrorMessage
+          message={errorMessage}
+          onClose={handleCloseErrorMessage}
+        />
+      )}
+
+      {advanceData.advance_type === "salary_advance" && (
+        <SalaryAdvance
+          data={advanceData}
+          showButtons={true}
+          handleDialogOpen={handleDialogOpen}
+        />
+      )}
+      {advanceData.advance_type === "in_country_tour_advance" && (
+        <InCountryTour
+          data={advanceData}
+          showButtons={true}
+          handleDialogOpen={handleDialogOpen}
+        />
+      )}
+      {advanceData.advance_type === "other_advance" && (
+        <OtherAdvance
+          data={advanceData}
+          showButtons={true}
+          handleDialogOpen={handleDialogOpen}
+        />
+      )}
+      {advanceData.advance_type === "out_country_tour_advance" && (
+        <OutCountryTour
+          data={advanceData}
+          showButtons={true}
+          handleDialogOpen={handleDialogOpen}
+        />
+      )}
+      {showDialog && (
+        <DialogBox
+          isOpen={showDialog}
+          onClose={handleDialogClose}
+          onSubmit={handleDialogSubmit}
+        />
+      )}
+    </div>
   );
 };
 

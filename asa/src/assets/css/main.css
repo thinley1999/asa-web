@@ -637,3 +637,7 @@ a {
 .customdialog {
   border-top: 10px solid #ffc800;
 }
+
+.btn-close {
+  color: white !important; /* Set text color to white */
+}
