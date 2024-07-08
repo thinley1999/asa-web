@@ -12,7 +12,7 @@ const SalaryAdvance = ({ data, showButons, handleDialogOpen }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     firstName: " - ",
     middleName: " - ",
     lastName: "- ",
@@ -26,7 +26,9 @@ const SalaryAdvance = ({ data, showButons, handleDialogOpen }) => {
     purpose: " ",
     advance_type: "salary_advance",
     completion_month: "june 2023",
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const [formErrors, setFormErrors] = useState({});
 
@@ -141,8 +143,9 @@ const SalaryAdvance = ({ data, showButons, handleDialogOpen }) => {
       try {
         const response = await AdvanceServices.create(formData);
 
-        if (response && response.status === 201) {
+        if (response) {
           setSuccessMessage("Advance created successfully");
+          resetForm();
         } else {
           setErrorMessage("Internal Server Error");
         }
@@ -150,6 +153,15 @@ const SalaryAdvance = ({ data, showButons, handleDialogOpen }) => {
         setErrorMessage(error.response?.data || "An error occurred");
       }
     }
+  };
+
+  const resetForm = () => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      advanceAmount: initialFormData.advanceAmount,
+      duration: initialFormData.duration,
+      purpose: initialFormData.purpose,
+    }));
   };
 
   const handleCloseSuccessMessage = () => {

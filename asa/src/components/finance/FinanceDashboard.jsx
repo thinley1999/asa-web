@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import "chartjs-plugin-datalabels";
 import "../../assets/css/main.css";
-import { CiChat2 } from "react-icons/ci";
-import { FaCheck } from "react-icons/fa6";
-import { CiBookmarkRemove } from "react-icons/ci";
-import { BsCartCheckFill } from "react-icons/bs";
+import { FaSackDollar } from "react-icons/fa6";
+import { FaHandHoldingUsd } from "react-icons/fa";
+import { FaFileInvoiceDollar } from "react-icons/fa6";
+import { PiPiggyBankFill } from "react-icons/pi";
 import AdvanceServices from "../services/AdvanceServices";
 import LoginoutMessage from "../general/LoginoutMessage";
 
@@ -106,9 +106,8 @@ const FinanceDashboard = () => {
           labels: labels,
           datasets: [
             {
-              backgroundColor: window.theme?.primary || "rgba(3, 104, 250)",
-              hoverBackgroundColor:
-                window.theme?.primary || "rgba(0,123,255,0.7)",
+              backgroundColor: window.theme?.primary || "rgb(24, 20, 243)",
+              hoverBackgroundColor: window.theme?.primary || "rgb(24, 20, 243)",
               data: data,
               barPercentage: 0.75,
               categoryPercentage: 0.5,
@@ -164,12 +163,7 @@ const FinanceDashboard = () => {
                 typeCount.advance_type_count.in_country_tour_advance,
                 typeCount.advance_type_count.ex_country_tour_advance,
               ],
-              backgroundColor: [
-                window.theme?.primary || "rgba(3, 104, 250)",
-                window.theme?.success || "rgba(40, 167, 69)",
-                window.theme?.warning || "rgba(255, 193, 7)",
-                "#dee2e6",
-              ],
+              backgroundColor: ["#343c6a", "#fc7900", "#1814f3", "#fa00ff"],
               borderColor: "transparent",
             },
           ],
@@ -218,7 +212,7 @@ const FinanceDashboard = () => {
                 <h6 className="mb-0 c-details">Pending Application</h6>
               </div>
               <div className="dashboardicon1">
-                <CiChat2 size={24} />
+                <FaSackDollar size={18} />
               </div>
             </div>
             <div className="text-center">
@@ -240,7 +234,7 @@ const FinanceDashboard = () => {
                 <h6 className="mb-0 c-details">Verified Application</h6>
               </div>
               <div className="dashboardicon2">
-                <FaCheck size={24} />
+                <FaHandHoldingUsd size={18} />
               </div>
             </div>
             <div className="text-center">
@@ -262,7 +256,7 @@ const FinanceDashboard = () => {
                 <h6 className="mb-0 c-details">Rejected Application</h6>
               </div>
               <div className="dashboardicon3">
-                <CiBookmarkRemove size={24} />
+                <FaFileInvoiceDollar size={18} />
               </div>
             </div>
             <div className="text-center">
@@ -284,7 +278,7 @@ const FinanceDashboard = () => {
                 <h6 className="mb-0 c-details">Approved Application</h6>
               </div>
               <div className="dashboardicon4">
-                <BsCartCheckFill size={24} />
+                <PiPiggyBankFill size={18} />
               </div>
             </div>
             <div className="text-center">

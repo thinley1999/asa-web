@@ -87,8 +87,13 @@ const Navbar = ({
 
         <div className="collapse navbar-collapse justify-content-end me-5">
           <span>
-            <button type="button" className="btn btn-info" id="showToastBtn">
-              <CiBellOn size={24} />
+            <button
+              type="button"
+              className="btn"
+              style={{ background: "#90c8ed" }}
+              id="showToastBtn"
+            >
+              <CiBellOn color="blue" size={24} />
             </button>
             <span className="badge">5</span>
           </span>
