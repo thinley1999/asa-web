@@ -3,8 +3,7 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 import "../../assets/css/main.css";
 import AdvanceServices from "../services/AdvanceServices";
-import { FaFilter } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
+import { FaFilter, FaSearch } from "react-icons/fa";
 
 const RequestedAdvance = () => {
   const customStyles = {
@@ -23,7 +22,7 @@ const RequestedAdvance = () => {
     },
   };
 
-  const column = [
+  const columns = [
     {
       name: "Name",
       sortable: true,
@@ -81,41 +80,47 @@ const RequestedAdvance = () => {
     "salary_advance",
   ];
 
-  const advanceParams = {
-    status: ["pending"],
-    advance_type: all_advance,
-    type: "other_advance",
-  };
-
   const [records, setRecords] = useState([]);
   const [filterRecords, setFilterRecords] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const fetchAdvances = async () => {
+  const fetchAdvances = async (pageNum) => {
+    const advanceParams = {
+      status: ["pending"],
+      advance_type: all_advance,
+      type: "other_advance",
+      page: pageNum,
+    };
+
     try {
       const response = await AdvanceServices.get(advanceParams);
       setRecords(response.data.advances);
       setFilterRecords(response.data.advances);
+      setTotalPages(response.data.pagy.pages);
     } catch (error) {
       console.error("Error fetching current applications:", error);
     }
   };
 
-  console.log("response", records);
-
   useEffect(() => {
-    fetchAdvances();
-  }, []);
+    fetchAdvances(page);
+  }, [page]);
 
   const handleFilter = (event) => {
     const newData = filterRecords.filter((row) =>
-      row.name.toLowerCase().includes(event.target.value.toLowerCase())
+      row.user.email.toLowerCase().includes(event.target.value.toLowerCase())
     );
     setRecords(newData);
+  };
+
+  const handlePageChange = (page) => {
+    setPage(page);
   };
 
   return (
@@ -142,11 +147,18 @@ const RequestedAdvance = () => {
         </div>
       </div>
       <DataTable
-        columns={column}
+        columns={columns}
         data={records}
         customStyles={customStyles}
         pagination
-      ></DataTable>
+        paginationServer
+        paginationTotalRows={totalPages * 10}
+        paginationPerPage={10}
+        paginationComponentOptions={{
+          noRowsPerPage: true,
+        }}
+        onChangePage={handlePageChange}
+      />
     </div>
   );
 };
