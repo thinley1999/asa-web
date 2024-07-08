@@ -6,30 +6,13 @@ import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
-import SuccessMessage from "../general/SuccessMessage";
-import ErrorMessage from "../general/ErrorMessage";
 
-const OtherAdvance = ({ data }) => {
+const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState({});
-  // const [formData, setFormData] = useState({
-  //   firstName: " - ",
-  //   middleName: " - ",
-  //   lastName: "- ",
-  //   date: new Date().toISOString().slice(0, 10),
-  //   department: "IT Department",
-  //   designation: " ",
-  //   employeeID: " ",
-  //   advanceAmount: 0,
-  //   purpose: " ",
-  //   other_advance_type: "",
-  //   advance_type: "other_advance",
-  //   files: [],
-  // });
-
-  const initialFormData = {
+  const [formData, setFormData] = useState({
     firstName: " - ",
     middleName: " - ",
     lastName: "- ",
@@ -42,9 +25,7 @@ const OtherAdvance = ({ data }) => {
     other_advance_type: "",
     advance_type: "other_advance",
     files: [],
-  };
-
-  const [formData, setFormData] = useState(initialFormData);
+  });
 
   const handleFileChange = (event) => {
     const newFiles = Array.from(event.target.files);
@@ -129,30 +110,17 @@ const OtherAdvance = ({ data }) => {
             formData.files
           );
           if (fileResponse && fileResponse.status === 201) {
-            setSuccessMessage(
-              "Your application has been successfully subbmitted."
-            );
-            resetForm();
+            setSuccessMessage("Advance created successfully");
           } else {
             setErrorMessage("File creation failed");
           }
         } else {
-          setErrorMessage("Your application subbmission has been failedr");
+          setErrorMessage("Internal Server Error");
         }
       } catch (error) {
-        setErrorMessage("Error:", error.response?.data);
+        setErrorMessage(error.response?.data || "An error occurred");
       }
     }
-  };
-
-  const resetForm = () => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      advanceAmount: initialFormData.advanceAmount,
-      advance_type: initialFormData.advance_type,
-      purpose: initialFormData.purpose,
-      files: initialFormData.files,
-    }));
   };
 
   useEffect(() => {
@@ -170,31 +138,11 @@ const OtherAdvance = ({ data }) => {
     fetchUserDetails();
   }, []);
 
-  const handleCloseSuccessMessage = () => {
-    setSuccessMessage("");
-  };
-
-  const handleCloseErrorMessage = () => {
-    setErrorMessage("");
-  };
-
   console.log("formData ....", formData);
 
   return (
-    <form onSubmit={handleSubmit}>
-      {successMessage && (
-        <SuccessMessage
-          message={successMessage}
-          onClose={handleCloseSuccessMessage}
-        />
-      )}
-      {errorMessage && (
-        <ErrorMessage
-          message={errorMessage}
-          onClose={handleCloseErrorMessage}
-        />
-      )}
-      <div className="mb-3">
+    <div className="mb-3">
+      <form onSubmit={handleSubmit}>
         <div className="bg-white px-4 py-4">
           <div className="row w-100">
             <CustomInput
@@ -315,8 +263,30 @@ const OtherAdvance = ({ data }) => {
             </button>
           )}
         </div>
-      </div>
-    </form>
+      </form>
+      {showButtons && ( <div className="d-flex justify-content-center bg-white">
+          <div className="px-4 pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-success px-5"
+              onClick={handleDialogOpen}
+            >
+              Approve
+            </button>
+          </div>
+          <div className="pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-danger px-5"
+              onClick={handleDialogOpen}
+            >
+              Reject
+            </button>
+          </div>
+        </div>)}
+    </div>
   );
 };
 

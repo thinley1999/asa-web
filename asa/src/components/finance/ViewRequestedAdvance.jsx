@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "../../assets/css/main.css";
-import CustomInput from "../general/CustomInput";
 import { useParams } from "react-router-dom";
 import AdvanceServices from "../services/AdvanceServices";
 import SalaryAdvance from "../employee/SalaryAdvance";
 import InCountryTour from "../general/InCountryTour";
 import OutCountryTour from "../general/OutCountryTour";
 import OtherAdvance from "../employee/OtherAdvance";
+import DialogBox from "../general/DialogBox";
 
 const ViewRequestedAdvance = () => {
   const { id } = useParams();
   const [advanceData, setAdvanceData] = useState({});
+  const [showDialog, setShowDialog] = useState(false);
 
   const fetchAdvance = async () => {
     try {
@@ -22,37 +23,53 @@ const ViewRequestedAdvance = () => {
     }
   };
 
+  const handleDialogOpen = () => {
+    setShowDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setShowDialog(false);
+  };
+
+  const handleDialogSubmit = async (e) => {
+    setShowDialog(false);
+    const params = {
+      id: advanceData.id
+    }
+
+    try {
+      const response = await AdvanceServices.updateStatus(params)
+
+      if (response && response.status === 201) {
+        setSuccessMessage("Advance created successfully");
+      } else {
+        setErrorMessage("Internal Server Error");
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data || "An error occurred");
+    }
+  };
+
   useEffect(() => {
     fetchAdvance();
   }, []);
 
   return (
     <div className="bg-white">
-      {advanceData.advance_type === "salary_advance" && <SalaryAdvance data={advanceData} />}
-      {advanceData.advance_type === "in_country_tour_advance" && <InCountryTour data={advanceData} />}
-      {advanceData.advance_type === "other_advance" && <OtherAdvance data={advanceData} />}
-      {advanceData.advance_type === "out_country_tour_advance" && <OutCountryTour data={advanceData} />}
-      <div className="d-flex justify-content-center bg-white">
-          <div className="px-4 pb-3 text-center">
-            <button
-              name="approve"
-              type="button"
-              className="btn btn-success px-5"
-            >
-              Approve
-            </button>
-          </div>
-          <div className="pb-3 text-center">
-            <button
-              name="approve"
-              type="button"
-              className="btn btn-danger px-5"
-            >
-              Reject
-            </button>
-          </div>
-        </div>
-    </div>
+      {advanceData.advance_type === "salary_advance" && <SalaryAdvance data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen} />}
+      {advanceData.advance_type === "in_country_tour_advance" && <InCountryTour data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen}/>}
+      {advanceData.advance_type === "other_advance" && <OtherAdvance data={advanceData} showButtons={true} handleDialogOpen={handleDialogOpen} />}
+      {advanceData.advance_type === "out_country_tour_advance" && <OutCountryTour data={advanceData} showButtons={true}  handleDialogOpen={handleDialogOpen}/>}
+      {
+        showDialog && (
+          <DialogBox
+            isOpen={showDialog}
+            onClose={handleDialogClose}
+            onSubmit={handleDialogSubmit}
+          />
+        )
+      }
+    </div> 
   );
 };
 
