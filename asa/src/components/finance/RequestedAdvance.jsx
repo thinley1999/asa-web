@@ -10,8 +10,8 @@ const RequestedAdvance = () => {
   const customStyles = {
     headRow: {
       style: {
-        backgroundColor: "#F4F1F9",
-        color: "#928AA2",
+        backgroundColor: "#f4f2ff",
+        color: "#6e6893",
       },
     },
     headCells: {
@@ -123,14 +123,14 @@ const RequestedAdvance = () => {
       <div className="d-flex bg-white py-3 justify-content-center">
         <div className="filterdiv d-flex p-1 px-4">
           <span>
-            <FaFilter />
+            <FaFilter color="#6e6893" />
           </span>
           <span className="ms-2">Filter</span>
         </div>
         <div className="ms-2">
           <div className="input-group">
             <span className="input-group-text">
-              <FaSearch />
+              <FaSearch color="#6e6893" />
             </span>
             <input
               className="form-control"

@@ -3,7 +3,7 @@ import "../../assets/css/main.css";
 import profileImage from "../../assets/img/Thinley.jpeg";
 import AdvanceServices from "../services/AdvanceServices";
 import MyApplications from "../general/MyApplications";
-import { IoBagCheck } from "react-icons/io5";
+import { FaBusinessTime } from "react-icons/fa6";
 import LoginoutMessage from "../general/LoginoutMessage";
 
 const EmployeeApplications = () => {
@@ -96,7 +96,7 @@ const EmployeeApplications = () => {
             style={{ color: activeTab === "currentapplication" ? "blue" : "" }}
           >
             <span>
-              <IoBagCheck size={24} />
+              <FaBusinessTime size={24} />
             </span>
             <span> Current Application</span>
           </a>
@@ -117,7 +117,7 @@ const EmployeeApplications = () => {
             style={{ color: activeTab === "previousapplication" ? "blue" : "" }}
           >
             <span>
-              <IoBagCheck size={24} />
+              <FaBusinessTime size={24} />
             </span>
             <span> Previous Application</span>
           </a>
