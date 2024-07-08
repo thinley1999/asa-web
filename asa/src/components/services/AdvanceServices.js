@@ -152,7 +152,7 @@ const updateStatus = async (params) => {
       {
         id: params.id,
         status: params.status,
-        message: message,
+        message: params.message,
       },
       {
         headers: {
