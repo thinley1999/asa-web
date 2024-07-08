@@ -12,6 +12,7 @@ const ViewRequestedAdvance = () => {
   const { id } = useParams();
   const [advanceData, setAdvanceData] = useState({});
   const [showDialog, setShowDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
 
   const fetchAdvance = async () => {
     try {
@@ -23,7 +24,8 @@ const ViewRequestedAdvance = () => {
     }
   };
 
-  const handleDialogOpen = () => {
+  const handleDialogOpen = (message) => {
+    setDialogMessage(message);
     setShowDialog(true);
   };
 
@@ -31,22 +33,29 @@ const ViewRequestedAdvance = () => {
     setShowDialog(false);
   };
 
-  const handleDialogSubmit = async (e) => {
+  const handleDialogSubmit = async (message) => {
     setShowDialog(false);
     const params = {
-      id: advanceData.id
+      id: advanceData.id,
+      status: dialogMessage,
+      message: message,
     }
 
     try {
       const response = await AdvanceServices.updateStatus(params)
+      console.log("srtststts", response);
 
-      if (response && response.status === 201) {
-        setSuccessMessage("Advance created successfully");
+      if (response && response.status === 200) {
+        if (dialogMessage === "approved") {
+          setSuccessMessage("Advance approved successfully");
+        }else{
+          setSuccessMessage("Advance rejected successfully");
+        }
       } else {
         setErrorMessage("Internal Server Error");
       }
     } catch (error) {
-      setErrorMessage(error.response?.data || "An error occurred");
+      setErrorMessage("An error occurred");
     }
   };
 

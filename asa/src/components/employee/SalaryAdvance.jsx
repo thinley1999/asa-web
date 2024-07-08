@@ -7,7 +7,7 @@ import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
 import { formatDate } from "../utils/DateUtils";
 
-const SalaryAdvance = ({ data, showButons, handleDialogOpen }) => {
+const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
   const [user, setUser] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -311,14 +311,14 @@ const SalaryAdvance = ({ data, showButons, handleDialogOpen }) => {
           )}
         </div>
       </form>
-      {showButons && (
+      {showButtons && (
         <div className="d-flex justify-content-center bg-white">
           <div className="px-4 pb-3 text-center">
             <button
               name="approve"
               type="button"
               className="btn btn-success px-5"
-              onClick={handleDialogOpen}
+              onClick={() => handleDialogOpen("approved")}
             >
               Approve
             </button>
@@ -328,7 +328,7 @@ const SalaryAdvance = ({ data, showButons, handleDialogOpen }) => {
               name="approve"
               type="button"
               className="btn btn-danger px-5"
-              onClick={handleDialogOpen}
+              onClick={() => handleDialogOpen("rejected")}
             >
               Reject
             </button>
