@@ -13,7 +13,6 @@ export const PermissionsProvider = ({ children }) => {
     try {
       const response = await PermissionServices.get();
       setPermissions(response.data);
-      console.log('permissions response', response);
     } catch (error) {
       setError("Error fetching the permissions");
     }

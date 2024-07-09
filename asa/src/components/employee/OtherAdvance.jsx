@@ -139,6 +139,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
   }, []);
 
   console.log("formData ....", formData);
+  console.log("subii ....", showButtons);
 
   return (
     <div className="mb-3">
@@ -264,7 +265,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
           )}
         </div>
       </form>
-      {showButtons && ( <div className="d-flex justify-content-center bg-white">
+      {showButtons?.show && ( <div className="d-flex justify-content-center bg-white">
           <div className="px-4 pb-3 text-center">
             <button
               name="approve"
@@ -272,7 +273,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
               className="btn btn-success px-5"
               onClick={() => handleDialogOpen("approved")}
             >
-              Approve
+              {showButtons?.message}
             </button>
           </div>
           <div className="pb-3 text-center">

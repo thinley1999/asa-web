@@ -33,6 +33,8 @@ const FinanceDashboard = () => {
     },
   });
 
+  console.log("statusCount...", statusCount);
+
   const [monthlycount, setMonthlyCount] = useState([]);
 
   const [applicationDetails, setApplicationDetails] = useState([]);
@@ -285,8 +287,8 @@ const FinanceDashboard = () => {
               <h1 className="cardheading">
                 {statusCount &&
                 statusCount.status_count &&
-                statusCount.status_count.approved
-                  ? statusCount.status_count.approved
+                statusCount.status_count.confirmed
+                  ? statusCount.status_count.confirmed
                   : 0}
               </h1>
             </div>

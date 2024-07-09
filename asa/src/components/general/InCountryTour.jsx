@@ -425,7 +425,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
           </button>
         )}
       </div>
-      {showButtons && (
+      {showButtons?.show && (
          <div className="d-flex justify-content-center bg-white">
          <div className="px-4 pb-3 text-center">
            <button
@@ -434,7 +434,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
              className="btn btn-success px-5"
              onClick={() => handleDialogOpen("approved")}
            >
-             Approve
+             {showButtons?.message}
            </button>
          </div>
          <div className="pb-3 text-center">
