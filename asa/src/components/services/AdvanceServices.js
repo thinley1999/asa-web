@@ -24,6 +24,7 @@ const get = async (params) => {
         "advance[status][]": params.status,
         "advance[advance_type][]": params.advance_type,
         "advance[type]": params.type,
+        page: params.page,
       },
       headers: {
         Authorization: `${token}`,
@@ -55,13 +56,13 @@ const create = async (params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
-    const convertedArray = travel_itinerary.map(item => ({
+    const convertedArray = travel_itinerary.map((item) => ({
       start_date: item.startDate,
       end_date: item.endDate,
       from: item.from,
       to: item.to,
       mode: item.mode,
-      amount: parseFloat(item.rate) 
+      amount: parseFloat(item.rate),
     }));
 
     const response = await axios.post(

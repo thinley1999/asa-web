@@ -624,11 +624,20 @@ a {
   }
 }
 
-.my-dialog-box{
+.my-dialog-box {
   z-index: 100;
   position: fixed;
   top: 50%;
   left: 55%;
   padding: 20px;
   box-shadow: 1px 1px rgb(220, 217, 217);
+}
+
+/* approve dialog */
+.customdialog {
+  border-top: 10px solid #ffc800;
+}
+
+.btn-close {
+  color: white !important; /* Set text color to white */
 }

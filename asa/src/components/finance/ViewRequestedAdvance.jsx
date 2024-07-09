@@ -8,6 +8,8 @@ import OutCountryTour from "../general/OutCountryTour";
 import OtherAdvance from "../employee/OtherAdvance";
 import DialogBox from "../general/DialogBox";
 import { usePermissions } from "../../contexts/PermissionsContext";
+import SuccessMessage from "../general/SuccessMessage";
+import ErrorMessage from "../general/ErrorMessage";
 
 const ViewRequestedAdvance = () => {
   const { id } = useParams();
@@ -17,6 +19,8 @@ const ViewRequestedAdvance = () => {
   const [showButtons, setShowButtons] = useState({ message: " ", show: false });
   const { permissions } = usePermissions();
   const [advancePermission, setAdvancePermission] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const fetchAdvance = async () => {
     try {
@@ -60,9 +64,8 @@ const ViewRequestedAdvance = () => {
 
     try {
       const response = await AdvanceServices.updateStatus(params);
-      console.log("srtststts", response);
 
-      if (response && response.status === 200) {
+      if (response && Response.data == 200) {
         if (dialogMessage === "approved") {
           setSuccessMessage("Advance approved successfully");
         } else {
@@ -74,6 +77,14 @@ const ViewRequestedAdvance = () => {
     } catch (error) {
       setErrorMessage("An error occurred");
     }
+  };
+
+  const handleCloseSuccessMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const handleCloseErrorMessage = () => {
+    setErrorMessage("");
   };
 
   useEffect(() => {
@@ -97,6 +108,20 @@ const ViewRequestedAdvance = () => {
 
   return (
     <div className="bg-white">
+      {successMessage && (
+        <SuccessMessage
+          message={successMessage}
+          onClose={handleCloseSuccessMessage}
+        />
+      )}
+
+      {errorMessage && (
+        <ErrorMessage
+          message={errorMessage}
+          onClose={handleCloseErrorMessage}
+        />
+      )}
+
       {advanceData.advance_type === "salary_advance" && (
         <SalaryAdvance
           data={advanceData}
