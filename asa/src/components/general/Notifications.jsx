@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import cable from "../../cable";
-import moment from "moment"; 
+import moment from "moment";
 
-const Notifications = ({ toastRef, profileImage }) => {
+const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
   const [notifications, setNotifications] = useState([]);
   const token = localStorage.getItem("token");
 
@@ -17,8 +17,9 @@ const Notifications = ({ toastRef, profileImage }) => {
           console.log("Disconnected from NotificationsChannel");
         },
         received(data) {
-          if (!notifications.some(notification => notification.id === data.id)) {
+          if (!notifications.some((notification) => notification.id === data.id)) {
             setNotifications((prevNotifications) => [data, ...prevNotifications]);
+            handleNotificationCount((prevCount) => prevCount + 1); 
           }
         },
       }
@@ -27,9 +28,7 @@ const Notifications = ({ toastRef, profileImage }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [token, notifications]); 
-
-  console.log("notifications", notifications);
+  }, [token]); 
 
   const formatDate = (date) => {
     const now = moment();
@@ -39,6 +38,10 @@ const Notifications = ({ toastRef, profileImage }) => {
     }
     return notificationDate.format("MMM D, YYYY");
   };
+
+  useEffect(() => {
+    handleNotificationCount(notifications.length);
+  }, [notifications, handleNotificationCount]);
 
   return (
     <div
@@ -60,10 +63,12 @@ const Notifications = ({ toastRef, profileImage }) => {
       </div>
       <div className="toast-body bg-white">
         {notifications.map((notification, index) => (
-          <div key={notification.id}>
-            {index === 0 || formatDate(notifications[index - 1].created_at) !== formatDate(notification.created_at) ? (
-              <p className="textsubheading">{formatDate(notification.created_at)}</p>
-            ) : null}
+          <div key={index}>
+            {formatDate(notification.created_at) !== formatDate(notifications[0]?.created_at) && (
+              <p className="textsubheading">
+                {formatDate(notification.created_at)}
+              </p>
+            )}
             <div className="d-flex align-items-center mb-2">
               <img
                 src={profileImage}
@@ -72,8 +77,20 @@ const Notifications = ({ toastRef, profileImage }) => {
                 alt="Profile"
               />
               <div className="ms-3">
-                <p className="textsubheading">{notification.message}. Click here to see more.</p>
-                <small className="text-primary">{moment(notification.created_at).fromNow()}</small>
+                <p className="textsubheading">
+                  {notification.message}.
+                  <span>
+                    <a
+                      href={notification.detail_url}
+                      className="text-decoration-none"
+                    >
+                      Click here to see more.
+                    </a>
+                  </span>
+                </p>
+                <small className="text-primary">
+                  {moment(notification.created_at).fromNow()}
+                </small>
               </div>
             </div>
           </div>

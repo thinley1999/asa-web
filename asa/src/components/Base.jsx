@@ -11,6 +11,11 @@ const Base = () => {
   const toastRef = useRef(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isMobileSidebarVisible, setIsMobileSidebarVisible] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0); 
+
+  const updateNotificationCount = (newCount) => {
+    setNotificationCount(newCount);
+  };
 
   useEffect(() => {
     const toastEl = toastRef.current;
@@ -24,7 +29,6 @@ const Base = () => {
       btn.addEventListener("click", showToast);
     }
 
-    // Cleanup event listener on component unmount
     return () => {
       if (btn) {
         btn.removeEventListener("click", showToast);
@@ -61,6 +65,7 @@ const Base = () => {
             handleMobileSidebarToggle={handleMobileSidebarToggle}
             profileImage={profileImage}
             isSidebarVisible={isSidebarVisible}
+            notificationCount={notificationCount} 
           />
         </div>
 
@@ -84,7 +89,7 @@ const Base = () => {
         className="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
         style={{ zIndex: 1055 }}
       >
-        <Notifications toastRef={toastRef} profileImage={profileImage} />
+        <Notifications toastRef={toastRef} profileImage={profileImage} handleNotificationCount={updateNotificationCount}/>
       </div>
     </div>
   );
