@@ -1,6 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import cable from "../../cable";
+import moment from "moment"; 
 
 const Notifications = ({ toastRef, profileImage }) => {
+  const [notifications, setNotifications] = useState([]);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const subscription = cable.subscriptions.create(
+      { channel: "NotificationsChannel", token: token },
+      {
+        connected() {
+          console.log("Connected to NotificationsChannel");
+        },
+        disconnected() {
+          console.log("Disconnected from NotificationsChannel");
+        },
+        received(data) {
+          if (!notifications.some(notification => notification.id === data.id)) {
+            setNotifications((prevNotifications) => [data, ...prevNotifications]);
+          }
+        },
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [token, notifications]); 
+
+  console.log("notifications", notifications);
+
+  const formatDate = (date) => {
+    const now = moment();
+    const notificationDate = moment(date);
+    if (now.isSame(notificationDate, "day")) {
+      return "Today";
+    }
+    return notificationDate.format("MMM D, YYYY");
+  };
+
   return (
     <div
       className="toast"
@@ -11,7 +50,7 @@ const Notifications = ({ toastRef, profileImage }) => {
     >
       <div className="toast-header">
         <h6 className="me-auto text-primary">Notifications</h6>
-        <a href="">Mark all as read</a>
+        <a href="#">Mark all as read</a>
         <button
           type="button"
           className="btn-close"
@@ -20,39 +59,25 @@ const Notifications = ({ toastRef, profileImage }) => {
         ></button>
       </div>
       <div className="toast-body bg-white">
-        <p className="textsubheading">Today</p>
-
-        <div className="d-flex align-items-center">
-          <img
-            src={profileImage}
-            className="rounded-circle me-2"
-            style={{ width: "6vh", height: "6vh" }}
-            alt="Profile"
-          />
-          <div className="ms-3">
-            <p className="textsubheading">
-              Thinley Yoezer requested for salary advance. Click here to see
-              more.
-            </p>
-            <small className="text-primary">3 minutes ago</small>
+        {notifications.map((notification, index) => (
+          <div key={notification.id}>
+            {index === 0 || formatDate(notifications[index - 1].created_at) !== formatDate(notification.created_at) ? (
+              <p className="textsubheading">{formatDate(notification.created_at)}</p>
+            ) : null}
+            <div className="d-flex align-items-center mb-2">
+              <img
+                src={profileImage}
+                className="rounded-circle me-2"
+                style={{ width: "6vh", height: "6vh" }}
+                alt="Profile"
+              />
+              <div className="ms-3">
+                <p className="textsubheading">{notification.message}. Click here to see more.</p>
+                <small className="text-primary">{moment(notification.created_at).fromNow()}</small>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div className="d-flex align-items-center">
-          <img
-            src={profileImage}
-            className="rounded-circle me-2"
-            style={{ width: "6vh", height: "6vh" }}
-            alt="Profile"
-          />
-          <div className="ms-3">
-            <p className="textsubheading">
-              Thinley Yoezer requested for salary advance. Click here to see
-              more.
-            </p>
-            <small className="text-primary">5 minutes ago</small>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
