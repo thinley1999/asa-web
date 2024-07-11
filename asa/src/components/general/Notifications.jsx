@@ -43,6 +43,21 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
     handleNotificationCount(notifications.length);
   }, [notifications, handleNotificationCount]);
 
+  // Function to group notifications by date
+  const groupNotificationsByDate = (notifications) => {
+    const grouped = {};
+    notifications.forEach((notification) => {
+      const date = formatDate(notification.created_at);
+      if (!grouped[date]) {
+        grouped[date] = [];
+      }
+      grouped[date].push(notification);
+    });
+    return grouped;
+  };
+
+  const groupedNotifications = groupNotificationsByDate(notifications);
+
   return (
     <div
       className="toast"
@@ -50,7 +65,7 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
-      style={{ display: "none" }}
+      style={{ display: notifications.length > 0 ? "block" : "none" }}
       id="notification"
     >
       <div className="toast-header">
@@ -64,37 +79,40 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
         ></button>
       </div>
       <div className="toast-body bg-white">
-        {notifications.map((notification, index) => (
+        {Object.keys(groupedNotifications).map((date, index) => (
           <div key={index}>
-            {formatDate(notification.created_at) !== formatDate(notifications[0]?.created_at) && (
-              <p className="textsubheading">
-                {formatDate(notification.created_at)}
-              </p>
+            {date === "Today" && (
+              <p className="textsubheading">Today</p>
             )}
-            <div className="d-flex align-items-center mb-2">
-              <img
-                src={profileImage}
-                className="rounded-circle me-2"
-                style={{ width: "6vh", height: "6vh" }}
-                alt="Profile"
-              />
-              <div className="ms-3">
-                <p className="textsubheading">
-                  {notification.message}.
-                  <span>
-                    <a
-                      href={notification.detail_url}
-                      className="text-decoration-none"
-                    >
-                      Click here to see more.
-                    </a>
-                  </span>
-                </p>
-                <small className="text-primary">
-                  {moment(notification.created_at).fromNow()}
-                </small>
+            {date !== "Today" && (
+              <p className="textsubheading">{date}</p>
+            )}
+            {groupedNotifications[date].map((notification, index) => (
+              <div key={index} className="d-flex align-items-center mb-2">
+                <img
+                  src={profileImage}
+                  className="rounded-circle me-2"
+                  style={{ width: "6vh", height: "6vh" }}
+                  alt="Profile"
+                />
+                <div className="ms-3">
+                  <p className="textsubheading">
+                    {notification.message}.
+                    <span>
+                      <a
+                        href={notification.detail_url}
+                        className="text-decoration-none"
+                      >
+                        Click here to see more.
+                      </a>
+                    </span>
+                  </p>
+                  <small className="text-primary">
+                    {moment(notification.created_at).fromNow()}
+                  </small>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         ))}
       </div>
