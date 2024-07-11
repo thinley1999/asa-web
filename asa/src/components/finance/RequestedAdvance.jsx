@@ -122,6 +122,7 @@ const RequestedAdvance = () => {
       advance_type: all_advances,
       page: pageNum,
       per_page: perPage,
+      search_query: searchTerm,
     };
 
     try {
@@ -136,14 +137,10 @@ const RequestedAdvance = () => {
 
   useEffect(() => {
     fetchAdvances(page, rowsPerPage);
-  }, [page, all_status, all_advances, rowsPerPage]);
+  }, [page, all_status, all_advances, rowsPerPage, searchTerm]);
 
   const handleFilter = (event) => {
     setSearchTerm(event.target.value);
-    const newData = filterRecords.filter((row) =>
-      row.user.email.toLowerCase().includes(event.target.value.toLowerCase())
-    );
-    setRecords(newData);
   };
 
   const handlePageChange = (page) => {

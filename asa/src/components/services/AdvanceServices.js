@@ -24,7 +24,7 @@ const get = async (params) => {
         "advance[status][]": params.status,
         "advance[advance_type][]": params.advance_type,
         "advance[type]": params.type,
-        "advance[query]": "emp",
+        "advance[query]": params.search_query,
         page: params.page,
         per_page: params.per_page,
       },
