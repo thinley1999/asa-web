@@ -65,7 +65,7 @@ const ViewRequestedAdvance = () => {
     try {
       const response = await AdvanceServices.updateStatus(params);
 
-      if (response && Response.data == 200) {
+      if (response) {
         if (dialogMessage === "approved") {
           setSuccessMessage("Advance approved successfully");
         } else {

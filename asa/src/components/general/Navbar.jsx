@@ -10,6 +10,7 @@ const Navbar = ({
   handleMobileSidebarToggle,
   profileImage,
   isSidebarVisible,
+  notificationCount
 }) => {
   const location = useLocation();
   const currentPath = location.pathname;
@@ -99,7 +100,7 @@ const Navbar = ({
             >
               <CiBellOn color="blue" size={24} />
             </button>
-            <span className="badge">5</span>
+            <span className="badge">{notificationCount}</span>
           </span>
 
           <img
