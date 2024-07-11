@@ -47,6 +47,9 @@ const Navbar = ({
     }
   };
 
+  const handleClick = () => {
+    document.getElementById("notification").style.display = null;
+  };
   return (
     <nav
       className={`navbar navbar-expand-md fixed-top bg-white ${
@@ -92,6 +95,7 @@ const Navbar = ({
               className="btn"
               style={{ background: "#90c8ed" }}
               id="showToastBtn"
+              onClick={handleClick}
             >
               <CiBellOn color="blue" size={24} />
             </button>

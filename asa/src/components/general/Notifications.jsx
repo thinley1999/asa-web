@@ -8,6 +8,8 @@ const Notifications = ({ toastRef, profileImage }) => {
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
+      style={{ display: "none" }}
+      id="notification"
     >
       <div className="toast-header">
         <h6 className="me-auto text-primary">Notifications</h6>

@@ -183,7 +183,7 @@ const RequestedAdvance = () => {
 
   return (
     <div className="mb-3">
-      <div className="d-flex bg-white py-3 justify-content-end">
+      <div className="d-flex bg-white py-3 justify-content-center">
         <button
           className="filterdiv d-flex p-1 px-4"
           onClick={handleButtonClick}
