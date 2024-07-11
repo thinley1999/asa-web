@@ -73,6 +73,13 @@ const RequestedAdvance = () => {
     },
   ];
 
+  const displayAdvanceTypes = {
+    ex_country_tour_advance: "Ex Country Tour Advance",
+    in_country_tour_advance: "In Country Tour Advance",
+    other_advance: "Other Advance",
+    salary_advance: "Salary Advance",
+  };
+
   const initialAdvanceState = {
     ex_country_tour_advance: true,
     in_country_tour_advance: true,
@@ -232,8 +239,7 @@ const RequestedAdvance = () => {
                         onChange={handleAdvancesChange}
                       />
                       <span className="text-black fw-bold ms-2">
-                        {advance_type.charAt(0).toUpperCase() +
-                          advance_type.slice(1)}
+                        {displayAdvanceTypes[advance_type]}
                       </span>
                     </div>
                   ))}
