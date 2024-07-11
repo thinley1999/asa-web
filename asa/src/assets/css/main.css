@@ -316,6 +316,11 @@ a:hoover {
   padding: 1rem;
 }
 
+.customfiltertoast {
+  z-index: 1060;
+  margin-top: 5rem;
+}
+
 /* employee dashboard */
 .tablist {
   background: white;
@@ -640,4 +645,9 @@ a {
 
 .btn-close {
   color: white !important; /* Set text color to white */
+}
+
+.customcheckbox {
+  width: 20px;
+  height: 20px;
 }
