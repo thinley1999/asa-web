@@ -9,7 +9,7 @@ const DialogBox = ({ isOpen, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(name);
-    setName(""); // Reset textarea input
+    setName("");
   };
 
   return (

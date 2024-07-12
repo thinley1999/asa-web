@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "../../assets/css/main.css";
 import CustomInput from "../general/CustomInput";
-import CustomFileInput from "../general/CustomFileInput"; // Import CustomFileInput
+import CustomFileInput from "../general/CustomFileInput";
 import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
+import SuccessMessage from "../general/SuccessMessage";
+import ErrorMessage from "../general/ErrorMessage";
 
-const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
+const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -138,11 +140,31 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
     fetchUserDetails();
   }, []);
 
+  const handleCloseSuccessMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const handleCloseErrorMessage = () => {
+    setErrorMessage("");
+  };
+
   console.log("formData ....", formData);
   console.log("subii ....", showButtons);
 
   return (
-    <div className="mb-3">
+    <div>
+      {successMessage && (
+        <SuccessMessage
+          message={successMessage}
+          onClose={handleCloseSuccessMessage}
+        />
+      )}
+      {errorMessage && (
+        <ErrorMessage
+          message={errorMessage}
+          onClose={handleCloseErrorMessage}
+        />
+      )}
       <form onSubmit={handleSubmit}>
         <div className="bg-white px-4 py-4">
           <div className="row w-100">
@@ -223,6 +245,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
                 <option>Select Advance Type</option>
                 <option value="medical_advance">Medical Advance</option>
                 <option value="study_advance">Study Advance</option>
+                <option value="offical_advance">Offical Advance</option>
               </select>
               {formErrors.other_advance_type && (
                 <div className="invalid-feedback" style={{ display: "block" }}>
@@ -265,7 +288,8 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
           )}
         </div>
       </form>
-      {showButtons?.show && ( <div className="d-flex justify-content-center bg-white">
+      {showButtons?.show && (
+        <div className="d-flex justify-content-center bg-white mb-3">
           <div className="px-4 pb-3 text-center">
             <button
               name="approve"
@@ -286,7 +310,8 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen}) => {
               Reject
             </button>
           </div>
-        </div>)}
+        </div>
+      )}
     </div>
   );
 };

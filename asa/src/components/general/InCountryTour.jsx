@@ -16,19 +16,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState([]);
-  // const [formData, setFormData] = useState({
-  //   firstName: " - ",
-  //   middleName: " - ",
-  //   lastName: " - ",
-  //   date: new Date().toISOString().slice(0, 10),
-  //   department: "IT Department",
-  //   designation: " ",
-  //   advanceAmount: 0,
-  //   purpose: " ",
-  //   remark: " ",
-  //   advance_type: "in_country_tour_advance",
-  //   files: [],
-  // });
   const initialFormData = {
     firstName: " - ",
     middleName: " - ",
@@ -39,7 +26,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     advanceAmount: 0,
     purpose: " ",
     remark: " ",
-    advance_type: "ex_country_tour_advance",
+    advance_type: "in_country_tour_advance",
     files: [],
   };
 
@@ -237,6 +224,8 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
         setErrorMessage("Error:", error);
       }
     }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const resetForm = () => {
@@ -426,28 +415,28 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
         )}
       </div>
       {showButtons?.show && (
-         <div className="d-flex justify-content-center bg-white">
-         <div className="px-4 pb-3 text-center">
-           <button
-             name="approve"
-             type="button"
-             className="btn btn-success px-5"
-             onClick={() => handleDialogOpen("approved")}
-           >
-             {showButtons?.message}
-           </button>
-         </div>
-         <div className="pb-3 text-center">
-           <button
-             name="approve"
-             type="button"
-             className="btn btn-danger px-5"
-             onClick={() => handleDialogOpen("rejected")}
-           >
-             Reject
-           </button>
-         </div>
-       </div>
+        <div className="d-flex justify-content-center bg-white">
+          <div className="px-4 pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-success px-5"
+              onClick={() => handleDialogOpen("approved")}
+            >
+              {showButtons?.message}
+            </button>
+          </div>
+          <div className="pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-danger px-5"
+              onClick={() => handleDialogOpen("rejected")}
+            >
+              Reject
+            </button>
+          </div>
+        </div>
       )}
     </form>
   );

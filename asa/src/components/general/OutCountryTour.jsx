@@ -11,7 +11,12 @@ import CustomFileInput from "./CustomFileInput";
 import SuccessMessage from "./SuccessMessage";
 import ErrorMessage from "./ErrorMessage";
 
-const OutCountryTour = ({ data, setActiveTab }) => {
+const OutCountryTour = ({
+  data,
+  setActiveTab,
+  showButtons,
+  handleDialogOpen,
+}) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -224,6 +229,8 @@ const OutCountryTour = ({ data, setActiveTab }) => {
         setErrorMessage("Error:", error.response?.data);
       }
     }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const resetForm = () => {
@@ -412,6 +419,30 @@ const OutCountryTour = ({ data, setActiveTab }) => {
           </button>
         )}
       </div>
+      {showButtons?.show && (
+        <div className="d-flex justify-content-center bg-white">
+          <div className="px-4 pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-success px-5"
+              onClick={() => handleDialogOpen("approved")}
+            >
+              {showButtons?.message}
+            </button>
+          </div>
+          <div className="pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-danger px-5"
+              onClick={() => handleDialogOpen("rejected")}
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      )}
     </form>
   );
 };

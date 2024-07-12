@@ -183,7 +183,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
   }, [formData.advanceAmount, formData.duration]);
 
   return (
-    <div className="mb-3 ">
+    <div>
       {successMessage && (
         <SuccessMessage
           message={successMessage}
@@ -312,7 +312,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
         </div>
       </form>
       {showButtons?.show && (
-        <div className="d-flex justify-content-center bg-white">
+        <div className="d-flex justify-content-center bg-white mb-3">
           <div className="px-4 pb-3 text-center">
             <button
               name="approve"

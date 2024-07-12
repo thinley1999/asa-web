@@ -32,18 +32,27 @@ const ViewRequestedAdvance = () => {
     }
   };
 
-  const handleShowButtons=()=>{
-    if(advanceData.status ==="pending" && advancePermission?.actions?.verify){
+  const handleShowButtons = () => {
+    if (
+      advanceData.status === "pending" &&
+      advancePermission?.actions?.verify
+    ) {
       setShowButtons({ message: "Approve", show: true });
     }
-    if (advanceData.status === "verified" && advancePermission?.actions?.confirm) {
+    if (
+      advanceData.status === "verified" &&
+      advancePermission?.actions?.confirm
+    ) {
       setShowButtons({ message: "Confirm", show: true });
     }
 
-    if (advanceData.status === "confirmed" && advancePermission?.actions?.dispatch) {  
+    if (
+      advanceData.status === "confirmed" &&
+      advancePermission?.actions?.dispatch
+    ) {
       setShowButtons({ message: "Dispatch Fund", show: true });
     }
-  }
+  };
 
   const handleDialogOpen = (message) => {
     setDialogMessage(message);
@@ -71,12 +80,14 @@ const ViewRequestedAdvance = () => {
         } else {
           setSuccessMessage("Advance rejected successfully");
         }
+        setShowButtons({ message: "", show: false });
       } else {
         setErrorMessage("Internal Server Error");
       }
     } catch (error) {
       setErrorMessage("An error occurred");
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleCloseSuccessMessage = () => {
@@ -107,7 +118,7 @@ const ViewRequestedAdvance = () => {
   console.log("advance permission...", advancePermission);
 
   return (
-    <div className="bg-white">
+    <div>
       {successMessage && (
         <SuccessMessage
           message={successMessage}
@@ -122,41 +133,43 @@ const ViewRequestedAdvance = () => {
         />
       )}
 
-      {advanceData.advance_type === "salary_advance" && (
-        <SalaryAdvance
-          data={advanceData}
-          showButtons={showButtons}
-          handleDialogOpen={handleDialogOpen}
-        />
-      )}
-      {advanceData.advance_type === "in_country_tour_advance" && (
-        <InCountryTour
-          data={advanceData}
-          showButtons={showButtons}
-          handleDialogOpen={handleDialogOpen}
-        />
-      )}
-      {advanceData.advance_type === "other_advance" && (
-        <OtherAdvance
-          data={advanceData}
-          showButtons={showButtons}
-          handleDialogOpen={handleDialogOpen}
-        />
-      )}
-      {advanceData.advance_type === "out_country_tour_advance" && (
-        <OutCountryTour
-          data={advanceData}
-          showButtons={showButtons}
-          handleDialogOpen={handleDialogOpen}
-        />
-      )}
-      {showDialog && (
-        <DialogBox
-          isOpen={showDialog}
-          onClose={handleDialogClose}
-          onSubmit={handleDialogSubmit}
-        />
-      )}
+      <div className="bg-white">
+        {advanceData.advance_type === "salary_advance" && (
+          <SalaryAdvance
+            data={advanceData}
+            showButtons={showButtons}
+            handleDialogOpen={handleDialogOpen}
+          />
+        )}
+        {advanceData.advance_type === "in_country_tour_advance" && (
+          <InCountryTour
+            data={advanceData}
+            showButtons={showButtons}
+            handleDialogOpen={handleDialogOpen}
+          />
+        )}
+        {advanceData.advance_type === "other_advance" && (
+          <OtherAdvance
+            data={advanceData}
+            showButtons={showButtons}
+            handleDialogOpen={handleDialogOpen}
+          />
+        )}
+        {advanceData.advance_type === "ex_country_tour_advance" && (
+          <OutCountryTour
+            data={advanceData}
+            showButtons={showButtons}
+            handleDialogOpen={handleDialogOpen}
+          />
+        )}
+        {showDialog && (
+          <DialogBox
+            isOpen={showDialog}
+            onClose={handleDialogClose}
+            onSubmit={handleDialogSubmit}
+          />
+        )}
+      </div>
     </div>
   );
 };
