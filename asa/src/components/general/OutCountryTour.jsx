@@ -103,6 +103,11 @@ const OutCountryTour = ({
       ...prevFormData,
       files: [...prevFormData.files, ...newFiles],
     }));
+
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      file_error: "",
+    }));
   };
 
   const removeFile = (indexToRemove) => {
@@ -150,6 +155,11 @@ const OutCountryTour = ({
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
+    }));
+
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
     }));
   };
 

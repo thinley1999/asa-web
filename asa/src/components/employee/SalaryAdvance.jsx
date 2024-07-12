@@ -116,6 +116,26 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
       ...prevFormData,
       [name]: value,
     }));
+
+    setFormErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (name === "advanceAmount") {
+        if (value > 0 && value <= formData.thresholdAmount) {
+          delete newErrors.advanceAmount;
+        }
+      }
+      if (name === "duration") {
+        if (value > 0 && value < 10) {
+          delete newErrors.duration;
+        }
+      }
+      if (name === "purpose") {
+        if (value.trim()) {
+          delete newErrors.purpose;
+        }
+      }
+      return newErrors;
+    });
   };
 
   const validateForm = () => {

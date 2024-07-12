@@ -14,7 +14,8 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState({});
-  const [formData, setFormData] = useState({
+
+  const initialFormData = {
     firstName: " - ",
     middleName: " - ",
     lastName: "- ",
@@ -27,7 +28,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
     other_advance_type: "",
     advance_type: "other_advance",
     files: [],
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const handleFileChange = (event) => {
     const newFiles = Array.from(event.target.files);
@@ -36,13 +39,36 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
       ...prevFormData,
       files: [...prevFormData.files, ...newFiles],
     }));
+
+    setFormErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (newFiles.length > 0) {
+        delete newErrors.file_error;
+      }
+      return newErrors;
+    });
   };
 
   const removeFile = (indexToRemove) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      files: prevFormData.files.filter((_, index) => index !== indexToRemove),
-    }));
+    setFormData((prevFormData) => {
+      const updatedFiles = prevFormData.files.filter(
+        (_, index) => index !== indexToRemove
+      );
+      return {
+        ...prevFormData,
+        files: updatedFiles,
+      };
+    });
+
+    setFormErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (formData.files.length <= 1) {
+        newErrors.file_error = "Please upload relevant documents.";
+      } else {
+        delete newErrors.file_error;
+      }
+      return newErrors;
+    });
   };
 
   const fetchUserDetails = async () => {
@@ -79,6 +105,26 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
       ...prevFormData,
       [name]: value,
     }));
+
+    setFormErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (name === "advanceAmount") {
+        if (value > 0) {
+          delete newErrors.advanceAmount;
+        }
+      }
+      if (name === "other_advance_type") {
+        if (value.trim()) {
+          delete newErrors.other_advance_type;
+        }
+      }
+      if (name === "purpose") {
+        if (value.trim()) {
+          delete newErrors.purpose;
+        }
+      }
+      return newErrors;
+    });
   };
 
   const validateForm = () => {
@@ -113,6 +159,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
           );
           if (fileResponse && fileResponse.status === 201) {
             setSuccessMessage("Advance created successfully");
+            resetForm();
           } else {
             setErrorMessage("File creation failed");
           }
@@ -123,6 +170,16 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
         setErrorMessage(error.response?.data || "An error occurred");
       }
     }
+  };
+
+  const resetForm = () => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      advanceAmount: initialFormData.advanceAmount,
+      advance_type: initialFormData.advance_type,
+      files: initialFormData.files,
+      purpose: initialFormData.purpose,
+    }));
   };
 
   useEffect(() => {
