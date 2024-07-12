@@ -10,7 +10,7 @@ const Navbar = ({
   handleMobileSidebarToggle,
   profileImage,
   isSidebarVisible,
-  notificationCount
+  notificationCount,
 }) => {
   const location = useLocation();
   const currentPath = location.pathname;
@@ -49,7 +49,7 @@ const Navbar = ({
   };
 
   const handleClick = () => {
-    document.getElementById("notification").style.display = null;
+    document.getElementById("notification").style.display = none;
   };
   return (
     <nav

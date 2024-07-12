@@ -17,9 +17,14 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
           console.log("Disconnected from NotificationsChannel");
         },
         received(data) {
-          if (!notifications.some((notification) => notification.id === data.id)) {
-            setNotifications((prevNotifications) => [data, ...prevNotifications]);
-            handleNotificationCount((prevCount) => prevCount + 1); 
+          if (
+            !notifications.some((notification) => notification.id === data.id)
+          ) {
+            setNotifications((prevNotifications) => [
+              data,
+              ...prevNotifications,
+            ]);
+            handleNotificationCount((prevCount) => prevCount + 1);
           }
         },
       }
@@ -28,7 +33,7 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [token]); 
+  }, [token]);
 
   const formatDate = (date) => {
     const now = moment();
@@ -65,7 +70,7 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
-      style={{ display: notifications.length > 0 ? "block" : "none" }}
+      style={{ display: "none" }}
       id="notification"
     >
       <div className="toast-header">
@@ -81,12 +86,8 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
       <div className="toast-body bg-white">
         {Object.keys(groupedNotifications).map((date, index) => (
           <div key={index}>
-            {date === "Today" && (
-              <p className="textsubheading">Today</p>
-            )}
-            {date !== "Today" && (
-              <p className="textsubheading">{date}</p>
-            )}
+            {date === "Today" && <p className="textsubheading">Today</p>}
+            {date !== "Today" && <p className="textsubheading">{date}</p>}
             {groupedNotifications[date].map((notification, index) => (
               <div key={index} className="d-flex align-items-center mb-2">
                 <img
