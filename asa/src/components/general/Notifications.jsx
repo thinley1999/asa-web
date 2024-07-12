@@ -70,6 +70,7 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
       role="alert"
       aria-live="assertive"
       aria-atomic="true"
+      style={{ display: notifications.length > 0 ? "block" : "none" }}
       id="notification"
     >
       <div className="toast-header">
