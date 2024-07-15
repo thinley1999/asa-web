@@ -307,15 +307,6 @@ a:hoover {
   text-decoration: none;
 }
 
-.toast-container {
-  z-index: 1055;
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 1rem;
-}
-
 .customfiltertoast {
   z-index: 1060;
   margin-top: 5rem;
@@ -651,3 +642,41 @@ a {
   width: 20px;
   height: 20px;
 }
+
+
+.toast-container {
+  z-index: 1055;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem;
+}
+
+.notifications-container{
+  display: flex;
+  flex-direction: column;
+  width: 28vw;
+  background-color: white;
+  padding: 10px 10px;
+  box-shadow: 2px 2px 2px rgb(199, 196, 196);
+}
+
+.notifications-header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notifications-right{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.notifications-buttom{
+  font-size: 13px;
+  justify-self: baseline;
+}
+

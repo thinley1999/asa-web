@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import cable from "../../cable";
 import moment from "moment";
+import { MdClose } from "react-icons/md";
 
-const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
+const Notifications = ({ profileImage, handleNotificationCount, closeNotification }) => {
   const [notifications, setNotifications] = useState([]);
   const token = localStorage.getItem("token");
 
@@ -64,26 +65,16 @@ const Notifications = ({ toastRef, profileImage, handleNotificationCount }) => {
   const groupedNotifications = groupNotificationsByDate(notifications);
 
   return (
-    <div
-      className="toast"
-      ref={toastRef}
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-      style={{ display: notifications.length > 0 ? "block" : "none" }}
-      id="notification"
-    >
-      <div className="toast-header">
-        <h6 className="me-auto text-primary">Notifications</h6>
-        <a href="#">Mark all as read</a>
-        <button
-          type="button"
-          className="btn-close"
-          data-bs-dismiss="toast"
-          aria-label="Close"
-        ></button>
+    <div className="notifications-container">
+      <div className="notifications-header">
+        <span className="notifications-left text-primary">Notifications</span>
+        <div className="notifications-right">
+          <span className="notifications-buttom">Mark all as read</span>
+          <MdClose size={25} onClick={closeNotification}/>
+        </div>
       </div>
-      <div className="toast-body bg-white">
+      <hr />
+      <div className="bg-white">
         {Object.keys(groupedNotifications).map((date, index) => (
           <div key={index}>
             {date === "Today" && <p className="textsubheading">Today</p>}
