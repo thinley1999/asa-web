@@ -21,8 +21,6 @@ const Base = () => {
     setShowNotification(!showNotification);
   };
 
-  console.log("showNotification", showNotification);
-
   const handleSidebarToggle = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
@@ -75,8 +73,8 @@ const Base = () => {
       {/* Toast element */}
       {showNotification && (
         <div
-        className="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
-        style={{ zIndex: 1055 }}
+          className="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
+          style={{ zIndex: 1055 }}
         >
           <Notifications
             profileImage={profileImage}
