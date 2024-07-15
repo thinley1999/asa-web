@@ -9,7 +9,7 @@ import SideBar2 from "./general/SideBar2";
 const Base = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isMobileSidebarVisible, setIsMobileSidebarVisible] = useState(false);
-  const [showNotification, setShowNotification] = useState(true);
+  const [showNotification, setShowNotification] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
 
   const updateNotificationCount = (newCount) => {
