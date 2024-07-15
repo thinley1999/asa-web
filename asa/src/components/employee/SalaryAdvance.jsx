@@ -147,8 +147,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
       errors.advanceAmount =
         "Advance amount should be more than 0 and less than the threshold amount.";
     }
-    if (formData.duration <= 0 || formData.duration >= 10) {
-      errors.duration = "Duration should be more than 0 and less than 10.";
+    if (formData.duration <= 0 || formData.duration >= 11) {
+      errors.duration = "Duration should be more than 0 and less than 11.";
     }
     if (!formData.purpose.trim()) {
       errors.purpose = "Purpose is required.";
