@@ -643,7 +643,6 @@ a {
   height: 20px;
 }
 
-
 .toast-container {
   z-index: 1055;
   position: fixed;
@@ -653,7 +652,7 @@ a {
   padding: 1rem;
 }
 
-.notifications-container{
+.notifications-container {
   display: flex;
   flex-direction: column;
   width: 28vw;
@@ -662,21 +661,29 @@ a {
   box-shadow: 2px 2px 2px rgb(199, 196, 196);
 }
 
-.notifications-header{
+.notifications-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
 
-.notifications-right{
+.notifications-right {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-.notifications-buttom{
+.notifications-buttom {
   font-size: 13px;
   justify-self: baseline;
 }
 
+.toast-body {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.textsubheading {
+  margin: 0;
+}
