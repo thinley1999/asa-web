@@ -71,18 +71,18 @@ const Base = () => {
       </div>
 
       {/* Toast element */}
-      {showNotification && (
-        <div
-          className="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
-          style={{ zIndex: 1055 }}
-        >
-          <Notifications
-            profileImage={profileImage}
-            handleNotificationCount={updateNotificationCount}
-            closeNotification={toggleShowNotification}
-          />
-        </div>
-      )}
+
+      <div
+        className="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
+        style={{ zIndex: 1055 }}
+      >
+        <Notifications
+          profileImage={profileImage}
+          handleNotificationCount={updateNotificationCount}
+          closeNotification={toggleShowNotification}
+          showNotification={showNotification}
+        />
+      </div>
     </div>
   );
 };
