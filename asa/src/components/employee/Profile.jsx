@@ -78,7 +78,9 @@ const Profile = () => {
 
           <div className="d-flex justify-content-center align-items-center mt-5">
             <div className="stats">
-              <h5 className="mb-0">{user.name}</h5>
+              <h5 className="mb-0">
+                {user.first_name} {user.middle_name} {user.last_name}
+              </h5>
               <p className="p-0 m-0">EID: {user.username}</p>
               {user.grade && (
                 <p className="p-0 m-0">{user.grade.position_title}</p>
@@ -92,7 +94,9 @@ const Profile = () => {
             <h5>Basic Details</h5>
             <div className="mt-2">
               <p className="p-0 m-0 detailhead">Name</p>
-              <p className="p-0 m-0 detailtail">{user.name}</p>
+              <p className="p-0 m-0 detailtail">
+                {user.first_name} {user.middle_name} {user.last_name}
+              </p>
             </div>
 
             <div className="mt-2">

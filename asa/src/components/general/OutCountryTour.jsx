@@ -255,18 +255,14 @@ const OutCountryTour = ({
   };
 
   const updateFormDataWithUserName = (user) => {
-    const { firstName, middleName, lastName } = processUserName(
-      formData,
-      user.name
-    );
     setFormData((prevFormData) => ({
       ...prevFormData,
-      firstName: firstName || prevFormData.firstName,
-      middleName: middleName || prevFormData.middleName,
-      lastName: lastName || prevFormData.lastName,
+      firstName: user.first_name || prevFormData.firstName,
+      middleName: user.middle_name || prevFormData.middleName,
+      lastName: user.last_name || prevFormData.lastName,
       employeeID: user.username || prevFormData.employeeID,
-      designation: user.grade.position_title || prevFormData.designation,
-      department: user.department || prevFormData.department,
+      department: user.department_name || prevFormData.department,
+      designation: user.position_title || prevFormData.designation,
     }));
   };
 
