@@ -26,10 +26,6 @@ const AdvanceDetail = () => {
     fetchApplication();
   }, [id]);
 
-  useEffect(() => {
-    console.log("advanceData:", advanceData);
-  }, [advanceData]);
-
   if (fetchError) {
     return <div>Error: {fetchError}</div>;
   }
