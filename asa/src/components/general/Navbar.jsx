@@ -109,7 +109,7 @@ const Navbar = ({
           />
           <div>
             <a className="profilelink text-decoration-none" href="/profile">
-              <p className="username">{user.name}</p>
+              <p className="username">{user.first_name} {user.middle_name} {user.last_name}</p>
               {user.role && <p className="userrole">{user.role.name}</p>}
             </a>
           </div>

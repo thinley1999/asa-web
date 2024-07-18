@@ -43,7 +43,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
         middleName: middleName || " - ",
         lastName: lastName || "- ",
         date: formatDate(data.created_at) || " -",
-        department: data.department || "IT Department",
+        department: data.department || " - ",
         designation: data.grade.position_title || " ",
         advanceAmount: data.amount || 0,
         thresholdAmount: data.grade.basic_pay * 2 || " ",
@@ -69,14 +69,14 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
   };
 
   const updateFormDataWithUserName = (user) => {
-    const { firstName, middleName, lastName } = processUserName(user.name);
     setFormData((prevFormData) => ({
       ...prevFormData,
-      firstName: firstName || prevFormData.firstName,
-      middleName: middleName || prevFormData.middleName,
-      lastName: lastName || prevFormData.lastName,
-      designation: user.grade.position_title || prevFormData.designation,
-      thresholdAmount: user.grade.basic_pay * 2 || prevFormData.thresholdAmount,
+      firstName: user.first_name || prevFormData.firstName,
+      middleName: user.middle_name || prevFormData.middleName,
+      lastName: user.last_name || prevFormData.lastName,
+      designation: user.position_title || prevFormData.designation,
+      thresholdAmount: user.basic_pay * 2 || prevFormData.thresholdAmount,
+      department: user.department_name || prevFormData.department,
     }));
   };
 
@@ -216,7 +216,6 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
           onClose={handleCloseErrorMessage}
         />
       )}
-
       <form onSubmit={handleSubmit}>
         <div className="bg-white px-4 py-4">
           <div className="row w-100 ">
