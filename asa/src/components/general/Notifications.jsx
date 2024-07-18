@@ -6,6 +6,7 @@ const Notifications = ({
   profileImage,
   handleNotificationCount,
   closeNotification,
+  showNotification,
 }) => {
   const [notifications, setNotifications] = useState([]);
   const token = localStorage.getItem("token");
@@ -69,60 +70,62 @@ const Notifications = ({
   const groupedNotifications = groupNotificationsByDate(notifications);
 
   return (
-    <div
-      className="toast show"
-      ref={toastRef}
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-      style={{ display: notifications.length > 0 ? "block" : "none" }}
-      id="notification"
-    >
-      <div className="toast-header">
-        <h6 className="me-auto text-primary">Notifications</h6>
-        <a href="#">Mark all as read</a>
-        <button
-          type="button"
-          className="btn-close"
-          onClick={closeNotification}
-          aria-label="Close"
-        ></button>
-      </div>
-      <div className="toast-body bg-white">
-        {Object.keys(groupedNotifications).map((date, index) => (
-          <div key={index}>
-            {date === "Today" && <p className="textsubheading">Today</p>}
-            {date !== "Today" && <p className="textsubheading">{date}</p>}
-            {groupedNotifications[date].map((notification, index) => (
-              <div key={index} className="d-flex align-items-center mb-2">
-                <img
-                  src={profileImage}
-                  className="rounded-circle me-2"
-                  style={{ width: "6vh", height: "6vh" }}
-                  alt="Profile"
-                />
-                <div className="ms-3">
-                  <p className="textsubheading">
-                    {notification.message}.
-                    <span>
-                      <a
-                        href={notification.detail_url}
-                        className="text-decoration-none"
-                      >
-                        Click here to see more.
-                      </a>
-                    </span>
-                  </p>
-                  <small className="text-primary">
-                    {moment(notification.created_at).fromNow()}
-                  </small>
+    showNotification && (
+      <div
+        className="toast show"
+        ref={toastRef}
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        style={{ display: notifications.length > 0 ? "block" : "block" }}
+        id="notification"
+      >
+        <div className="toast-header">
+          <h6 className="me-auto text-primary">Notifications</h6>
+          <a href="#">Mark all as read</a>
+          <button
+            type="button"
+            className="btn-close"
+            onClick={closeNotification}
+            aria-label="Close"
+          ></button>
+        </div>
+        <div className="toast-body bg-white">
+          {Object.keys(groupedNotifications).map((date, index) => (
+            <div key={index}>
+              {date === "Today" && <p className="textsubheading">Today</p>}
+              {date !== "Today" && <p className="textsubheading">{date}</p>}
+              {groupedNotifications[date].map((notification, index) => (
+                <div key={index} className="d-flex align-items-center mb-2">
+                  <img
+                    src={profileImage}
+                    className="rounded-circle me-2"
+                    style={{ width: "6vh", height: "6vh" }}
+                    alt="Profile"
+                  />
+                  <div className="ms-3">
+                    <p className="textsubheading">
+                      {notification.message}.
+                      <span>
+                        <a
+                          href={notification.detail_url}
+                          className="text-decoration-none"
+                        >
+                          Click here to see more.
+                        </a>
+                      </span>
+                    </p>
+                    <small className="text-primary">
+                      {moment(notification.created_at).fromNow()}
+                    </small>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ))}
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    )
   );
 };
 
