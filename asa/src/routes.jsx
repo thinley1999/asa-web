@@ -14,6 +14,7 @@ import FinanceDashboard from "./components/finance/FinanceDashboard";
 import RequestedAdvance from "./components/finance/RequestedAdvance";
 import ViewRequestedAdvance from "./components/finance/ViewRequestedAdvance";
 import AdvanceDetail from "./components/general/AdvanceDetail";
+import DsaClaim from "./components/employee/DsaClaim";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -33,6 +34,7 @@ const routes = createBrowserRouter([
       { path: "financeDashboard", element: <FinanceDashboard /> },
       { path: "requestedAdvance", element: <RequestedAdvance /> },
       { path: "viewRequestedAdvance/:id", element: <ViewRequestedAdvance /> },
+      { path: "dsaClaim", element: <DsaClaim /> },
     ],
   },
 ]);
