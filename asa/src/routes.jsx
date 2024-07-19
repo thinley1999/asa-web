@@ -15,6 +15,7 @@ import RequestedAdvance from "./components/finance/RequestedAdvance";
 import ViewRequestedAdvance from "./components/finance/ViewRequestedAdvance";
 import AdvanceDetail from "./components/general/AdvanceDetail";
 import DsaClaim from "./components/employee/DsaClaim";
+import PageNotFound from "./components/general/PageNotFound";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -37,6 +38,7 @@ const routes = createBrowserRouter([
       { path: "dsaClaim", element: <DsaClaim /> },
     ],
   },
+  { path: "*", element: <PageNotFound /> },
 ]);
 
 export default routes;

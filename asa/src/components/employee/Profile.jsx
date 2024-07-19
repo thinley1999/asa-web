@@ -67,9 +67,10 @@ const Profile = () => {
             <div className="user text-center">
               <div className="profile">
                 <img
-                  src={profileImage}
+                  src={user?.profile_pic?.url}
                   className="rounded-circle"
                   width="100"
+                  height="100"
                   alt="Profile"
                 />
               </div>

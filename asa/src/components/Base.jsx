@@ -48,7 +48,6 @@ const Base = () => {
           <Navbar
             handleSidebarToggle={handleSidebarToggle}
             handleMobileSidebarToggle={handleMobileSidebarToggle}
-            profileImage={profileImage}
             isSidebarVisible={isSidebarVisible}
             notificationCount={notificationCount}
             showNotification={toggleShowNotification}

@@ -8,7 +8,6 @@ import { FaChevronDown } from "react-icons/fa";
 const Navbar = ({
   handleSidebarToggle,
   handleMobileSidebarToggle,
-  profileImage,
   isSidebarVisible,
   notificationCount,
   showNotification,
@@ -102,14 +101,16 @@ const Navbar = ({
           </span>
 
           <img
-            src={profileImage}
+            src={user?.profile_pic?.url}
             className="rounded-circle me-2"
-            style={{ width: "8vh" }}
+            style={{ width: "8vh", height: "8vh" }}
             alt="Profile"
           />
           <div>
             <a className="profilelink text-decoration-none" href="/profile">
-              <p className="username">{user.first_name} {user.middle_name} {user.last_name}</p>
+              <p className="username">
+                {user.first_name} {user.middle_name} {user.last_name}
+              </p>
               {user.role && <p className="userrole">{user.role.name}</p>}
             </a>
           </div>

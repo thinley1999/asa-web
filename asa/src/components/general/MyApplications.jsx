@@ -35,9 +35,9 @@ const MyApplications = ({
           >
             <div className="d-flex align-items-center py-1 col-lg-3 col-xl-3 col-md-4 col-6 bio">
               <img
-                src={profileImage}
+                src={application?.user?.profile_pic?.url}
                 className="rounded-circle me-2"
-                style={{ width: "8vh" }}
+                style={{ width: "8vh", height: "8vh" }}
                 alt="Profile"
               />
               <div>
