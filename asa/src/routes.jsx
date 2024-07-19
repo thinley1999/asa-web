@@ -16,6 +16,7 @@ import ViewRequestedAdvance from "./components/finance/ViewRequestedAdvance";
 import AdvanceDetail from "./components/general/AdvanceDetail";
 import DsaClaim from "./components/employee/DsaClaim";
 import PageNotFound from "./components/general/PageNotFound";
+import PrivateRoute from "./components/general/PrivateRoute";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -23,19 +24,71 @@ const routes = createBrowserRouter([
     path: "/",
     element: <Base />,
     children: [
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "profile", element: <Profile /> },
-      { path: "salaryAdvance", element: <SalaryAdvance /> },
-      { path: "otherAdvance", element: <OtherAdvance /> },
-      { path: "tourAdvance", element: <TourAdvance /> },
-      { path: "/advanceDetail/:id", element: <AdvanceDetail /> },
-      { path: "/myApplications", element: <EmployeeDashboard /> },
-      { path: "viewPerviousApplication", element: <ViewPreviousApplication /> },
-      { path: "viewApplication/:id", element: <ViewCurrentApplication /> },
-      { path: "financeDashboard", element: <FinanceDashboard /> },
-      { path: "requestedAdvance", element: <RequestedAdvance /> },
-      { path: "viewRequestedAdvance/:id", element: <ViewRequestedAdvance /> },
-      { path: "dsaClaim", element: <DsaClaim /> },
+      {
+        path: "dashboard",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <Dashboard /> }],
+      },
+      {
+        path: "profile",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <Profile /> }],
+      },
+      {
+        path: "salaryAdvance",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <SalaryAdvance /> }],
+      },
+      {
+        path: "otherAdvance",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <OtherAdvance /> }],
+      },
+      {
+        path: "tourAdvance",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <TourAdvance /> }],
+      },
+      {
+        path: "/advanceDetail/:id",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <AdvanceDetail /> }],
+      },
+      {
+        path: "/myApplications",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <EmployeeDashboard /> }],
+      },
+      {
+        path: "viewPerviousApplication",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <ViewPreviousApplication /> }],
+      },
+      {
+        path: "viewApplication/:id",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <ViewCurrentApplication /> }],
+      },
+      {
+        path: "financeDashboard",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <FinanceDashboard /> }],
+      },
+      {
+        path: "requestedAdvance",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <RequestedAdvance /> }],
+      },
+      {
+        path: "viewRequestedAdvance/:id",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <ViewRequestedAdvance /> }],
+      },
+      {
+        path: "dsaClaim",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <DsaClaim /> }],
+      },
     ],
   },
   { path: "*", element: <PageNotFound /> },
