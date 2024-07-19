@@ -36,12 +36,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
     if (data) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        firstName: data.first_name || " - ",
-        middleName: data.middle_name || " - ",
-        lastName: data.last_name || "- ",
         date: formatDate(data.created_at) || " -",
-        department: data.department || " - ",
-        designation: data.position_title || " ",
         advanceAmount: data.amount || 0,
         thresholdAmount: data.basic_pay * 2 || " ",
         duration: data.advance_detail.duration || 0,
@@ -55,13 +50,14 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await UserServices.showDetail();
+      const response = await UserServices.showDetail(data ? data.user.id : null);
+      
       if (response && response.status === 200) {
         setUser(response.data);
         updateFormDataWithUserName(response.data);
       }
     } catch (error) {
-      console.error("Error fetching current applications:", error);
+      console.error("Error fetching user details:", error);
     }
   };
 
