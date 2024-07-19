@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "../../assets/css/main.css";
-import profileImage from "../../assets/img/Thinley.jpeg";
 import UserServices from "../services/UserServices";
 import { FaCheck } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
+import { RxHamburgerMenu } from "react-icons/rx";
 
 const Profile = () => {
   const [user, setUser] = useState([]);
@@ -129,7 +129,7 @@ const Profile = () => {
         <div className="permissiondetails mt-2 mb-3 pb-3">
           <div className="px-2 py-2">
             <div className="d-flex">
-              <i className="bi bi-justify"></i>
+              <RxHamburgerMenu />
               <h5 className="px-2">Permissions</h5>
             </div>
             <p className="px-4">Here you can find your permissions</p>

@@ -3,7 +3,6 @@ import cable from "../../cable";
 import moment from "moment";
 
 const Notifications = ({
-  profileImage,
   handleNotificationCount,
   closeNotification,
   showNotification,
@@ -100,9 +99,9 @@ const Notifications = ({
               {groupedNotifications[date].map((notification, index) => (
                 <div key={index} className="d-flex align-items-center mb-2">
                   <img
-                    src={profileImage}
+                    src={notification?.sender?.url}
                     className="rounded-circle me-2"
-                    style={{ width: "6vh", height: "6vh" }}
+                    style={{ width: "8vh", height: "8vh" }}
                     alt="Profile"
                   />
                   <div className="ms-3">
