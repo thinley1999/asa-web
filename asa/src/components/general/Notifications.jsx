@@ -69,6 +69,8 @@ const Notifications = ({
 
   const groupedNotifications = groupNotificationsByDate(notifications);
 
+  console.log("notifications", notifications);
+
   return (
     showNotification && (
       <div
