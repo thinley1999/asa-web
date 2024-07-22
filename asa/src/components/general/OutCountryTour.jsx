@@ -12,6 +12,7 @@ import SuccessMessage from "./SuccessMessage";
 import ErrorMessage from "./ErrorMessage";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import TravelDetails from "./TravelDetails";
+import TravelDetailsTable from "./TravelDetailsTable";
 
 const OutCountryTour = ({
   data,
@@ -395,6 +396,7 @@ const OutCountryTour = ({
           {showDialog && (
             <TravelDetails isOpen={showDialog} onClose={handleDialogClose} />
           )}
+          <TravelDetailsTable />
           <CustomInput
             label="Total Amount"
             type="text"
