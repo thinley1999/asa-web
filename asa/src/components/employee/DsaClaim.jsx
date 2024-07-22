@@ -240,7 +240,7 @@ const DsaClaim = () => {
           />
         </div>
         <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label className="form-label">No. of Days Actual</label>
+          <label className="form-label">No. of Days</label>
           <input
             className="form-control"
             type="text"

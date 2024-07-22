@@ -10,12 +10,35 @@ import FileServices from "../services/FileServices";
 import CustomFileInput from "./CustomFileInput";
 import SuccessMessage from "./SuccessMessage";
 import ErrorMessage from "./ErrorMessage";
+import { FaPlus, FaTimes } from "react-icons/fa";
+import TravelDetails from "./TravelDetails";
 
 const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [claimChecked, setClaimChecked] = useState(true);
+  const [afterChecked, setAfterChecked] = useState(false);
+
+  const handleClaimChange = (e) => {
+    const isChecked = e.target.checked;
+    setClaimChecked(isChecked);
+
+    if (isChecked) {
+      setAfterChecked(false);
+    }
+  };
+
+  const handleAfterChange = (e) => {
+    const isChecked = e.target.checked;
+    setAfterChecked(isChecked);
+    if (isChecked) {
+      setClaimChecked(false);
+    }
+  };
+
   const initialFormData = {
     firstName: " - ",
     middleName: " - ",
@@ -160,7 +183,9 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await UserServices.showDetail(data ? data.user.id : null);
+      const response = await UserServices.showDetail(
+        data ? data.user.id : null
+      );
       if (response && response.status === 200) {
         setUser(response.data);
         updateFormDataWithUserName(response.data);
@@ -277,6 +302,10 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     setErrorMessage("");
   };
 
+  const handleDialogClose = () => {
+    setShowDialog(false);
+  };
+
   console.log("rows", rows);
   console.log("formdata", formData);
   console.log("trave.....", data);
@@ -364,17 +393,23 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
         </div>
       </div>
 
-      <TravelItinerary
-        rows={data ? data.travel_itinerary : rows}
-        addRow={addRow}
-        handleTravelItinerary={handleTravelItinerary}
-        removeRow={removeRow}
-        error={formErrors.travelItinerary}
-        data={data?.travel_itinerary}
-      />
-
       <div className="bg-white px-4">
         <div className="row w-100 ">
+          <div className="col-12 mb-3">
+            <label className="form-label">Travel Itinerary</label>
+            <div>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setShowDialog(true)}
+              >
+                <FaPlus size={18} />
+              </button>
+            </div>
+          </div>
+          {showDialog && (
+            <TravelDetails isOpen={showDialog} onClose={handleDialogClose} />
+          )}
           <CustomInput
             label="Total Amount"
             type="text"
@@ -384,20 +419,27 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
             onChange={handleChange}
           />
           <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-            <label className="form-label">Purpose of advance</label>
-            <textarea
-              className="form-control"
-              name="purpose"
-              rows="4"
-              disabled={data ? true : false}
-              value={data ? data.purpose : formData.purpose}
-              onChange={handleChange}
-            ></textarea>
-            {formErrors.purpose && (
-              <div className="invalid-feedback" style={{ display: "block" }}>
-                {formErrors.purpose}
-              </div>
-            )}
+            <label className="form-label">Claim Advance</label>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="claimAdvance"
+                checked={claimChecked}
+                onChange={handleClaimChange}
+              />
+              <label className="form-check-label">90% Advance</label>
+            </div>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="noAdvance"
+                checked={afterChecked}
+                onChange={handleAfterChange}
+              />
+              <label className="form-check-label">Claim DSA after tour</label>
+            </div>
           </div>
           <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
             <label className="form-label">Remarks</label>

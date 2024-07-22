@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import RateServices from "../services/RateServices";
+import TravelDetails from "./TravelDetails";
 
 const TravelItinerary = ({
   rows,
@@ -8,10 +9,11 @@ const TravelItinerary = ({
   handleTravelItinerary,
   removeRow,
   error,
-  data
+  data,
 }) => {
   const [from, setFrom] = useState([]);
   const [to, setTo] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
 
   const fetchCountry = async () => {
     try {
@@ -36,7 +38,13 @@ const TravelItinerary = ({
     fetchCountry();
   }, []);
 
-  console.log('data', data);
+  const handleDialogSubmit = async () => {};
+
+  const handleDialogClose = () => {
+    setShowDialog(false);
+  };
+
+  console.log("data", data);
 
   return (
     <div className="bg-white px-4">
@@ -47,10 +55,10 @@ const TravelItinerary = ({
             <label className="form-label">Start Date</label>
             <input
               className="form-control"
-              type="date"
+              type="datetime-local"
               name="startDate"
-              value={data ? row.start_date : row.startDate }
-              disabled = {data ? true: false}
+              value={data ? row.start_date : row.startDate}
+              disabled={data ? true : false}
               onChange={(e) =>
                 handleTravelItinerary(index, "startDate", e.target.value)
               }
@@ -60,10 +68,10 @@ const TravelItinerary = ({
             <label className="form-label">End Date</label>
             <input
               className="form-control"
-              type="date"
+              type="datetime-local"
               name="endDate"
-              disabled = {data ? true: false}
-              value={ data ? row.end_date : row.endDate}
+              disabled={data ? true : false}
+              value={data ? row.end_date : row.endDate}
               onChange={(e) =>
                 handleTravelItinerary(index, "endDate", e.target.value)
               }
@@ -75,7 +83,7 @@ const TravelItinerary = ({
               className="form-select"
               name="from"
               value={row.from}
-              disabled = {data ? true: false}
+              disabled={data ? true : false}
               onChange={(e) =>
                 handleTravelItinerary(index, "from", e.target.value)
               }
@@ -85,8 +93,8 @@ const TravelItinerary = ({
               </option>
               {from.map((location, index) => (
                 <option key={location} value={location}>
-                {location}
-              </option>
+                  {location}
+                </option>
               ))}
             </select>
           </div>
@@ -96,7 +104,7 @@ const TravelItinerary = ({
               className="form-select"
               name="to"
               value={row.to}
-              disabled = {data ? true: false}
+              disabled={data ? true : false}
               onChange={(e) =>
                 handleTravelItinerary(index, "to", e.target.value)
               }
@@ -106,8 +114,8 @@ const TravelItinerary = ({
               </option>
               {to.map((location, index) => (
                 <option key={location} value={location}>
-                {location}
-              </option>
+                  {location}
+                </option>
               ))}
             </select>
           </div>
@@ -116,7 +124,7 @@ const TravelItinerary = ({
             <select
               className="form-select"
               name="mode"
-              disabled = {data ? true: false}
+              disabled={data ? true : false}
               value={row.mode}
               onChange={(e) =>
                 handleTravelItinerary(index, "mode", e.target.value)
@@ -144,7 +152,7 @@ const TravelItinerary = ({
             <button
               type="button"
               className="btn btn-danger"
-              disabled = {data ? true: false}
+              disabled={data ? true : false}
               onClick={() => removeRow(index)}
             >
               <FaTimes size={18} />
@@ -157,9 +165,16 @@ const TravelItinerary = ({
           {error}
         </div>
       )}
-      <button type="button" className="btn btn-primary" onClick={addRow} disabled = {data ? true: false}>
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={() => setShowDialog(true)}
+      >
         <FaPlus size={18} />
       </button>
+      {showDialog && (
+        <TravelDetails isOpen={showDialog} onClose={handleDialogClose} />
+      )}
     </div>
   );
 };
