@@ -44,7 +44,7 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
         style={{ maxWidth: "900px" }}
       >
         <div className="modal-content">
-          <div className="modal-header">
+          <div className="modal-header" style={{ borderTop: "5px solid blue" }}>
             <h5 className="modal-title">Travel Details</h5>
             <button
               type="button"
@@ -100,7 +100,7 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                   <option value="Airplane">Airplane</option>
                   <option value="Train">Train</option>
                   <option value="Private Vehicle">Private Vehicle</option>
-                  <option value="Other Vehicle">Other Vehicle</option>
+                  <option value="Pool Vehicle">Pool Vehicle</option>
                 </select>
               </div>
               <CustomInput
@@ -154,6 +154,17 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                 </select>
               </div>
               <CustomInput label="DSA Amount" type="text" name="days" />
+            </div>
+            <div className="d-flex justify-content-end mt-3">
+              <button
+                type="button"
+                className="btn btn-secondary me-4 mb-2 mybtn"
+              >
+                Clear
+              </button>
+              <button type="button" className="btn btn-primary me-4 mb-2 mybtn">
+                Save
+              </button>
             </div>
           </div>
         </div>
