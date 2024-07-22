@@ -18,11 +18,11 @@ const getUserPermission = async () => {
   }
 };
 
-const showDetail = async () => {
+const showDetail = async (id) => {
   const token = localStorage.getItem("token");
-  const id = localStorage.getItem("id");
+  const user_id = id ? id : localStorage.getItem("id");
   try {
-    const response = await axios.get(`${API_URL}/api/users/${id}`, {
+    const response = await axios.get(`${API_URL}/api/users/${user_id}`, {
       headers: {
         Authorization: `${token}`,
       },

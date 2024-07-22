@@ -165,7 +165,7 @@ const OutCountryTour = ({
 
   const fetchUserDetails = async () => {
     try {
-      const response = await UserServices.showDetail();
+      const response = await UserServices.showDetail(data ? data.user.id : null);
       if (response && response.status === 200) {
         setUser(response.data);
         updateFormDataWithUserName(response.data);
