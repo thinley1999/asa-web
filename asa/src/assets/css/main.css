@@ -410,6 +410,20 @@ a:hoover {
   background: white;
 }
 
+.myinfordiv {
+  background: #e7f4ff;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.mybutton {
+  width: 100%;
+  background: #199bcc;
+  color: white;
+  text-decoration: none;
+  border-radius: 0;
+}
+
 /* tour advance */
 
 .form-label {
