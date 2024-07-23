@@ -30,6 +30,8 @@ const Navbar = ({
         return "Other Advance";
       case "/tourAdvance":
         return "Tour Advance";
+      case "/dsaClaim":
+        return "DSA Claim";
       case "/requestedAdvance":
         return "Requested Advance";
       default:
