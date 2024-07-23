@@ -85,9 +85,12 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     return { isValid: false, errors: newErrors };
   };
 
-  const fetchRate = async (from, to, dsaPercentage, days) => {
+  const fetchRate = async (from, to, dsaPercentage, days, mode) => {
     try {
-      const response = await RateServices.getRate(from, to);
+      if (mode === "Private Vehicle") {
+        return dsaPercentage * 16;
+      }
+      const response = await RateServices.getRate(from, to, mode);
       if (response) {
         const rate = dsaPercentage * days * response.rate;
         return rate; 
@@ -103,8 +106,8 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     setErrors(errors);
     if (isValid) {
       try {
-        const { dsa_percentage, days } = data;
-        const rate = await fetchRate("Bhutan", "Bhutan", dsa_percentage, days);
+        const { dsa_percentage, days, mode } = data;
+        const rate = await fetchRate("Bhutan", "Bhutan", dsa_percentage, days, mode);
         setData((prevData) => ({ ...prevData, rate: rate }));
         onSave({ ...data, rate }); 
         onClose();
@@ -224,7 +227,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                 )}
               </div>
               <CustomInput
-                label={"Mileage"}
+                label={"Mileage(Km)"}
                 name="mileage"
                 type="number"
                 isDisable={data.mode !== "Private Vehicle"}
