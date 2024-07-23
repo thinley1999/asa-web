@@ -1,14 +1,15 @@
 import React from "react";
 import DataTable from "react-data-table-component";
 import { MdModeEditOutline } from "react-icons/md";
-import { IoMdClose } from "react-icons/io";
+import { RiDeleteBinLine } from "react-icons/ri";
 
-const TravelDetailsTable = () => {
+const TravelDetailsTable = ({ data, removeRow, editRow }) => {
   const customStyles = {
     headRow: {
       style: {
         backgroundColor: "#f4f2ff",
         color: "#6e6893",
+        borderBottom: "2px solid #ccc",
       },
     },
     headCells: {
@@ -18,18 +19,23 @@ const TravelDetailsTable = () => {
         textTransform: "uppercase",
       },
     },
+    rows: {
+      style: {
+        borderBottom: "1px solid #ddd",
+      },
+    },
   };
 
   const columns = [
     {
       name: "Start Date",
       sortable: true,
-      selector: (row) => row.fromDate,
+      selector: (row) => row.startDate,
     },
     {
       name: "End Date",
       sortable: true,
-      selector: (row) => row.toDate,
+      selector: (row) => row.endDate,
     },
     {
       name: "From",
@@ -40,35 +46,36 @@ const TravelDetailsTable = () => {
       selector: (row) => row.to,
     },
     {
+      name: "Mode",
+      selector: (row) => row.mode,
+    },
+    {
       name: "DSA Amount",
-      selector: (row) => row.dsaAmount,
+      selector: (row) => row.dsa_percentage,
     },
     {
       name: "Action",
-      selector: (row) => row.action,
-    },
-  ];
-
-  const data = [
-    {
-      id: 1,
-      fromDate: "07/17/2024 10:07 AM",
-      toDate: "07/17/2024 10:07 PM",
-      from: "Bhutan",
-      to: "Bhutan",
-      dsaAmount: "2000",
-      action: (
+      cell: (row) => (
         <div className="tabledetails">
-          <button type="button" className="btn btn-success ms-2">
+          <button
+            type="button"
+            className="btn btn-success ms-2"
+            onClick={() => editRow(row)}
+          >
             <MdModeEditOutline size={18} />
           </button>
-          <button type="button" className="btn btn-danger ms-2">
-            <IoMdClose size={18} />
+          <button
+            type="button"
+            className="btn btn-danger ms-2"
+            onClick={() => removeRow(row.id)}
+          >
+            <RiDeleteBinLine size={18} />
           </button>
         </div>
       ),
     },
   ];
+
   return (
     <div className="row w-100 mb-3">
       <DataTable columns={columns} data={data} customStyles={customStyles} />

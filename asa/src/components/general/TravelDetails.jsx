@@ -1,41 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomInput from "./CustomInput";
+import { dzongkhags } from "../../components/datas/dzongkhag_lists";
+import RateServices from "../services/RateServices";
 
-const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
+const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
   const [haltChecked, setHaltChecked] = useState(true);
   const [returnChecked, setReturnChecked] = useState(false);
-  const [mode, setMode] = useState(true);
+  const [mode, setMode] = useState("");
+
+  const [data, setData] = useState(
+    initialData || {
+      startDate: "",
+      endDate: "",
+      from: "",
+      to: "",
+      mode: "",
+      mileage: "",
+      rate: "",
+      halt_at: "",
+      dsa_percentage: "",
+      days: "",
+    }
+  );
+
+  useEffect(() => {
+    if (initialData) {
+      setData(initialData);
+    }
+  }, [initialData]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSubmit = () => {
+    onSave(data);
+    onClose();
+  };
 
   if (!isOpen) return null;
-
-  const validateForm = () => {
-    let errors = {};
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
-  const handleHaltChange = (e) => {
-    const isChecked = e.target.checked;
-    setHaltChecked(isChecked);
-
-    if (isChecked) {
-      setReturnChecked(false);
-    }
-  };
-
-  const handleReturnChange = (e) => {
-    const isChecked = e.target.checked;
-    setReturnChecked(isChecked);
-    if (isChecked) {
-      setHaltChecked(false);
-    }
-  };
-
-  const handleModeChange = (e) => {
-    setMode(e.target.value);
-  };
 
   return (
     <div className="modal fade show" tabIndex="-1" style={{ display: "block" }}>
@@ -61,6 +65,8 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                   className="form-control"
                   type="datetime-local"
                   name="startDate"
+                  value={data.startDate}
+                  onChange={handleChange}
                 />
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
@@ -69,22 +75,44 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                   className="form-control"
                   type="datetime-local"
                   name="endDate"
+                  value={data.endDate}
+                  onChange={handleChange}
                 />
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">From</label>
-                <select className="form-select" name="from">
+                <select
+                  className="form-select"
+                  name="from"
+                  value={data.from}
+                  onChange={handleChange}
+                >
                   <option value="" disabled>
                     Select From
                   </option>
+                  {dzongkhags.map((dzongkhag, index) => (
+                    <option key={index} value={dzongkhag}>
+                      {dzongkhag}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">To</label>
-                <select className="form-select" name="to">
+                <select
+                  className="form-select"
+                  name="to"
+                  value={data.to}
+                  onChange={handleChange}
+                >
                   <option value="" disabled>
                     Select To
                   </option>
+                  {dzongkhags.map((dzongkhag, index) => (
+                    <option key={index} value={dzongkhag}>
+                      {dzongkhag}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
@@ -92,7 +120,11 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                 <select
                   className="form-select"
                   name="mode"
-                  onChange={handleModeChange}
+                  value={data.mode}
+                  onChange={(e) => {
+                    handleChange(e);
+                    setMode(e.target.value);
+                  }}
                 >
                   <option value="" disabled>
                     Select mode
@@ -107,9 +139,17 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                 label={"Mileage"}
                 name="mileage"
                 type="number"
-                isDisable={mode !== "Private Vehicle"}
+                isDisable={data.mode !== "Private Vehicle"}
+                value={data.mileage}
+                onChange={handleChange}
               />
-              <CustomInput label="Rate(Nu)" type="text" name="rate" />
+              <CustomInput
+                label="Number of days"
+                type="number"
+                name="days"
+                value={data.days}
+                onChange={handleChange}
+              />
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label></label>
                 <div className="form-check">
@@ -118,7 +158,11 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                     type="checkbox"
                     name="halt"
                     checked={haltChecked}
-                    onChange={handleHaltChange}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setHaltChecked(e.target.checked);
+                      if (e.target.checked) setReturnChecked(false);
+                    }}
                   />
                   <label className="form-check-label">Halt?</label>
                 </div>
@@ -128,7 +172,11 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                     type="checkbox"
                     name="return"
                     checked={returnChecked}
-                    onChange={handleReturnChange}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setReturnChecked(e.target.checked);
+                      if (e.target.checked) setHaltChecked(false);
+                    }}
                   />
                   <label className="form-check-label">
                     Return on the same day?
@@ -140,29 +188,38 @@ const TravelDetails = ({ isOpen, onClose, onSubmit }) => {
                 <input
                   type="text"
                   className="form-control"
-                  name="haltAt"
+                  name="halt_at"
+                  value={data.halt_at}
+                  onChange={handleChange}
                   disabled={returnChecked}
                 />
               </div>
               <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-                <label className="form-label">
-                  DSA Percent <span className="reqspan">*</span>
-                </label>
-                <select className="form-select" name="dsaPercent">
+                <label className="form-label">DSA Percent</label>
+                <select
+                  className="form-select"
+                  name="dsa_percentage"
+                  value={data.dsa_percentage}
+                  onChange={handleChange}
+                >
                   <option value="100">100</option>
                   <option value="50">50</option>
                 </select>
               </div>
-              <CustomInput label="DSA Amount" type="text" name="days" />
             </div>
             <div className="d-flex justify-content-end mt-3">
               <button
                 type="button"
-                className="btn btn-secondary me-4 mb-2 mybtn"
+                className="btn btn-secondary me-4 mb-2"
+                onClick={() => setData(initialData)}
               >
                 Clear
               </button>
-              <button type="button" className="btn btn-primary me-4 mb-2 mybtn">
+              <button
+                type="button"
+                className="btn btn-primary me-4 mb-2"
+                onClick={handleSubmit}
+              >
                 Save
               </button>
             </div>
