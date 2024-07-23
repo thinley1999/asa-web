@@ -11,6 +11,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { FaFileInvoiceDollar } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
+import { TbReportSearch } from "react-icons/tb";
 
 const SideBar2 = ({ handleCloseSidebar }) => {
   const location = useLocation();
@@ -79,6 +80,12 @@ const SideBar2 = ({ handleCloseSidebar }) => {
               icon: <FaFileInvoiceDollar size={24} />,
               label: "Requested Advance",
               value: 6,
+            },
+            {
+              path: "/reports",
+              icon: <TbReportSearch size={24} />,
+              label: "Reports",
+              value: 7,
             },
           ];
 
