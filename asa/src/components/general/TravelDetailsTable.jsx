@@ -51,7 +51,7 @@ const TravelDetailsTable = ({ data, removeRow, editRow }) => {
     },
     {
       name: "DSA Amount",
-      selector: (row) => row.dsa_percentage,
+      selector: (row) => row.rate,
     },
     {
       name: "Action",

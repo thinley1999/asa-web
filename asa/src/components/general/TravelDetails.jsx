@@ -4,7 +4,7 @@ import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
 
 const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
-  const [haltChecked, setHaltChecked] = useState(true);
+  const [haltChecked, setHaltChecked] = useState(false);
   const [returnChecked, setReturnChecked] = useState(false);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
@@ -42,7 +42,6 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     const { name, value } = e.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
 
-    // Validation for date fields
     if (name === "startDate" || name === "endDate") {
       const { startDate, endDate } = { ...data, [name]: value };
       if (startDate && endDate) {
@@ -86,12 +85,32 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     return { isValid: false, errors: newErrors };
   };
 
-  const handleSubmit = () => {
+  const fetchRate = async (from, to, dsaPercentage, days) => {
+    try {
+      const response = await RateServices.getRate(from, to);
+      if (response) {
+        const rate = dsaPercentage * days * response.rate;
+        return rate; 
+      }
+    } catch (error) {
+      console.error("Error fetching rates:", error);
+      throw error;
+    }
+  };
+  
+  const handleSubmit = async () => {
     const { isValid, errors } = validateData();
     setErrors(errors);
     if (isValid) {
-      onSave(data);
-      onClose();
+      try {
+        const { dsa_percentage, days } = data;
+        const rate = await fetchRate("Bhutan", "Bhutan", dsa_percentage, days);
+        setData((prevData) => ({ ...prevData, rate: rate }));
+        onSave({ ...data, rate }); 
+        onClose();
+      } catch (error) {
+        console.error("Error while submitting:", error);
+      }
     }
   };
 
@@ -259,6 +278,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                 <select
                   className={`form-select ${errors.halt_at ? "is-invalid" : ""}`}
                   name="halt_at"
+                  disabled={haltChecked ? false : true}
                   value={data.halt_at}
                   onChange={(e) => {
                     handleChange(e);
@@ -293,8 +313,8 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                   <option value="" disabled>
                     Select Percentage
                   </option>
-                  <option value="100">100%</option>
-                  <option value="50">50%</option>
+                  <option value="1">100%</option>
+                  <option value="0.5">50%</option>
                 </select>
                 {errors.dsa_percentage && <div className="text-danger">{errors.dsa_percentage}</div>}
               </div>
