@@ -30,12 +30,12 @@ const TravelDetailsTable = ({ data, removeRow, editRow }) => {
     {
       name: "Start Date",
       sortable: true,
-      selector: (row) => row.startDate,
+      selector: (row) => row.start_date,
     },
     {
       name: "End Date",
       sortable: true,
-      selector: (row) => row.endDate,
+      selector: (row) => row.end_date,
     },
     {
       name: "From",

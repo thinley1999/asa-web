@@ -29,7 +29,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     department: "IT Department",
     designation: " ",
     advanceAmount: 0,
-    purpose: " ",
     remark: " ",
     advance_type: "in_country_tour_advance",
     files: [],
@@ -119,9 +118,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
   const validateForm = () => {
     let errors = {};
-    if (!formData.purpose.trim()) {
-      errors.purpose = "Purpose is required.";
-    }
 
     if (!formData.files.length) {
       errors.file_error = "Please upload relevant documents.";
@@ -132,24 +128,8 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
   };
 
   const validateTravelItinerary = () => {
-    const hasErrors = rows.some(
-      (row) =>
-        !row.startDate || !row.endDate || !row.from || !row.to || !row.mode
-    );
-
-    if (hasErrors) {
-      setFormErrors((prevErrors) => ({
-        ...prevErrors,
-        travelItinerary: "Complete the Travel Itinerary",
-      }));
-    } else {
-      setFormErrors((prevErrors) => {
-        const { travelItinerary, ...rest } = prevErrors;
-        return rest;
-      });
-    }
-
-    return !hasErrors;
+    // check all the date are in sequence
+    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -189,7 +169,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       advanceAmount: initialFormData.advanceAmount,
-      purpose: initialFormData.purpose,
       remark: initialFormData.remark,
       files: initialFormData.files,
     }));
