@@ -17,6 +17,7 @@ import AdvanceDetail from "./components/general/AdvanceDetail";
 import DsaClaim from "./components/employee/DsaClaim";
 import PageNotFound from "./components/general/PageNotFound";
 import PrivateRoute from "./components/general/PrivateRoute";
+import Reports from "./components/finance/Reports";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -88,6 +89,11 @@ const routes = createBrowserRouter([
         path: "dsaClaim",
         element: <PrivateRoute />,
         children: [{ path: "", element: <DsaClaim /> }],
+      },
+      {
+        path: "reports",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <Reports /> }],
       },
     ],
   },

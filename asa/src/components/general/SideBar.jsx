@@ -11,6 +11,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { FaFileInvoiceDollar } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa";
 import { PiMoneyWavyFill } from "react-icons/pi";
+import { TbReportSearch } from "react-icons/tb";
 
 const SideBar = () => {
   const location = useLocation();
@@ -85,6 +86,12 @@ const SideBar = () => {
               icon: <FaFileInvoiceDollar size={24} />,
               label: "Requested Advance",
               value: 6,
+            },
+            {
+              path: "/reports",
+              icon: <TbReportSearch size={24} />,
+              label: "Reports",
+              value: 7,
             },
           ];
 
