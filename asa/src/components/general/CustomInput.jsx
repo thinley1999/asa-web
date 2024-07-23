@@ -16,7 +16,7 @@ const CustomInput = ({
         className={`form-control ${error ? "is-invalid" : ""}`}
         type={type}
         name={name}
-        value={value}
+        value={value || ""}
         disabled={isDisable ? true : false}
         onChange={onChange}
       />
