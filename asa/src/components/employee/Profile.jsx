@@ -165,10 +165,8 @@ const Profile = () => {
 
                 <div className="mt-2 mb-2">
                   <p className="p-0 m-0 detailhead">Role</p>
-                  {user.grade && (
-                    <p className="p-0 m-0 detailtail">
-                      {user.grade.position_title}
-                    </p>
+                  {user.role && (
+                    <p className="p-0 m-0 detailtail">{user.role.name}</p>
                   )}
                 </div>
               </div>

@@ -631,7 +631,7 @@ a {
 }
 
 .preview-btn {
-  border-radius: 10px;
+  border-radius: 0;
   color: white;
   padding-right: 5px !important;
   padding-left: 5px !important;
@@ -722,4 +722,26 @@ a {
 
 .mybtn {
   width: 20%;
+}
+
+.text-ellipsis {
+  display: inline-block;
+  max-width: 12ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.text-ellipsis:hover::after {
+  content: attr(data-full-text);
+  white-space: nowrap;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 2px 4px;
+  margin-left: 4px;
+  z-index: 1;
+  left: 18rem;
+  transform: translateY(-100%);
 }

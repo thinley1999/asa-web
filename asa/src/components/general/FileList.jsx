@@ -21,7 +21,11 @@ const FileList = ({ files }) => {
       {files.map((file, index) => (
         <div key={index} className="d-flex pb-2 align-items-center">
           <FaRegFilePdf fontSize={18} color="red" />
-          <p className="m-0 ms-2">{file.name}</p>
+          <p className="m-0 ms-2">
+            <span className="text-ellipsis" data-full-text={file.name}>
+              {file.name}
+            </span>
+          </p>
           <div className="ms-auto">
             <button
               type="button"
@@ -29,7 +33,7 @@ const FileList = ({ files }) => {
               onClick={() => handlePreview(file.url)}
             >
               <FaEye fontSize={12} />{" "}
-              <span style={{ fontSize: "12px" }}>Preview</span>
+              <span style={{ fontSize: "12px" }}>Preview </span>{" "}
             </button>
             <button
               type="button"
@@ -37,7 +41,7 @@ const FileList = ({ files }) => {
               onClick={() => handleDownload(file.url, file.name)}
             >
               <IoMdDownload fontSize={12} />{" "}
-              <span style={{ fontSize: "12px" }}>Download</span>
+              <span style={{ fontSize: "12px" }}>Download</span>{" "}
             </button>
           </div>
         </div>
