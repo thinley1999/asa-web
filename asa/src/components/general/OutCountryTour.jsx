@@ -349,7 +349,7 @@ const OutCountryTour = ({
                 type="checkbox"
                 name="advance_percentage"
                 value={90}
-                checked={formData.advance_percentage == 90 ? true: false}
+                checked={data?.advance_percentage == 90 || formData.advance_percentage == 90 ? true: false}
                 onChange={handleChange}
               />
               <label className="form-check-label">90% Advance</label>
@@ -359,7 +359,7 @@ const OutCountryTour = ({
                 className="form-check-input"
                 type="checkbox"
                 name="advance_percentage"
-                checked={formData.advance_percentage == 0 ? true: false}
+                checked={data?.advance_percentage == 0 || formData.advance_percentage == 0 ? true: false}
                 onChange={handleChange}
                 value={0}
               />

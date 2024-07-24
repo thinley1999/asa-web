@@ -341,7 +341,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
                 className="form-check-input"
                 type="checkbox"
                 name="advance_percentage"
-                checked={ data.advance_percentage == 90 || formData.advance_percentage == 90 ? true: false}
+                checked={ data?.advance_percentage == 90 || formData.advance_percentage == 90 ? true: false}
                 onChange={handleChange}
                 value={90}
                 disabled={data ? true: false}
@@ -353,7 +353,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
                 className="form-check-input"
                 type="checkbox"
                 name="advance_percentage"
-                checked={data.advance_percentage == 0 || formData.advance_percentage == 0 ? true: false}
+                checked={data?.advance_percentage == 0 || formData.advance_percentage == 0 ? true: false}
                 onChange={handleChange}
                 value={0}
                 disabled={data ? true: false}
