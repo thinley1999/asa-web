@@ -67,7 +67,16 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
   };
 
   const validateData = () => {
-    const { start_date, end_date, from, to, mode, mileage, halt_at, dsa_percentage} = data;
+    const {
+      start_date,
+      end_date,
+      from,
+      to,
+      mode,
+      mileage,
+      halt_at,
+      dsa_percentage,
+    } = data;
     const newErrors = {};
 
     if (!start_date) newErrors.start_date = "Start date is required";
@@ -75,7 +84,8 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
     if (!from) newErrors.from = "From location is required";
     if (!to) newErrors.to = "To location is required";
     if (!mode) newErrors.mode = "Mode of travel is required";
-    if (!dsa_percentage) newErrors.dsa_percentage = "DSA percentage is required";
+    if (!dsa_percentage)
+      newErrors.dsa_percentage = "DSA percentage is required";
 
     if (mode === "Private Vehicle" && !mileage) {
       newErrors.mileage = "Mileage is required for private vehicle";
@@ -100,23 +110,30 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
       const response = await RateServices.getRate(from, to, mode);
       if (response) {
         const rate = dsaPercentage * days * response.rate;
-        return rate; 
+        return rate;
       }
     } catch (error) {
       console.error("Error fetching rates:", error);
       throw error;
     }
   };
-  
+
   const handleSubmit = async () => {
     const { isValid, errors } = validateData();
     setErrors(errors);
     if (isValid) {
       try {
         const { dsa_percentage, days, mode, mileage } = data;
-        const rate = await fetchRate("Bhutan", "Bhutan", dsa_percentage, days, mode, mileage);
+        const rate = await fetchRate(
+          "Bhutan",
+          "Bhutan",
+          dsa_percentage,
+          days,
+          mode,
+          mileage
+        );
         setData((prevData) => ({ ...prevData, rate: rate }));
-        onSave({ ...data, rate }); 
+        onSave({ ...data, rate });
         onClose();
       } catch (error) {
         console.error("Error while submitting:", error);
@@ -153,7 +170,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">Start Date</label>
                 <input
-                  className={`form-control ${errors.start_date ? "is-invalid" : ""}`}
+                  className={`form-control ${
+                    errors.start_date ? "is-invalid" : ""
+                  }`}
                   type="datetime-local"
                   name="start_date"
                   value={existingData ? formatDateForInput(data.start_date) : data.start_date}
@@ -167,7 +186,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">End Date</label>
                 <input
-                  className={`form-control ${errors.end_date ? "is-invalid" : ""}`}
+                  className={`form-control ${
+                    errors.end_date ? "is-invalid" : ""
+                  }`}
                   type="datetime-local"
                   name="end_date"
                   value={existingData ? formatDateForInput(data.end_date) : data.end_date}
@@ -253,7 +274,7 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                 onChange={handleChange}
                 error={errors.mileage || ""}
               />
-             
+
               <CustomInput
                 label="Number of days"
                 type="number"
@@ -300,7 +321,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">Halt at</label>
                 <select
-                  className={`form-select ${errors.halt_at ? "is-invalid" : ""}`}
+                  className={`form-select ${
+                    errors.halt_at ? "is-invalid" : ""
+                  }`}
                   name="halt_at"
                   disabled={haltChecked ? false : true}
                   value={data.halt_at}
@@ -326,7 +349,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">DSA Percentage</label>
                 <select
-                  className={`form-select ${errors.dsa_percentage ? "is-invalid" : ""}`}
+                  className={`form-select ${
+                    errors.dsa_percentage ? "is-invalid" : ""
+                  }`}
                   name="dsa_percentage"
                   value={data.dsa_percentage}
                   disabled={existingData ? true : false}
@@ -341,7 +366,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   <option value="1">100%</option>
                   <option value="0.5">50%</option>
                 </select>
-                {errors.dsa_percentage && <div className="text-danger">{errors.dsa_percentage}</div>}
+                {errors.dsa_percentage && (
+                  <div className="text-danger">{errors.dsa_percentage}</div>
+                )}
               </div>
             </div>
           </div>

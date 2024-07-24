@@ -5,12 +5,15 @@ import Notifications from "./general/Notifications";
 import SideBar from "./general/SideBar";
 import Navbar from "./general/Navbar";
 import SideBar2 from "./general/SideBar2";
+import useZoomLevels from "./general/useZoomLevel";
 
 const Base = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isMobileSidebarVisible, setIsMobileSidebarVisible] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
+
+  const zoomLevel = useZoomLevels();
 
   const updateNotificationCount = (newCount) => {
     setNotificationCount(newCount);
@@ -54,7 +57,7 @@ const Base = () => {
           />
         </div>
 
-        <div className="px-2 pt-2 outlet">
+        <div className={`px-2 pt-2 outlet ${zoomLevel}`}>
           <Outlet />
         </div>
       </div>
@@ -70,7 +73,6 @@ const Base = () => {
       </div>
 
       {/* Toast element */}
-
       <div
         className="toast-container position-fixed top-0 start-50 translate-middle-x p-3"
         style={{ zIndex: 1055 }}

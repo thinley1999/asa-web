@@ -122,6 +122,14 @@ body {
   overflow-y: auto;
 }
 
+.outlet.zoomed-90 {
+  margin-top: 6.5rem;
+}
+
+.outlet.zoomed-50 {
+  margin-top: 5.5%;
+}
+
 @keyframes slideInFromLeft {
   0% {
     transform: translateX(-100%);
