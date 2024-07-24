@@ -106,9 +106,6 @@ const OutCountryTour = ({
 
   const validateForm = () => {
     let errors = {};
-    if (!formData.purpose.trim()) {
-      errors.purpose = "Purpose is required.";
-    }
 
     if (!formData.files.length) {
       errors.file_error = "Please upload relevant documents.";
