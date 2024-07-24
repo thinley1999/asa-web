@@ -2,8 +2,9 @@ import React from "react";
 import DataTable from "react-data-table-component";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { FaEye } from "react-icons/fa";
 
-const TravelDetailsTable = ({ data, removeRow, editRow }) => {
+const TravelDetailsTable = ({ existingData, data, removeRow, editRow }) => {
   const customStyles = {
     headRow: {
       style: {
@@ -55,30 +56,45 @@ const TravelDetailsTable = ({ data, removeRow, editRow }) => {
     },
     {
       name: "Action",
-      cell: (row) => (
-        <div className="tabledetails">
-          <button
-            type="button"
-            className="btn btn-success ms-2"
-            onClick={() => editRow(row)}
-          >
-            <MdModeEditOutline size={18} />
-          </button>
-          <button
-            type="button"
-            className="btn btn-danger ms-2"
-            onClick={() => removeRow(row.id)}
-          >
-            <RiDeleteBinLine size={18} />
-          </button>
-        </div>
-      ),
+      cell: (row) => {
+        return (
+          <div className="tabledetails">
+            {existingData ? (
+              <button
+                type="button"
+                className="btn btn-warning preview-btn p-0 ms-2 "
+                onClick={() => editRow(row)}
+              >
+                <FaEye size={16} /> { }
+                <span style={{ fontSize: "13px" }}>Preview</span>
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-success ms-2"
+                  onClick={() => editRow(row)}
+                >
+                  <MdModeEditOutline size={18} />
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger ms-2"
+                  onClick={() => removeRow(row.id)}
+                >
+                  <RiDeleteBinLine size={18} />
+                </button>
+              </>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
   return (
     <div className="row w-100 mb-3">
-      <DataTable columns={columns} data={data} customStyles={customStyles} />
+      <DataTable columns={columns} data={existingData ? existingData : data} customStyles={customStyles} />
     </div>
   );
 };

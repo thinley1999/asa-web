@@ -320,6 +320,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
           </div>
           {showDialog && (
             <TravelDetails
+              existingData={ data ? data.travel_itinerary : null}
               isOpen={showDialog}
               onClose={handleDialogClose}
               onSave={handleTravelItinerary}
@@ -327,6 +328,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
             />
           )}
           <TravelDetailsTable
+            existingData={ data ? data.travel_itinerary : null}
             data={rows}
             removeRow={removeRow}
             editRow={editRow}
@@ -335,6 +337,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
               <button
                 type="button"
                 className="btn btn-primary"
+                disabled={!data ? false: true}
                 onClick={() => setShowDialog(true)}
               >
                 <FaPlus size={18} />

@@ -3,12 +3,11 @@ import CustomInput from "./CustomInput";
 import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
 
-const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
+const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) => {
   const [haltChecked, setHaltChecked] = useState(false);
   const [returnChecked, setReturnChecked] = useState(false);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
-
   const [data, setData] = useState(
     initialData || {
       start_date: "",
@@ -24,11 +23,19 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     }
   );
 
-  useEffect(() => {
-    if (initialData) {
-      setData(initialData);
-    }
-  }, [initialData]);
+  console.log('data...', data);
+  console.log('data s...', data.start_date);
+
+  const formatDateForInput = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = ("0" + (d.getMonth() + 1)).slice(-2);
+    const day = ("0" + d.getDate()).slice(-2);
+    const hours = ("0" + d.getHours()).slice(-2);
+    const minutes = ("0" + d.getMinutes()).slice(-2);
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
 
   const getNumberOfDays = (start_date, end_date) => {
     const start = new Date(start_date);
@@ -117,6 +124,12 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     }
   };
 
+  useEffect(() => {
+    if (initialData) {
+      setData(initialData);
+    }
+  }, [initialData]);
+
   if (!isOpen) return null;
 
   return (
@@ -143,8 +156,9 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                   className={`form-control ${errors.start_date ? "is-invalid" : ""}`}
                   type="datetime-local"
                   name="start_date"
-                  value={data.start_date}
+                  value={existingData ? formatDateForInput(data.start_date) : data.start_date}
                   onChange={handleChange}
+                  disabled={existingData ? true : false}
                 />
                 {errors.start_date && (
                   <div className="text-danger">{errors.start_date}</div>
@@ -156,8 +170,9 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                   className={`form-control ${errors.end_date ? "is-invalid" : ""}`}
                   type="datetime-local"
                   name="end_date"
-                  value={data.end_date}
+                  value={existingData ? formatDateForInput(data.end_date) : data.end_date}
                   onChange={handleChange}
+                  disabled={existingData ? true : false}
                 />
                 {errors.end_date && (
                   <div className="text-danger">{errors.end_date}</div>
@@ -170,6 +185,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                   name="from"
                   value={data.from}
                   onChange={handleChange}
+                  disabled={existingData ? true : false}
                 >
                   <option value="" disabled>
                     Select From
@@ -191,6 +207,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                   name="to"
                   value={data.to}
                   onChange={handleChange}
+                  disabled={existingData ? true : false}
                 >
                   <option value="" disabled>
                     Select To
@@ -209,6 +226,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                   className={`form-select ${errors.mode ? "is-invalid" : ""}`}
                   name="mode"
                   value={data.mode}
+                  disabled={existingData ? true : false}
                   onChange={(e) => {
                     handleChange(e);
                     setMode(e.target.value);
@@ -230,7 +248,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                 label={"Mileage(Km)"}
                 name="mileage"
                 type="number"
-                isDisable={data.mode !== "Private Vehicle"}
+                isDisable={data.mode !== "Private Vehicle" || existingData ? true : false}
                 value={data.mileage}
                 onChange={handleChange}
                 error={errors.mileage || ""}
@@ -242,6 +260,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                 name="days"
                 value={data.days}
                 onChange={handleChange}
+                isDisable={true}
               />
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label></label>
@@ -251,6 +270,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                     type="checkbox"
                     name="halt"
                     checked={haltChecked}
+                    disabled={existingData ? true : false}
                     onChange={(e) => {
                       handleChange(e);
                       setHaltChecked(e.target.checked);
@@ -265,6 +285,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                     type="checkbox"
                     name="return"
                     checked={returnChecked}
+                    disabled={existingData ? true : false}
                     onChange={(e) => {
                       handleChange(e);
                       setReturnChecked(e.target.checked);
@@ -308,6 +329,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                   className={`form-select ${errors.dsa_percentage ? "is-invalid" : ""}`}
                   name="dsa_percentage"
                   value={data.dsa_percentage}
+                  disabled={existingData ? true : false}
                   onChange={(e) => {
                     handleChange(e);
                     setMode(e.target.value);
@@ -331,13 +353,16 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
             >
               Close
             </button>
-            <button
+            {!existingData ? (
+              <button
               type="button"
               className="btn btn-primary"
               onClick={handleSubmit}
             >
               Save
             </button>
+            ): null}
+            
           </div>
         </div>
       </div>
