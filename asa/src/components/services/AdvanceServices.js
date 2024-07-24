@@ -60,6 +60,8 @@ const create = async (params, travel_itinerary = []) => {
 
     console.log('travel_itinerary', travel_itinerary);
 
+    const filteredTravelItinerary = travel_itinerary.map(({ id, ...rest }) => rest);
+
     const response = await axios.post(
       `${API_URL}/api/advances`,
       {
@@ -76,7 +78,7 @@ const create = async (params, travel_itinerary = []) => {
           status: "pending",
           completion_month: params.completion_month,
         },
-        travel_itinerary: travel_itinerary,
+        travel_itinerary: filteredTravelItinerary,
       },
       {
         headers: {

@@ -136,11 +136,12 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     e.preventDefault();
     const isFormValid = validateForm();
     const isTravelItineraryValid = validateTravelItinerary();
-
+  
     if (isFormValid && isTravelItineraryValid) {
       try {
         const advanceResponse = await AdvanceServices.create(formData, rows);
-        if (advanceResponse) {
+  
+        if (advanceResponse && advanceResponse.id) {
           const fileResponse = await FileServices.create(
             advanceResponse.id,
             formData.files
@@ -148,22 +149,23 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
           if (fileResponse && fileResponse.status === 201) {
             setSuccessMessage(
-              "Your application has been successfully subbmitted."
+              "Your application has been successfully submitted."
             );
             resetForm();
           } else {
             setErrorMessage("File creation failed");
           }
         } else {
-          setErrorMessage("Your application subbmission has been failed");
+          setErrorMessage("Your application submission has failed");
         }
       } catch (error) {
-        setErrorMessage("Error:", error);
+        setErrorMessage("An error occurred during submission. Please try again.");
       }
     }
-
+  
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  
 
   const resetForm = () => {
     setFormData((prevFormData) => ({
@@ -172,7 +174,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
       remark: initialFormData.remark,
       files: initialFormData.files,
     }));
-    setRows(initialRows);
+    setRows([]);
   };
 
   const updateFormDataWithUserName = (user) => {
