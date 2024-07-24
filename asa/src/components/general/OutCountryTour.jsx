@@ -325,6 +325,7 @@ const OutCountryTour = ({
               type="button"
               className="btn btn-primary"
               onClick={() => setShowDialog(true)}
+              disabled={!data ? false: true}
             >
               <FaPlus size={18} />
             </button>

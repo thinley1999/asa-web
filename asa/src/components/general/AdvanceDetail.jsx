@@ -39,7 +39,7 @@ const AdvanceDetail = () => {
       {advanceData.advance_type === "salary_advance" && <SalaryAdvance data={advanceData} />}
       {advanceData.advance_type === "in_country_tour_advance" && <InCountryTour data={advanceData} />}
       {advanceData.advance_type === "other_advance" && <OtherAdvance data={advanceData} />}
-      {advanceData.advance_type === "out_country_tour_advance" && <OutCountryTour data={advanceData} />}
+      {advanceData.advance_type === "ex_country_tour_advance" && <OutCountryTour data={advanceData} />}
     </div>
   );
 };
