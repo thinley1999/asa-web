@@ -22,6 +22,45 @@ const getRate = async (from, to) => {
     }
   };
 
+  const getThirdCountryRate = async (country) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/rates/third_country`, {
+        params: {
+            rate: {
+                country: country
+            }
+        },
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getStopOverRate = async (value, country) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/stop_over`, {
+        params: {
+            stop_over_rate: {
+                value: value,
+                country: country,
+            }
+        },
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+
+
 const getCountryFrom = async () => {
   try {
     const response = await axios.get(`${API_URL}/api/rates/get_country_from`, {
@@ -54,4 +93,6 @@ export default {
   getRate,
   getCountryFrom,
   getCountryTo,
+  getThirdCountryRate,
+  getStopOverRate
 };

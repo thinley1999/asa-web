@@ -3,12 +3,21 @@ import CustomInput from "./CustomInput";
 import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
 
-const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, type }) => {
+const TravelDetails = ({
+  existingData,
+  isOpen,
+  onClose,
+  onSave,
+  initialData,
+  type,
+}) => {
   const [haltChecked, setHaltChecked] = useState(false);
   const [returnChecked, setReturnChecked] = useState(false);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([]);
+  const [tourType, setTourType] = useState(type);
+  const [dropDown, setDropDown] = useState([]);
   const [data, setData] = useState(
     initialData || {
       start_date: "",
@@ -100,25 +109,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
     return { isValid: false, errors: newErrors };
   };
 
-  const fetchRate = async (from, to, dsaPercentage, days, mode, mileage) => {
-    try {
-      if (mode === "Private Vehicle") {
-        return dsaPercentage * 16 * mileage;
-      }
-      const response = await RateServices.getRate(from, to, mode);
-      if (response) {
-        const rate = dsaPercentage * days * response.rate;
-        return rate;
-      }
-    } catch (error) {
-      console.error("Error fetching rates:", error);
-      throw error;
-    }
-  };
-
   const fetchCountry = async () => {
     try {
-      const response = await RateServices.getCountryTo()
+      const response = await RateServices.getCountryTo();
       if (response && response.status === 200) {
         setCountries(response.data);
       }
@@ -127,28 +120,62 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
     }
   };
 
+  const fetchRate = async (from, to, dsaPercentage, days, mode, mileage, halt_at, type) => {
+    try {
+      if (mode === "Private Vehicle") {
+        return dsaPercentage * 16 * mileage;
+      }
+  
+      let response;
+      if (tourType === "inCountry") {
+        response = await RateServices.getRate(from, to);
+      } else if (tourType === "outCountry") {
+        if (halt_at) {
+          response = await RateServices.getStopOverRate(halt_at);
+        } else if ((from === "India" || to === "India")) {
+          response = await RateServices.getRate(from, to);
+        } else {
+          response = await RateServices.getThirdCountryRate(to);
+        }
+      }
+  
+      if (response) {
+        return dsaPercentage * days * response.rate;
+      }
+     
+    } catch (error) {
+      console.error("Error fetching rates:", error);
+      throw error;
+    }
+  };
+
   const handleSubmit = async () => {
     const { isValid, errors } = validateData();
     setErrors(errors);
-    if (isValid) {
-      try {
-        const { dsa_percentage, days, mode, mileage } = data;
-        const rate = await fetchRate(
-          "Bhutan",
-          "Bhutan",
-          dsa_percentage,
-          days,
-          mode,
-          mileage
-        );
-        setData((prevData) => ({ ...prevData, rate: rate }));
-        onSave({ ...data, rate });
-        onClose();
-      } catch (error) {
-        console.error("Error while submitting:", error);
-      }
+  
+    if (!isValid) return; 
+  
+    try {
+      const { from, to, dsa_percentage, days, mode, mileage, halt_at} = data;
+      const destination = type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
+  
+      const rate = await fetchRate(
+        destination.from,
+        destination.to,
+        dsa_percentage,
+        days,
+        mode,
+        mileage
+      );
+
+      setData(prevData => ({ ...prevData, rate }));
+      onSave({ ...data, rate });
+      onClose();
+    } catch (error) {
+      console.error("Error while submitting:", error);
     }
   };
+
 
   useEffect(() => {
     if (initialData) {
@@ -157,10 +184,14 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
   }, [initialData]);
 
   useEffect(() => {
-    if (type === "outCountry"){
+    if (type === "outCountry") {
       fetchCountry();
+      setDropDown(countries);
     }
-  }, []);
+    if (type === "inCountry") {
+      setDropDown(dzongkhags);
+    }
+  }, [countries]);
 
   if (!isOpen) return null;
 
@@ -190,7 +221,11 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
                   }`}
                   type="datetime-local"
                   name="start_date"
-                  value={existingData ? formatDateForInput(data.start_date) : data.start_date}
+                  value={
+                    existingData
+                      ? formatDateForInput(data.start_date)
+                      : data.start_date
+                  }
                   onChange={handleChange}
                   disabled={existingData ? true : false}
                 />
@@ -206,7 +241,11 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
                   }`}
                   type="datetime-local"
                   name="end_date"
-                  value={existingData ? formatDateForInput(data.end_date) : data.end_date}
+                  value={
+                    existingData
+                      ? formatDateForInput(data.end_date)
+                      : data.end_date
+                  }
                   onChange={handleChange}
                   disabled={existingData ? true : false}
                 />
@@ -226,7 +265,7 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
                   <option value="" disabled>
                     Select From
                   </option>
-                  {countries.map((country, index) => (
+                  {dropDown.map((country, index) => (
                     <option key={index} value={country}>
                       {country}
                     </option>
@@ -248,7 +287,7 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
                   <option value="" disabled>
                     Select To
                   </option>
-                  {countries.map((country, index) => (
+                  {dropDown.map((country, index) => (
                     <option key={index} value={country}>
                       {country}
                     </option>
@@ -284,7 +323,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
                 label={"Mileage(Km)"}
                 name="mileage"
                 type="number"
-                isDisable={data.mode !== "Private Vehicle" || existingData ? true : false}
+                isDisable={
+                  data.mode !== "Private Vehicle" || existingData ? true : false
+                }
                 value={data.mileage}
                 onChange={handleChange}
                 error={errors.mileage || ""}
@@ -350,7 +391,7 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
                   <option value="" disabled>
                     Select Halt Location
                   </option>
-                  {countries.map((country, index) => (
+                  {dropDown.map((country, index) => (
                     <option key={index} value={country}>
                       {country}
                     </option>
@@ -397,14 +438,13 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, ty
             </button>
             {!existingData ? (
               <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSubmit}
-            >
-              Save
-            </button>
-            ): null}
-            
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSubmit}
+              >
+                Save
+              </button>
+            ) : null}
           </div>
         </div>
       </div>
