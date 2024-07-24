@@ -18,6 +18,10 @@ const MyApplications = ({
     navigate(`/advanceDetail/${id}`);
   };
 
+  const handleDSAClaim = (id) => {
+    navigate(`/dsaClaim/${id}`);
+  };
+
   return (
     <div
       className={`tab-pane fade ${activeTab === title ? "show active" : ""}`}
@@ -68,10 +72,20 @@ const MyApplications = ({
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4  col-6">
               <a
                 onClick={() => handleDetails(application.id)}
-                className="btn btn-outline-primary"
+                className="btn btn-outline-primary btn-fixed-width"
               >
                 View Details
               </a>
+              {application.status === "dispatched" &&
+                (application.advance_type === "ex_country_tour_advance" ||
+                  application.advance_type === "in_country_tour_advance") && (
+                  <a
+                    className="btn btn-outline-success mt-1 btn-fixed-width"
+                    onClick={() => handleDSAClaim(application.id)}
+                  >
+                    Claim DSA
+                  </a>
+                )}
             </div>
           </div>
         ))}
