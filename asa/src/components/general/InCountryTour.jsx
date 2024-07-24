@@ -110,19 +110,39 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
   };
 
   const validateTravelItinerary = () => {
-    // check all the date are in sequence
-    return true;
+    let errors = {};
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      itinerary_error: "",
+    }))
+
+    if (rows.length == 0) {
+      errors.itinerary_error = "Please add travel itinerary for the advance.";
+    }
+
+    for (let i = 0; i < rows.length - 1; i++) {
+      const currentEndDate = new Date(rows[i].end_date);
+      const nextStartDate = new Date(rows[i + 1].start_date);
+
+      if (currentEndDate >= nextStartDate) {
+        errors.itinerary_error =
+          "Travel itinerary dates are not valid. Start date of the next itinerary should be greater than the end date of the previous itinerary.";
+        break;
+      }
+    }
+    setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isFormValid = validateForm();
     const isTravelItineraryValid = validateTravelItinerary();
-  
+
     if (isFormValid && isTravelItineraryValid) {
       try {
         const advanceResponse = await AdvanceServices.create(formData, rows);
-  
+
         if (advanceResponse && advanceResponse.id) {
           const fileResponse = await FileServices.create(
             advanceResponse.id,
@@ -141,13 +161,14 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
           setErrorMessage("Your application submission has failed");
         }
       } catch (error) {
-        setErrorMessage("An error occurred during submission. Please try again.");
+        setErrorMessage(
+          "An error occurred during submission. Please try again."
+        );
       }
     }
-  
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  
 
   const resetForm = () => {
     setFormData((prevFormData) => ({
@@ -173,7 +194,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
   const handleTravelItinerary = (newData) => {
     if (editData) {
-      setRows(rows.map(row => row.id === newData.id ? newData : row));
+      setRows(rows.map((row) => (row.id === newData.id ? newData : row)));
     } else {
       setRows([...rows, { id: rows.length + 1, ...newData }]);
     }
@@ -211,6 +232,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     setEditData(null);
   };
 
+  console.log("rows", rows);
   return (
     <form onSubmit={handleSubmit}>
       {successMessage && (
@@ -302,30 +324,35 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
           </div>
           {showDialog && (
             <TravelDetails
-              existingData={ data ? data.travel_itinerary : null}
+              existingData={data ? data.travel_itinerary : null}
               isOpen={showDialog}
               onClose={handleDialogClose}
               onSave={handleTravelItinerary}
               initialData={editData}
-              type='inCountry'
+              type="inCountry"
             />
           )}
           <TravelDetailsTable
-            existingData={ data ? data.travel_itinerary : null}
+            existingData={data ? data.travel_itinerary : null}
             data={rows}
             removeRow={removeRow}
             editRow={editRow}
           />
-           <div className="mb-3">
-              <button
-                type="button"
-                className="btn btn-primary"
-                disabled={!data ? false: true}
-                onClick={() => setShowDialog(true)}
-              >
-                <FaPlus size={18} />
-              </button>
+          {formErrors?.itinerary_error && (
+            <div className="invalid-feedback" style={{ display: "block" }}>
+              {formErrors?.itinerary_error}
             </div>
+          )}
+          <div className="mb-3">
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={!data ? false : true}
+              onClick={() => setShowDialog(true)}
+            >
+              <FaPlus size={18} />
+            </button>
+          </div>
           <CustomInput
             label="Total Amount"
             type="text"
@@ -341,10 +368,15 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
                 className="form-check-input"
                 type="checkbox"
                 name="advance_percentage"
-                checked={ data?.advance_percentage == 90 || formData.advance_percentage == 90 ? true: false}
+                checked={
+                  data?.advance_percentage == 90 ||
+                  formData.advance_percentage == 90
+                    ? true
+                    : false
+                }
                 onChange={handleChange}
                 value={90}
-                disabled={data ? true: false}
+                disabled={data ? true : false}
               />
               <label className="form-check-label">90% Advance</label>
             </div>
@@ -353,10 +385,15 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
                 className="form-check-input"
                 type="checkbox"
                 name="advance_percentage"
-                checked={data?.advance_percentage == 0 || formData.advance_percentage == 0 ? true: false}
+                checked={
+                  data?.advance_percentage == 0 ||
+                  formData.advance_percentage == 0
+                    ? true
+                    : false
+                }
                 onChange={handleChange}
                 value={0}
-                disabled={data ? true: false}
+                disabled={data ? true : false}
               />
               <label className="form-check-label">Claim DSA after tour</label>
             </div>
@@ -411,3 +448,9 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 };
 
 export default InCountryTour;
+
+// rows = [
+//   {id: 1, start_date: '2024-07-24T16:25', end_date: '2024-07-26T16:24', from: 'Gasa', to: 'Trashigang'},
+//   {id: 2, start_date: '2024-07-26T16:25', end_date: '2024-07-27T16:25', from: 'Gasa', to: 'Sarpang'},
+//   {id: 3, start_date: '2024-07-30T16:25', end_date: '2024-07-31T16:25', from: 'Lhuentse', to: 'Trashigang'}
+// ]

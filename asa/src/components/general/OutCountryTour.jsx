@@ -117,8 +117,24 @@ const OutCountryTour = ({
   };
 
   const validateTravelItinerary = () => {
-    // check all the date are in sequence
-    return true;
+    let errors = {};
+
+    if (rows.length == 0) {
+      errors.itinerary_error = "Please add travel itinerary for the advance.";
+    }
+
+    for (let i = 0; i < rows.length - 1; i++) {
+      const currentEndDate = new Date(rows[i].end_date);
+      const nextStartDate = new Date(rows[i + 1].start_date);
+
+      if (currentEndDate >= nextStartDate) {
+        errors.itinerary_error =
+          "Travel itinerary dates are not valid. Start date of the next itinerary should be greater than the end date of the previous itinerary.";
+        break;
+      }
+    }
+    setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -178,6 +194,10 @@ const OutCountryTour = ({
   };
 
   const handleTravelItinerary = (newData) => {
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      itinerary_error: "",
+    }))
     if (editData) {
       setRows(rows.map(row => row.id === newData.id ? newData : row));
     } else {
@@ -323,6 +343,11 @@ const OutCountryTour = ({
             removeRow={removeRow}
             editRow={editRow}
           />
+          {formErrors?.itinerary_error && (
+            <div className="invalid-feedback" style={{ display: "block" }}>
+              {formErrors?.itinerary_error}
+            </div>
+          )}
           <div className="mb-3">
             <button
               type="button"
