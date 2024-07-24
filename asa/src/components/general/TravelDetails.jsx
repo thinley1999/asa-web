@@ -120,29 +120,37 @@ const TravelDetails = ({
     }
   };
 
-  const fetchRate = async (from, to, dsaPercentage, days, mode, mileage, halt_at, type) => {
+  const fetchRate = async (
+    from,
+    to,
+    dsaPercentage,
+    days,
+    mode,
+    mileage,
+    halt_at,
+    type
+  ) => {
     try {
       if (mode === "Private Vehicle") {
         return dsaPercentage * 16 * mileage;
       }
-  
+
       let response;
       if (tourType === "inCountry") {
         response = await RateServices.getRate(from, to);
       } else if (tourType === "outCountry") {
         if (halt_at) {
           response = await RateServices.getStopOverRate(halt_at);
-        } else if ((from === "India" || to === "India")) {
+        } else if (from === "India" || to === "India") {
           response = await RateServices.getRate(from, to);
         } else {
           response = await RateServices.getThirdCountryRate(to);
         }
       }
-  
+
       if (response) {
         return dsaPercentage * days * response.rate;
       }
-     
     } catch (error) {
       console.error("Error fetching rates:", error);
       throw error;
@@ -152,13 +160,14 @@ const TravelDetails = ({
   const handleSubmit = async () => {
     const { isValid, errors } = validateData();
     setErrors(errors);
-  
-    if (!isValid) return; 
-  
+
+    if (!isValid) return;
+
     try {
-      const { from, to, dsa_percentage, days, mode, mileage, halt_at} = data;
-      const destination = type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
-  
+      const { from, to, dsa_percentage, days, mode, mileage, halt_at } = data;
+      const destination =
+        type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
+
       const rate = await fetchRate(
         destination.from,
         destination.to,
@@ -168,14 +177,13 @@ const TravelDetails = ({
         mileage
       );
 
-      setData(prevData => ({ ...prevData, rate }));
+      setData((prevData) => ({ ...prevData, rate }));
       onSave({ ...data, rate });
       onClose();
     } catch (error) {
       console.error("Error while submitting:", error);
     }
   };
-
 
   useEffect(() => {
     if (initialData) {
@@ -312,24 +320,30 @@ const TravelDetails = ({
                   </option>
                   <option value="Airplane">Airplane</option>
                   <option value="Train">Train</option>
-                  <option value="Private Vehicle">Private Vehicle</option>
+                  {type === "inCountry" && (
+                    <option value="Private Vehicle">Private Vehicle</option>
+                  )}
                   <option value="Pool Vehicle">Pool Vehicle</option>
                 </select>
                 {errors.mode && (
                   <div className="text-danger">{errors.mode}</div>
                 )}
               </div>
-              <CustomInput
-                label={"Mileage(Km)"}
-                name="mileage"
-                type="number"
-                isDisable={
-                  data.mode !== "Private Vehicle" || existingData ? true : false
-                }
-                value={data.mileage}
-                onChange={handleChange}
-                error={errors.mileage || ""}
-              />
+              {type === "inCountry" && (
+                <CustomInput
+                  label={"Mileage(Km)"}
+                  name="mileage"
+                  type="number"
+                  isDisable={
+                    data.mode !== "Private Vehicle" || existingData
+                      ? true
+                      : false
+                  }
+                  value={data.mileage}
+                  onChange={handleChange}
+                  error={errors.mileage || ""}
+                />
+              )}
 
               <CustomInput
                 label="Number of days"
