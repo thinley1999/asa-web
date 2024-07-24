@@ -17,8 +17,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
-  const [claimChecked, setClaimChecked] = useState(true);
-  const [afterChecked, setAfterChecked] = useState(false);
   const [editData, setEditData] = useState(null);
 
   const initialFormData = {
@@ -32,6 +30,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     remark: " ",
     advance_type: "in_country_tour_advance",
     files: [],
+    advance_percentage: 90,
   };
   const [formData, setFormData] = useState(initialFormData);
   const [rows, setRows] = useState([]);
@@ -49,23 +48,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
       ...prevFormData,
       advanceAmount: total,
     }));
-  };
-
-  const handleClaimChange = (e) => {
-    const isChecked = e.target.checked;
-    setClaimChecked(isChecked);
-
-    if (isChecked) {
-      setAfterChecked(false);
-    }
-  };
-
-  const handleAfterChange = (e) => {
-    const isChecked = e.target.checked;
-    setAfterChecked(isChecked);
-    if (isChecked) {
-      setClaimChecked(false);
-    }
   };
 
   const handleFileChange = (event) => {
@@ -325,6 +307,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
               onClose={handleDialogClose}
               onSave={handleTravelItinerary}
               initialData={editData}
+              type='inCountry'
             />
           )}
           <TravelDetailsTable
@@ -357,9 +340,11 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
               <input
                 className="form-check-input"
                 type="checkbox"
-                name="claimAdvance"
-                checked={claimChecked}
-                onChange={handleClaimChange}
+                name="advance_percentage"
+                checked={ data?.advance_percentage == 90 || formData.advance_percentage == 90 ? true: false}
+                onChange={handleChange}
+                value={90}
+                disabled={data ? true: false}
               />
               <label className="form-check-label">90% Advance</label>
             </div>
@@ -367,9 +352,11 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
               <input
                 className="form-check-input"
                 type="checkbox"
-                name="noAdvance"
-                checked={afterChecked}
-                onChange={handleAfterChange}
+                name="advance_percentage"
+                checked={data?.advance_percentage == 0 || formData.advance_percentage == 0 ? true: false}
+                onChange={handleChange}
+                value={0}
+                disabled={data ? true: false}
               />
               <label className="form-check-label">Claim DSA after tour</label>
             </div>

@@ -3,11 +3,21 @@ import CustomInput from "./CustomInput";
 import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
 
-const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) => {
+const TravelDetails = ({
+  existingData,
+  isOpen,
+  onClose,
+  onSave,
+  initialData,
+  type,
+}) => {
   const [haltChecked, setHaltChecked] = useState(false);
   const [returnChecked, setReturnChecked] = useState(false);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
+  const [countries, setCountries] = useState([]);
+  const [tourType, setTourType] = useState(type);
+  const [dropDown, setDropDown] = useState([]);
   const [data, setData] = useState(
     initialData || {
       start_date: "",
@@ -22,9 +32,6 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
       days: "",
     }
   );
-
-  console.log('data...', data);
-  console.log('data s...', data.start_date);
 
   const formatDateForInput = (date) => {
     if (!date) return "";
@@ -102,15 +109,47 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
     return { isValid: false, errors: newErrors };
   };
 
-  const fetchRate = async (from, to, dsaPercentage, days, mode, mileage) => {
+  const fetchCountry = async () => {
+    try {
+      const response = await RateServices.getCountryTo();
+      if (response && response.status === 200) {
+        setCountries(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+
+  const fetchRate = async (
+    from,
+    to,
+    dsaPercentage,
+    days,
+    mode,
+    mileage,
+    halt_at,
+    type
+  ) => {
     try {
       if (mode === "Private Vehicle") {
         return dsaPercentage * 16 * mileage;
       }
-      const response = await RateServices.getRate(from, to, mode);
+
+      let response;
+      if (tourType === "inCountry") {
+        response = await RateServices.getRate(from, to);
+      } else if (tourType === "outCountry") {
+        if (halt_at) {
+          response = await RateServices.getStopOverRate(halt_at);
+        } else if (from === "India" || to === "India") {
+          response = await RateServices.getRate(from, to);
+        } else {
+          response = await RateServices.getThirdCountryRate(to);
+        }
+      }
+
       if (response) {
-        const rate = dsaPercentage * days * response.rate;
-        return rate;
+        return dsaPercentage * days * response.rate;
       }
     } catch (error) {
       console.error("Error fetching rates:", error);
@@ -121,23 +160,28 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
   const handleSubmit = async () => {
     const { isValid, errors } = validateData();
     setErrors(errors);
-    if (isValid) {
-      try {
-        const { dsa_percentage, days, mode, mileage } = data;
-        const rate = await fetchRate(
-          "Bhutan",
-          "Bhutan",
-          dsa_percentage,
-          days,
-          mode,
-          mileage
-        );
-        setData((prevData) => ({ ...prevData, rate: rate }));
-        onSave({ ...data, rate });
-        onClose();
-      } catch (error) {
-        console.error("Error while submitting:", error);
-      }
+
+    if (!isValid) return;
+
+    try {
+      const { from, to, dsa_percentage, days, mode, mileage, halt_at } = data;
+      const destination =
+        type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
+
+      const rate = await fetchRate(
+        destination.from,
+        destination.to,
+        dsa_percentage,
+        days,
+        mode,
+        mileage
+      );
+
+      setData((prevData) => ({ ...prevData, rate }));
+      onSave({ ...data, rate });
+      onClose();
+    } catch (error) {
+      console.error("Error while submitting:", error);
     }
   };
 
@@ -146,6 +190,16 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
       setData(initialData);
     }
   }, [initialData]);
+
+  useEffect(() => {
+    if (type === "outCountry") {
+      fetchCountry();
+      setDropDown(countries);
+    }
+    if (type === "inCountry") {
+      setDropDown(dzongkhags);
+    }
+  }, [countries]);
 
   if (!isOpen) return null;
 
@@ -175,7 +229,11 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   }`}
                   type="datetime-local"
                   name="start_date"
-                  value={existingData ? formatDateForInput(data.start_date) : data.start_date}
+                  value={
+                    existingData
+                      ? formatDateForInput(data.start_date)
+                      : data.start_date
+                  }
                   onChange={handleChange}
                   disabled={existingData ? true : false}
                 />
@@ -191,7 +249,11 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   }`}
                   type="datetime-local"
                   name="end_date"
-                  value={existingData ? formatDateForInput(data.end_date) : data.end_date}
+                  value={
+                    existingData
+                      ? formatDateForInput(data.end_date)
+                      : data.end_date
+                  }
                   onChange={handleChange}
                   disabled={existingData ? true : false}
                 />
@@ -211,9 +273,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   <option value="" disabled>
                     Select From
                   </option>
-                  {dzongkhags.map((dzongkhag, index) => (
-                    <option key={index} value={dzongkhag}>
-                      {dzongkhag}
+                  {dropDown.map((country, index) => (
+                    <option key={index} value={country}>
+                      {country}
                     </option>
                   ))}
                 </select>
@@ -233,9 +295,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   <option value="" disabled>
                     Select To
                   </option>
-                  {dzongkhags.map((dzongkhag, index) => (
-                    <option key={index} value={dzongkhag}>
-                      {dzongkhag}
+                  {dropDown.map((country, index) => (
+                    <option key={index} value={country}>
+                      {country}
                     </option>
                   ))}
                 </select>
@@ -258,22 +320,30 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   </option>
                   <option value="Airplane">Airplane</option>
                   <option value="Train">Train</option>
-                  <option value="Private Vehicle">Private Vehicle</option>
+                  {type === "inCountry" && (
+                    <option value="Private Vehicle">Private Vehicle</option>
+                  )}
                   <option value="Pool Vehicle">Pool Vehicle</option>
                 </select>
                 {errors.mode && (
                   <div className="text-danger">{errors.mode}</div>
                 )}
               </div>
-              <CustomInput
-                label={"Mileage(Km)"}
-                name="mileage"
-                type="number"
-                isDisable={data.mode !== "Private Vehicle" || existingData ? true : false}
-                value={data.mileage}
-                onChange={handleChange}
-                error={errors.mileage || ""}
-              />
+              {type === "inCountry" && (
+                <CustomInput
+                  label={"Mileage(Km)"}
+                  name="mileage"
+                  type="number"
+                  isDisable={
+                    data.mode !== "Private Vehicle" || existingData
+                      ? true
+                      : false
+                  }
+                  value={data.mileage}
+                  onChange={handleChange}
+                  error={errors.mileage || ""}
+                />
+              )}
 
               <CustomInput
                 label="Number of days"
@@ -335,9 +405,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   <option value="" disabled>
                     Select Halt Location
                   </option>
-                  {dzongkhags.map((dzongkhag, index) => (
-                    <option key={index} value={dzongkhag}>
-                      {dzongkhag}
+                  {dropDown.map((country, index) => (
+                    <option key={index} value={country}>
+                      {country}
                     </option>
                   ))}
                 </select>
@@ -382,14 +452,13 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
             </button>
             {!existingData ? (
               <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSubmit}
-            >
-              Save
-            </button>
-            ): null}
-            
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSubmit}
+              >
+                Save
+              </button>
+            ) : null}
           </div>
         </div>
       </div>
