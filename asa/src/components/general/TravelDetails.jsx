@@ -60,10 +60,9 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
   };
 
   const validateData = () => {
-<<<<<<< HEAD
     const {
-      startDate,
-      endDate,
+      start_date,
+      end_date,
       from,
       to,
       mode,
@@ -71,9 +70,6 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
       halt_at,
       dsa_percentage,
     } = data;
-=======
-    const { start_date, end_date, from, to, mode, mileage, halt_at, dsa_percentage} = data;
->>>>>>> aa1b5dec735f83e2f3a7b695d56220c413dd37be
     const newErrors = {};
 
     if (!start_date) newErrors.start_date = "Start date is required";
@@ -121,7 +117,14 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     if (isValid) {
       try {
         const { dsa_percentage, days, mode, mileage } = data;
-        const rate = await fetchRate("Bhutan", "Bhutan", dsa_percentage, days, mode, mileage);
+        const rate = await fetchRate(
+          "Bhutan",
+          "Bhutan",
+          dsa_percentage,
+          days,
+          mode,
+          mileage
+        );
         setData((prevData) => ({ ...prevData, rate: rate }));
         onSave({ ...data, rate });
         onClose();
@@ -154,13 +157,9 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">Start Date</label>
                 <input
-<<<<<<< HEAD
                   className={`form-control ${
-                    errors.startDate ? "is-invalid" : ""
+                    errors.start_date ? "is-invalid" : ""
                   }`}
-=======
-                  className={`form-control ${errors.start_date ? "is-invalid" : ""}`}
->>>>>>> aa1b5dec735f83e2f3a7b695d56220c413dd37be
                   type="datetime-local"
                   name="start_date"
                   value={data.start_date}
@@ -173,13 +172,9 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">End Date</label>
                 <input
-<<<<<<< HEAD
                   className={`form-control ${
-                    errors.endDate ? "is-invalid" : ""
+                    errors.end_date ? "is-invalid" : ""
                   }`}
-=======
-                  className={`form-control ${errors.end_date ? "is-invalid" : ""}`}
->>>>>>> aa1b5dec735f83e2f3a7b695d56220c413dd37be
                   type="datetime-local"
                   name="end_date"
                   value={data.end_date}
