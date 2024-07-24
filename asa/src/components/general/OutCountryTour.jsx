@@ -37,6 +37,7 @@ const OutCountryTour = ({
     remark: " ",
     advance_type: "ex_country_tour_advance",
     files: [],
+    advance_percentage: 90,
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -215,6 +216,8 @@ const OutCountryTour = ({
     setShowDialog(false);
   };
 
+  console.log('form data', formData);
+
   return (
     <form onSubmit={handleSubmit}>
       {successMessage && (
@@ -338,6 +341,31 @@ const OutCountryTour = ({
             isDisable={true}
             onChange={handleChange}
           />
+          <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+            <label className="form-label">Claim Advance</label>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="advance_percentage"
+                value={90}
+                checked={formData.advance_percentage == 90 ? true: false}
+                onChange={handleChange}
+              />
+              <label className="form-check-label">90% Advance</label>
+            </div>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="advance_percentage"
+                checked={formData.advance_percentage == 0 ? true: false}
+                onChange={handleChange}
+                value={0}
+              />
+              <label className="form-check-label">Claim DSA after tour</label>
+            </div>
+          </div>
           <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
             <label className="form-label">Remarks</label>
             <textarea
