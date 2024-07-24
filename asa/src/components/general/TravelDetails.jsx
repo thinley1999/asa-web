@@ -11,8 +11,8 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
 
   const [data, setData] = useState(
     initialData || {
-      startDate: "",
-      endDate: "",
+      start_date: "",
+      end_date: "",
       from: "",
       to: "",
       mode: "",
@@ -30,9 +30,9 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     }
   }, [initialData]);
 
-  const getNumberOfDays = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+  const getNumberOfDays = (start_date, end_date) => {
+    const start = new Date(start_date);
+    const end = new Date(end_date);
     const differenceInTime = end.getTime() - start.getTime();
     const differenceInDays = differenceInTime / (1000 * 3600 * 24);
     return Math.ceil(differenceInDays);
@@ -42,17 +42,17 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     const { name, value } = e.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
 
-    if (name === "startDate" || name === "endDate") {
-      const { startDate, endDate } = { ...data, [name]: value };
-      if (startDate && endDate) {
-        if (new Date(startDate) >= new Date(endDate)) {
+    if (name === "start_date" || name === "end_date") {
+      const { start_date, end_date } = { ...data, [name]: value };
+      if (start_date && end_date) {
+        if (new Date(start_date) >= new Date(end_date)) {
           setErrors((prevErrors) => ({
             ...prevErrors,
-            endDate: "End date must be greater than start date",
+            end_date: "End date must be greater than start date",
           }));
         } else {
-          setErrors((prevErrors) => ({ ...prevErrors, endDate: "" }));
-          const days = getNumberOfDays(startDate, endDate);
+          setErrors((prevErrors) => ({ ...prevErrors, end_date: "" }));
+          const days = getNumberOfDays(start_date, end_date);
           setData((prevData) => ({ ...prevData, days: days }));
         }
       }
@@ -60,6 +60,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
   };
 
   const validateData = () => {
+<<<<<<< HEAD
     const {
       startDate,
       endDate,
@@ -70,10 +71,13 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
       halt_at,
       dsa_percentage,
     } = data;
+=======
+    const { start_date, end_date, from, to, mode, mileage, halt_at, dsa_percentage} = data;
+>>>>>>> aa1b5dec735f83e2f3a7b695d56220c413dd37be
     const newErrors = {};
 
-    if (!startDate) newErrors.startDate = "Start date is required";
-    if (!endDate) newErrors.endDate = "End date is required";
+    if (!start_date) newErrors.start_date = "Start date is required";
+    if (!end_date) newErrors.end_date = "End date is required";
     if (!from) newErrors.from = "From location is required";
     if (!to) newErrors.to = "To location is required";
     if (!mode) newErrors.mode = "Mode of travel is required";
@@ -95,9 +99,12 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     return { isValid: false, errors: newErrors };
   };
 
-  const fetchRate = async (from, to, dsaPercentage, days) => {
+  const fetchRate = async (from, to, dsaPercentage, days, mode, mileage) => {
     try {
-      const response = await RateServices.getRate(from, to);
+      if (mode === "Private Vehicle") {
+        return dsaPercentage * 16 * mileage;
+      }
+      const response = await RateServices.getRate(from, to, mode);
       if (response) {
         const rate = dsaPercentage * days * response.rate;
         return rate;
@@ -113,8 +120,8 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
     setErrors(errors);
     if (isValid) {
       try {
-        const { dsa_percentage, days } = data;
-        const rate = await fetchRate("Bhutan", "Bhutan", dsa_percentage, days);
+        const { dsa_percentage, days, mode, mileage } = data;
+        const rate = await fetchRate("Bhutan", "Bhutan", dsa_percentage, days, mode, mileage);
         setData((prevData) => ({ ...prevData, rate: rate }));
         onSave({ ...data, rate });
         onClose();
@@ -147,31 +154,39 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">Start Date</label>
                 <input
+<<<<<<< HEAD
                   className={`form-control ${
                     errors.startDate ? "is-invalid" : ""
                   }`}
+=======
+                  className={`form-control ${errors.start_date ? "is-invalid" : ""}`}
+>>>>>>> aa1b5dec735f83e2f3a7b695d56220c413dd37be
                   type="datetime-local"
-                  name="startDate"
-                  value={data.startDate}
+                  name="start_date"
+                  value={data.start_date}
                   onChange={handleChange}
                 />
-                {errors.startDate && (
-                  <div className="text-danger">{errors.startDate}</div>
+                {errors.start_date && (
+                  <div className="text-danger">{errors.start_date}</div>
                 )}
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">End Date</label>
                 <input
+<<<<<<< HEAD
                   className={`form-control ${
                     errors.endDate ? "is-invalid" : ""
                   }`}
+=======
+                  className={`form-control ${errors.end_date ? "is-invalid" : ""}`}
+>>>>>>> aa1b5dec735f83e2f3a7b695d56220c413dd37be
                   type="datetime-local"
-                  name="endDate"
-                  value={data.endDate}
+                  name="end_date"
+                  value={data.end_date}
                   onChange={handleChange}
                 />
-                {errors.endDate && (
-                  <div className="text-danger">{errors.endDate}</div>
+                {errors.end_date && (
+                  <div className="text-danger">{errors.end_date}</div>
                 )}
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
@@ -238,7 +253,7 @@ const TravelDetails = ({ isOpen, onClose, onSave, initialData }) => {
                 )}
               </div>
               <CustomInput
-                label={"Mileage"}
+                label={"Mileage(Km)"}
                 name="mileage"
                 type="number"
                 isDisable={data.mode !== "Private Vehicle"}

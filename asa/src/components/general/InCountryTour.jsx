@@ -29,7 +29,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     department: "IT Department",
     designation: " ",
     advanceAmount: 0,
-    purpose: " ",
     remark: " ",
     advance_type: "in_country_tour_advance",
     files: [],
@@ -119,9 +118,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
   const validateForm = () => {
     let errors = {};
-    if (!formData.purpose.trim()) {
-      errors.purpose = "Purpose is required.";
-    }
 
     if (!formData.files.length) {
       errors.file_error = "Please upload relevant documents.";
@@ -132,35 +128,20 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
   };
 
   const validateTravelItinerary = () => {
-    const hasErrors = rows.some(
-      (row) =>
-        !row.startDate || !row.endDate || !row.from || !row.to || !row.mode
-    );
-
-    if (hasErrors) {
-      setFormErrors((prevErrors) => ({
-        ...prevErrors,
-        travelItinerary: "Complete the Travel Itinerary",
-      }));
-    } else {
-      setFormErrors((prevErrors) => {
-        const { travelItinerary, ...rest } = prevErrors;
-        return rest;
-      });
-    }
-
-    return !hasErrors;
+    // check all the date are in sequence
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isFormValid = validateForm();
     const isTravelItineraryValid = validateTravelItinerary();
-
+  
     if (isFormValid && isTravelItineraryValid) {
       try {
         const advanceResponse = await AdvanceServices.create(formData, rows);
-        if (advanceResponse) {
+  
+        if (advanceResponse && advanceResponse.id) {
           const fileResponse = await FileServices.create(
             advanceResponse.id,
             formData.files
@@ -168,32 +149,32 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
           if (fileResponse && fileResponse.status === 201) {
             setSuccessMessage(
-              "Your application has been successfully subbmitted."
+              "Your application has been successfully submitted."
             );
             resetForm();
           } else {
             setErrorMessage("File creation failed");
           }
         } else {
-          setErrorMessage("Your application subbmission has been failed");
+          setErrorMessage("Your application submission has failed");
         }
       } catch (error) {
-        setErrorMessage("Error:", error);
+        setErrorMessage("An error occurred during submission. Please try again.");
       }
     }
-
+  
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  
 
   const resetForm = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       advanceAmount: initialFormData.advanceAmount,
-      purpose: initialFormData.purpose,
       remark: initialFormData.remark,
       files: initialFormData.files,
     }));
-    setRows(initialRows);
+    setRows([]);
   };
 
   const updateFormDataWithUserName = (user) => {

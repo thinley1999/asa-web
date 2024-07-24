@@ -58,14 +58,9 @@ const create = async (params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
-    const convertedArray = travel_itinerary.map((item) => ({
-      start_date: item.startDate,
-      end_date: item.endDate,
-      from: item.from,
-      to: item.to,
-      mode: item.mode,
-      amount: parseFloat(item.rate),
-    }));
+    console.log('travel_itinerary', travel_itinerary);
+
+    const filteredTravelItinerary = travel_itinerary.map(({ id, ...rest }) => rest);
 
     const response = await axios.post(
       `${API_URL}/api/advances`,
@@ -83,7 +78,7 @@ const create = async (params, travel_itinerary = []) => {
           status: "pending",
           completion_month: params.completion_month,
         },
-        travel_itinerary: convertedArray,
+        travel_itinerary: filteredTravelItinerary,
       },
       {
         headers: {
