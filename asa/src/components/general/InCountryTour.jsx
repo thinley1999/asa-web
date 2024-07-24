@@ -325,6 +325,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
               onClose={handleDialogClose}
               onSave={handleTravelItinerary}
               initialData={editData}
+              type='inCountry'
             />
           )}
           <TravelDetailsTable

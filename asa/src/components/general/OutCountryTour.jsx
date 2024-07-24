@@ -1,16 +1,13 @@
 import React from "react";
 import CustomInput from "./CustomInput";
 import { useState, useEffect } from "react";
-import TravelItinerary from "./TravelItinerary";
 import UserServices from "../services/UserServices";
-import { processUserName } from "../utils/UserUtils";
-import RateServices from "../services/RateServices";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
 import CustomFileInput from "./CustomFileInput";
 import SuccessMessage from "./SuccessMessage";
 import ErrorMessage from "./ErrorMessage";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import TravelDetails from "./TravelDetails";
 import TravelDetailsTable from "./TravelDetailsTable";
 
@@ -25,6 +22,8 @@ const OutCountryTour = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [editData, setEditData] = useState(null);
 
   const initialFormData = {
     firstName: " - ",
@@ -40,50 +39,7 @@ const OutCountryTour = ({
     files: [],
   };
 
-  const initialRows = [
-    { startDate: "", endDate: "", from: "", to: "", mode: "", rate: "" },
-  ];
-
   const [formData, setFormData] = useState(initialFormData);
-  const [rate, setRate] = useState([]);
-
-  const fetchRate = async (startDate, endDate, from, to, index) => {
-    try {
-      const response = await RateServices.getRate(from, to);
-      if (response) {
-        const updatedRows = [...rows];
-        updatedRows[index].rate =
-          getNumberOfDays(startDate, endDate) * response.rate;
-        setRows(updatedRows);
-      }
-    } catch (error) {
-      console.error("Error fetching rates:", error);
-    }
-  };
-
-  const getNumberOfDays = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const differenceInTime = end.getTime() - start.getTime();
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-    return differenceInDays + 1;
-  };
-
-  const [rows, setRows] = useState([
-    { startDate: "", endDate: "", from: "", to: "", mode: "", rate: "" },
-  ]);
-
-  const addRow = () => {
-    setRows([
-      ...rows,
-      { startDate: "", endDate: "", from: "", to: "", mode: "", rate: "" },
-    ]);
-  };
-
-  const removeRow = (index) => {
-    const newRows = rows.filter((row, rowIndex) => rowIndex !== index);
-    setRows(newRows);
-  };
 
   const totalAmount = () => {
     let total = 0;
@@ -119,39 +75,6 @@ const OutCountryTour = ({
       ...prevFormData,
       files: prevFormData.files.filter((_, index) => index !== indexToRemove),
     }));
-  };
-
-  const handleTravelItinerary = (index, field, value) => {
-    const updatedRows = [...rows];
-    updatedRows[index][field] = value;
-
-    if (
-      field === "from" ||
-      field === "to" ||
-      field === "startDate" ||
-      field === "endDate"
-    ) {
-      const { startDate, endDate, from, to } = updatedRows[index];
-
-      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-        setFormErrors((prevErrors) => ({
-          ...prevErrors,
-          travelItinerary: `Start date must be earlier than end date for row ${
-            index + 1
-          }`,
-        }));
-      } else {
-        setFormErrors((prevErrors) => {
-          const { travelItinerary, ...rest } = prevErrors;
-          return rest;
-        });
-        if (startDate && endDate && from && to) {
-          fetchRate(startDate, endDate, from, to, index);
-        }
-      }
-    }
-
-    setRows(updatedRows);
   };
 
   const handleChange = (e) => {
@@ -196,24 +119,8 @@ const OutCountryTour = ({
   };
 
   const validateTravelItinerary = () => {
-    const hasErrors = rows.some(
-      (row) =>
-        !row.startDate || !row.endDate || !row.from || !row.to || !row.mode
-    );
-
-    if (hasErrors) {
-      setFormErrors((prevErrors) => ({
-        ...prevErrors,
-        travelItinerary: "Complete the Travel Itinerary",
-      }));
-    } else {
-      setFormErrors((prevErrors) => {
-        const { travelItinerary, ...rest } = prevErrors;
-        return rest;
-      });
-    }
-
-    return !hasErrors;
+    // check all the date are in sequence
+    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -257,7 +164,7 @@ const OutCountryTour = ({
       remark: initialFormData.remark,
       files: initialFormData.files,
     }));
-    setRows(initialRows);
+    setRows([]);
   };
 
   const updateFormDataWithUserName = (user) => {
@@ -270,6 +177,25 @@ const OutCountryTour = ({
       department: user.department_name || prevFormData.department,
       designation: user.position_title || prevFormData.designation,
     }));
+  };
+
+  const handleTravelItinerary = (newData) => {
+    if (editData) {
+      setRows(rows.map(row => row.id === newData.id ? newData : row));
+    } else {
+      setRows([...rows, { id: rows.length + 1, ...newData }]);
+    }
+    handleDialogClose();
+  };
+
+  const removeRow = (id) => {
+    const newRows = rows.filter((row) => row.id !== id);
+    setRows(newRows);
+  };
+
+  const editRow = (rowData) => {
+    setEditData(rowData);
+    setShowDialog(true);
   };
 
   useEffect(() => {
@@ -292,9 +218,6 @@ const OutCountryTour = ({
     setShowDialog(false);
   };
 
-  console.log("rows", rows);
-  console.log("formdata", formData);
-  console.log("trave.....", data);
   return (
     <form onSubmit={handleSubmit}>
       {successMessage && (
@@ -383,20 +306,32 @@ const OutCountryTour = ({
         <div className="row w-100 ">
           <div className="col-12 mb-3">
             <label className="form-label">Travel Itinerary</label>
-            <div>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => setShowDialog(true)}
-              >
-                <FaPlus size={18} />
-              </button>
-            </div>
           </div>
           {showDialog && (
-            <TravelDetails isOpen={showDialog} onClose={handleDialogClose} />
+            <TravelDetails
+              existingData={data ? data.travel_itinerary : null}
+              isOpen={showDialog}
+              onClose={handleDialogClose}
+              onSave={handleTravelItinerary}
+              initialData={editData}
+              type='outCountry'
+            />
           )}
-          <TravelDetailsTable />
+          <TravelDetailsTable
+            existingData={data ? data.travel_itinerary : null}
+            data={rows}
+            removeRow={removeRow}
+            editRow={editRow}
+          />
+          <div className="mb-3">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setShowDialog(true)}
+            >
+              <FaPlus size={18} />
+            </button>
+          </div>
           <CustomInput
             label="Total Amount"
             type="text"

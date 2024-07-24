@@ -3,11 +3,12 @@ import CustomInput from "./CustomInput";
 import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
 
-const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) => {
+const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData, type }) => {
   const [haltChecked, setHaltChecked] = useState(false);
   const [returnChecked, setReturnChecked] = useState(false);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
+  const [countries, setCountries] = useState([]);
   const [data, setData] = useState(
     initialData || {
       start_date: "",
@@ -22,9 +23,6 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
       days: "",
     }
   );
-
-  console.log('data...', data);
-  console.log('data s...', data.start_date);
 
   const formatDateForInput = (date) => {
     if (!date) return "";
@@ -118,6 +116,17 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
     }
   };
 
+  const fetchCountry = async () => {
+    try {
+      const response = await RateServices.getCountryTo()
+      if (response && response.status === 200) {
+        setCountries(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+
   const handleSubmit = async () => {
     const { isValid, errors } = validateData();
     setErrors(errors);
@@ -146,6 +155,12 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
       setData(initialData);
     }
   }, [initialData]);
+
+  useEffect(() => {
+    if (type === "outCountry"){
+      fetchCountry();
+    }
+  }, []);
 
   if (!isOpen) return null;
 
@@ -211,9 +226,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   <option value="" disabled>
                     Select From
                   </option>
-                  {dzongkhags.map((dzongkhag, index) => (
-                    <option key={index} value={dzongkhag}>
-                      {dzongkhag}
+                  {countries.map((country, index) => (
+                    <option key={index} value={country}>
+                      {country}
                     </option>
                   ))}
                 </select>
@@ -233,9 +248,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   <option value="" disabled>
                     Select To
                   </option>
-                  {dzongkhags.map((dzongkhag, index) => (
-                    <option key={index} value={dzongkhag}>
-                      {dzongkhag}
+                  {countries.map((country, index) => (
+                    <option key={index} value={country}>
+                      {country}
                     </option>
                   ))}
                 </select>
@@ -335,9 +350,9 @@ const TravelDetails = ({  existingData, isOpen, onClose, onSave, initialData }) 
                   <option value="" disabled>
                     Select Halt Location
                   </option>
-                  {dzongkhags.map((dzongkhag, index) => (
-                    <option key={index} value={dzongkhag}>
-                      {dzongkhag}
+                  {countries.map((country, index) => (
+                    <option key={index} value={country}>
+                      {country}
                     </option>
                   ))}
                 </select>
