@@ -86,7 +86,7 @@ const routes = createBrowserRouter([
         children: [{ path: "", element: <ViewRequestedAdvance /> }],
       },
       {
-        path: "dsaClaim",
+        path: "dsaClaim/:id",
         element: <PrivateRoute />,
         children: [{ path: "", element: <DsaClaim /> }],
       },

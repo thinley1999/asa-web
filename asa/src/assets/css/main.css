@@ -745,3 +745,7 @@ a {
   left: 18rem;
   transform: translateY(-100%);
 }
+
+.btn-fixed-width {
+  width: 70%;
+}

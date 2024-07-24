@@ -10,7 +10,6 @@ import { FaCar } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaFileInvoiceDollar } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa";
-import { PiMoneyWavyFill } from "react-icons/pi";
 import { BiSolidReport } from "react-icons/bi";
 
 const SideBar = () => {
@@ -45,12 +44,6 @@ const SideBar = () => {
       path: "/tourAdvance",
       icon: <FaCar size={24} />,
       label: "Tour Advance",
-      value: 5,
-    },
-    {
-      path: "/dsaClaim",
-      icon: <PiMoneyWavyFill size={24} />,
-      label: "DSA Claim",
       value: 5,
     },
   ]);
