@@ -10,6 +10,7 @@ const TravelDetails = ({
   onSave,
   initialData,
   type,
+  haltCount,
 }) => {
   const [haltChecked, setHaltChecked] = useState(false);
   const [returnChecked, setReturnChecked] = useState(false);
@@ -32,6 +33,7 @@ const TravelDetails = ({
       days: "",
     }
   );
+  const halt_count = haltCount();
 
   const formatDateForInput = (date) => {
     if (!date) return "";
@@ -113,7 +115,7 @@ const TravelDetails = ({
     try {
       const response = await RateServices.getCountryTo();
       if (response && response.status === 200) {
-        setCountries(response.data);
+        setDropDown(response.data);
       }
     } catch (error) {
       console.error("Error fetching countries:", error);
@@ -140,7 +142,7 @@ const TravelDetails = ({
         response = await RateServices.getRate(from, to);
       } else if (tourType === "outCountry") {
         if (halt_at) {
-          response = await RateServices.getStopOverRate(halt_at);
+          response = await RateServices.getStopOverRate(halt_count + 1, halt_at);
         } else if (from === "India" || to === "India") {
           response = await RateServices.getRate(from, to);
         } else {
@@ -162,6 +164,7 @@ const TravelDetails = ({
     setErrors(errors);
 
     if (!isValid) return;
+    console.log('data..', data);
 
     try {
       const { from, to, dsa_percentage, days, mode, mileage, halt_at } = data;
@@ -174,7 +177,8 @@ const TravelDetails = ({
         dsa_percentage,
         days,
         mode,
-        mileage
+        mileage,
+        halt_at,
       );
 
       setData((prevData) => ({ ...prevData, rate }));
@@ -195,11 +199,12 @@ const TravelDetails = ({
     if (type === "outCountry") {
       fetchCountry();
       setDropDown(countries);
-    }
-    if (type === "inCountry") {
+    } else if (type === "inCountry") {
       setDropDown(dzongkhags);
     }
-  }, [countries]);
+  }, [type]);
+
+  console.log('data....', data);
 
   if (!isOpen) return null;
 

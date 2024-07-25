@@ -37,7 +37,6 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
   const totalAmount = () => {
     let total = 0;
-    console.log("ffdfs", rows);
     rows.forEach((row) => {
       if (row.rate) {
         total += parseFloat(row.rate);
@@ -355,6 +354,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
               onSave={handleTravelItinerary}
               initialData={editData}
               type="inCountry"
+              haltCount={haltCount}
             />
           )}
           <TravelDetailsTable

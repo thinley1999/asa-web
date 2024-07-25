@@ -41,24 +41,30 @@ const getRate = async (from, to) => {
   };
 
   const getStopOverRate = async (value, country) => {
+    country = country === "India" ? "India" : "Other";
+
+    if (value > 2) {
+      return { rate: 0 };
+    }
+  
     try {
       const response = await axios.get(`${API_URL}/api/stop_over`, {
         params: {
-            stop_over_rate: {
-                value: value,
-                country: country,
-            }
+          stop_over_rate: {
+            value: value,
+            country: country,
+          }
         },
         headers: {
           Authorization: `${token}`,
         },
       });
+
       return response.data;
     } catch (error) {
       throw error;
     }
   };
-
 
 
 const getCountryFrom = async () => {
