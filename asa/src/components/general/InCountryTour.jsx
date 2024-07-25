@@ -192,12 +192,37 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     }));
   };
 
-  const handleTravelItinerary = (newData) => {
-    if (editData) {
-      setRows(rows.map((row) => (row.id === newData.id ? newData : row)));
-    } else {
-      setRows([...rows, { id: rows.length + 1, ...newData }]);
+  const haltCount = () => {
+    let count = 0;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].halt_at) {
+        count++;
+      }
     }
+    return count;
+  };
+  
+  const handleTravelItinerary = (newData) => {
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      itinerary_error: "",
+    }));
+    const dataToCheck = editData || newData;
+    const currentHaltCount = haltCount();
+  
+    if (dataToCheck.halt_at && currentHaltCount >= 2) { 
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        itinerary_error: "Travel itinerary dates are not valid. User can only add 2 halts.",
+      }));
+    } else {
+      if (editData) {
+        setRows(rows.map((row) => (row.id === newData.id ? newData : row)));
+      } else {
+        setRows([...rows, { id: rows.length + 1, ...newData }]);
+      }
+    }
+  
     handleDialogClose();
   };
 

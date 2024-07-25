@@ -193,16 +193,38 @@ const OutCountryTour = ({
     }));
   };
 
+  const haltCount = () => {
+    let count = 0;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].halt_at) {
+        count++;
+      }
+    }
+    return count;
+  };
+
   const handleTravelItinerary = (newData) => {
     setFormErrors((prevErrors) => ({
       ...prevErrors,
       itinerary_error: "",
-    }))
-    if (editData) {
-      setRows(rows.map(row => row.id === newData.id ? newData : row));
+    }));
+    const dataToCheck = editData || newData;
+    const currentHaltCount = haltCount();
+
+    if (dataToCheck.halt_at && currentHaltCount >= 2) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        itinerary_error:
+          "Travel itinerary dates are not valid. User can only add 2 halts.",
+      }));
     } else {
-      setRows([...rows, { id: rows.length + 1, ...newData }]);
+      if (editData) {
+        setRows(rows.map((row) => (row.id === newData.id ? newData : row)));
+      } else {
+        setRows([...rows, { id: rows.length + 1, ...newData }]);
+      }
     }
+
     handleDialogClose();
   };
 
@@ -236,7 +258,7 @@ const OutCountryTour = ({
     setShowDialog(false);
   };
 
-  console.log('form data', formData);
+  console.log("form data", formData);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -334,7 +356,7 @@ const OutCountryTour = ({
               onClose={handleDialogClose}
               onSave={handleTravelItinerary}
               initialData={editData}
-              type='outCountry'
+              type="outCountry"
             />
           )}
           <TravelDetailsTable
@@ -353,7 +375,7 @@ const OutCountryTour = ({
               type="button"
               className="btn btn-primary"
               onClick={() => setShowDialog(true)}
-              disabled={!data ? false: true}
+              disabled={!data ? false : true}
             >
               <FaPlus size={18} />
             </button>
@@ -374,7 +396,12 @@ const OutCountryTour = ({
                 type="checkbox"
                 name="advance_percentage"
                 value={90}
-                checked={data?.advance_percentage == 90 || formData.advance_percentage == 90 ? true: false}
+                checked={
+                  data?.advance_percentage == 90 ||
+                  formData.advance_percentage == 90
+                    ? true
+                    : false
+                }
                 onChange={handleChange}
               />
               <label className="form-check-label">90% Advance</label>
@@ -384,7 +411,12 @@ const OutCountryTour = ({
                 className="form-check-input"
                 type="checkbox"
                 name="advance_percentage"
-                checked={data?.advance_percentage == 0 || formData.advance_percentage == 0 ? true: false}
+                checked={
+                  data?.advance_percentage == 0 ||
+                  formData.advance_percentage == 0
+                    ? true
+                    : false
+                }
                 onChange={handleChange}
                 value={0}
               />
