@@ -12,7 +12,7 @@ const TravelDetails = ({
   type,
   haltCount,
 }) => {
-  const [haltChecked, setHaltChecked] = useState(false);
+  const [haltChecked, setHaltChecked] = useState(existingData?.halt_at || initialData?.halt_at ? true : false);
   const [returnChecked, setReturnChecked] = useState(false);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
