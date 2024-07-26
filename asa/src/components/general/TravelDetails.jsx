@@ -143,7 +143,7 @@ const TravelDetails = ({
       } else if (tourType === "outCountry") {
         if (halt_at) {
           response = await RateServices.getStopOverRate(halt_count + 1, halt_at);
-        } else if (from === "India" || to === "India") {
+        } else if (from === "India" && to === "India") {
           response = await RateServices.getRate(from, to);
         } else {
           response = await RateServices.getThirdCountryRate(to);
