@@ -34,6 +34,8 @@ const Navbar = ({
         return "DSA Claim";
       case "/requestedAdvance":
         return "Requested Advance";
+      case "/requestedDsa":
+        return "Requested DSA";
       case "/reports":
         return "Reports";
       default:

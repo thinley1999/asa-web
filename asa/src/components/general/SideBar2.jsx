@@ -12,6 +12,7 @@ import { FaFileInvoiceDollar } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { BiSolidReport } from "react-icons/bi";
+import { GrMoney } from "react-icons/gr";
 
 const SideBar2 = ({ handleCloseSidebar }) => {
   const location = useLocation();
@@ -82,10 +83,16 @@ const SideBar2 = ({ handleCloseSidebar }) => {
               value: 6,
             },
             {
+              path: "/requestedDsa",
+              icon: <GrMoney size={24} />,
+              label: "Requested DSA",
+              value: 7,
+            },
+            {
               path: "/reports",
               icon: <BiSolidReport size={24} />,
               label: "Reports",
-              value: 7,
+              value: 8,
             },
           ];
 

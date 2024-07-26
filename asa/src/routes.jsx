@@ -18,6 +18,7 @@ import DsaClaim from "./components/employee/DsaClaim";
 import PageNotFound from "./components/general/PageNotFound";
 import PrivateRoute from "./components/general/PrivateRoute";
 import Reports from "./components/finance/Reports";
+import RequestedDsa from "./components/finance/RequestedDsa";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -84,6 +85,11 @@ const routes = createBrowserRouter([
         path: "viewRequestedAdvance/:id",
         element: <PrivateRoute />,
         children: [{ path: "", element: <ViewRequestedAdvance /> }],
+      },
+      {
+        path: "requestedDsa",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <RequestedDsa /> }],
       },
       {
         path: "dsaClaim/:id",
