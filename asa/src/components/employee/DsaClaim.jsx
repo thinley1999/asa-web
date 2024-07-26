@@ -1,48 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
+import ItenararyService from "../services/ItenararyService";
+import { useParams } from "react-router-dom";
+import ClaimInput from "../general/ClaimInput";
+import ClaimDropDown from "./ClainDropDown";
 
 const DsaClaim = () => {
-  const [haltChecked, setHaltChecked] = useState(true);
   const [returnChecked, setReturnChecked] = useState(false);
   const [isEditable, setIsEditable] = useState(true);
-
-  const [formData, setFormData] = useState({
-    fromDate: "",
-    toDate: "",
-    halt: true,
-    dsaPercent: "100",
-    day: "",
-    dsaAmount: "",
-  });
-
-  const handleReturnChange = (e) => {
-    const isChecked = e.target.checked;
-    setReturnChecked(isChecked);
-    if (isChecked) {
-      setHaltChecked(false);
-    }
-  };
-
-  const handleHaltChange = (e) => {
-    const isChecked = e.target.checked;
-    setHaltChecked(isChecked);
-
-    if (isChecked) {
-      setReturnChecked(false);
-    }
-  };
-
-  const formatDateForInput = (dateString) => {
-    const [date, time, period] = dateString.split(" ");
-    const [month, day, year] = date.split("/");
-    const [hours, minutes] = time.split(":");
-    const formattedHours =
-      period.toLowerCase() === "pm" && hours !== "12"
-        ? String(Number(hours) + 12).padStart(2, "0")
-        : hours.padStart(2, "0");
-    const formattedMinutes = minutes.padStart(2, "0");
-    return `${year}-${month}-${day}T${formattedHours}:${formattedMinutes}`;
-  };
+  const [itinararies, setItineraries] = useState([]);
+  const { id } = useParams();
+  const [formData, setFormData] = useState(null);
+  const [dsa_amount, setDsaAmount] = useState(0);
 
   const handleRowClicked = (row) => {
     setFormData({
@@ -64,16 +33,51 @@ const DsaClaim = () => {
 
   const handleResetClick = () => {
     setFormData({
-      fromDate: "",
-      toDate: "",
-      halt: true,
-      dsaPercent: "100",
-      day: "",
-      dsaAmount: "",
+      start_date: "",
+      end_date: "",
+      from: "",
+      to: "",
+      mode: "",
+      halt_at: "",
+      dsa_percentage: "",
+      days: "",
+      rate: "",
     });
-    setHaltChecked(true); // Reset checkboxes if needed
-    setReturnChecked(false); // Reset checkboxes if needed
-    setIsEditable(true); // Ensure inputs are editable after reset
+    setHaltChecked(true);
+    setReturnChecked(false);
+    setIsEditable(true);
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const formatDateForInput = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = ("0" + (d.getMonth() + 1)).slice(-2);
+    const day = ("0" + d.getDate()).slice(-2);
+    const hours = ("0" + d.getHours()).slice(-2);
+    const minutes = ("0" + d.getMinutes()).slice(-2);
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const fetchItinaries = async () => {
+    try {
+      const response = await ItenararyService.getItineraries(id);
+
+      if (response) {
+        setItineraries(response);
+        setFormData(response[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching current applications:", error);
+    }
   };
 
   const customStyles = {
@@ -96,20 +100,24 @@ const DsaClaim = () => {
     {
       name: "From Date",
       sortable: true,
-      selector: (row) => row.fromDate,
+      selector: (row) => row.start_date,
     },
     {
       name: "To Date",
       sortable: true,
-      selector: (row) => row.toDate,
+      selector: (row) => row.end_date,
     },
     {
-      name: "Halt",
-      selector: (row) => row.halt,
+      name: "From",
+      selector: (row) => row.from,
+    },
+    {
+      name: "To",
+      selector: (row) => row.to,
     },
     {
       name: "DSA Percent",
-      selector: (row) => row.dsaPercent,
+      selector: (row) => row.dsa_percentage,
     },
     {
       name: "No. of Days",
@@ -117,64 +125,51 @@ const DsaClaim = () => {
     },
     {
       name: "DSA Amount",
-      selector: (row) => row.dsaAmount,
+      selector: (row) => row.rate,
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      fromDate: "07/17/2024 10:07 AM",
-      toDate: "07/17/2024 10:07 PM",
-      halt: "true",
-      dsaPercent: "100",
-      days: "1",
-      dsaAmount: "2000",
-    },
-    {
-      id: 2,
-      fromDate: "07/17/2024 10:07 AM",
-      toDate: "07/22/2024 10:07 PM",
-      halt: "false",
-      dsaPercent: "50",
-      days: "5",
-      dsaAmount: "5000",
-    },
-  ];
+  useEffect(() => {
+    fetchItinaries();
+  }, []);
+
+  if (formData === null) {
+    return null;
+  }
+
+  console.log("formData:", formData);
 
   return (
     <div className="bg-white px-4 py-4">
       <div className="row w-100">
-        <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label className="form-label">
-            From Date <span className="reqspan">*</span>
-          </label>
-          <input
-            type="datetime-local"
-            className="form-control"
-            name="fromDate"
-            value={formData.fromDate}
-            onChange={(e) =>
-              setFormData({ ...formData, fromDate: e.target.value })
-            }
-            disabled={!isEditable}
-          />
-        </div>
-        <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label className="form-label">
-            To Date <span className="reqspan">*</span>
-          </label>
-          <input
-            type="datetime-local"
-            className="form-control"
-            name="toDate"
-            value={formData.toDate}
-            onChange={(e) =>
-              setFormData({ ...formData, toDate: e.target.value })
-            }
-            disabled={!isEditable}
-          />
-        </div>
+        <ClaimInput
+          label="From Date"
+          type="datetime-local"
+          name="start_date"
+          value={formatDateForInput(formData.start_date)}
+          handleChange={handleFormChange}
+        />
+        <ClaimInput
+          label="To Date"
+          type="datetime-local"
+          name="end_date"
+          value={formatDateForInput(formData.end_date)}
+          handleChange={handleFormChange}
+        />
+        <ClaimDropDown
+          label="From"
+          name="from"
+          value={formData.from}
+          handleChange={handleFormChange}
+          dropDown={["In", "Out"]}
+        />
+        <ClaimDropDown
+          label="To"
+          name="to"
+          value={formData.to}
+          handleChange={handleFormChange}
+          dropDown={["In", "Out"]}
+        />
         <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
           <label></label>
           <div className="form-check">
@@ -182,8 +177,7 @@ const DsaClaim = () => {
               className="form-check-input"
               type="checkbox"
               name="halt"
-              checked={haltChecked}
-              onChange={handleHaltChange}
+              checked={formData.halt_at ? true : false}
               disabled={!isEditable}
             />
             <label className="form-check-label">Halt?</label>
@@ -193,85 +187,49 @@ const DsaClaim = () => {
               className="form-check-input"
               type="checkbox"
               name="return"
-              checked={returnChecked}
-              onChange={handleReturnChange}
               disabled={!isEditable}
             />
             <label className="form-check-label">Return on the same day?</label>
           </div>
         </div>
-        <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label className="form-label">Halt At</label>
-          <input
-            type="text"
-            className="form-control"
-            name="haltAt"
-            disabled={returnChecked || !isEditable}
-          />
-        </div>
-        <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label className="form-label">
-            DSA Percent <span className="reqspan">*</span>
-          </label>
-          <select
-            className="form-select"
-            name="dsaPercent"
-            value={formData.dsaPercent}
-            onChange={(e) =>
-              setFormData({ ...formData, dsaPercent: e.target.value })
-            }
-            disabled={!isEditable}
-          >
-            <option value="100">100</option>
-            <option value="50">50</option>
-          </select>
-        </div>
-        <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label className="form-label">DSA Amount (Per Day)</label>
-          <input
-            className="form-control"
-            type="text"
-            name="amount"
-            value={formData.dsaAmount}
-            onChange={(e) =>
-              setFormData({ ...formData, dsaAmount: e.target.value })
-            }
-            disabled={!isEditable}
-          />
-        </div>
-        <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label className="form-label">No. of Days</label>
-          <input
-            className="form-control"
-            type="text"
-            name="day"
-            value={formData.day}
-            onChange={(e) => setFormData({ ...formData, day: e.target.value })}
-            disabled={!isEditable}
-          />
-        </div>
-        <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label className="form-label">DSA Amount</label>
-          <input
-            className="form-control"
-            type="text"
-            name="dsaAmount"
-            value={formData.dsaAmount}
-            onChange={(e) =>
-              setFormData({ ...formData, dsaAmount: e.target.value })
-            }
-            disabled={!isEditable}
-          />
-        </div>
-        <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
-          <label className="form-label">Other Details</label>
-          <textarea
-            className="form-control"
-            name="otherDetails"
-            rows="4"
-            disabled={!isEditable}
-          ></textarea>
-        </div>
+        <ClaimDropDown
+          label="Halt AT"
+          name="halt_at"
+          value={formData.halt_at}
+          handleChange={handleFormChange}
+          dropDown={["In", "Out"]}
+          isDisable={formData?.halt_at ? false : true}
+        />
+        <ClaimDropDown
+          label="Mode of Travel"
+          name="mode"
+          value={formData.mode}
+          handleChange={handleFormChange}
+          dropDown={["Airplane", "Train", "Private Vehicle", "Pool Vehicle"]}
+        />
+        <ClaimInput
+          label="Mileage"
+          type="number"
+          name="mileage"
+          value={formData.mileage}
+          handleChange={handleFormChange}
+          isDisable={formData?.mode === "Private Vehicle" ? false : true}
+        />
+        <ClaimDropDown
+          label="DSA Percentage"
+          name="dsa_percentage"
+          value={formData.dsa_percentage}
+          handleChange={handleFormChange}
+          dropDown={["100", "50"]}
+        />
+        <ClaimInput
+          label="No. of Days"
+          type="number"
+          name="days"
+          value={formData.days}
+          handleChange={handleFormChange}
+          isDisable={true}
+        />
       </div>
       <div className="d-flex justify-content-center">
         <button
@@ -299,10 +257,23 @@ const DsaClaim = () => {
       <div className="row w-100">
         <DataTable
           columns={columns}
-          data={data}
+          data={itinararies}
           customStyles={customStyles}
           onRowClicked={handleRowClicked}
         />
+      </div>
+      <div className="divider1"></div>
+      <ClaimInput
+        label="DSA Amount"
+        type="text"
+        name="dsa_amount"
+        value={dsa_amount}
+        isDisable={true}
+      />
+      <div className="bg-white px-4 pb-3 text-center">
+        <button type="submit" className="btn btn-primary px-5">
+          Claim Now
+        </button>
       </div>
     </div>
   );
