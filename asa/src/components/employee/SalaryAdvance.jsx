@@ -50,8 +50,10 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await UserServices.showDetail(data ? data.user.id : null);
-      
+      const response = await UserServices.showDetail(
+        data ? data.user.id : null
+      );
+
       if (response && response.status === 200) {
         setUser(response.data);
         updateFormDataWithUserName(response.data);
@@ -252,7 +254,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
               error={formErrors.advanceAmount}
             />
             <CustomInput
-              label="Threshold Amount (Netpay * 2)"
+              label="Threshold Amount (Basic pay * 2)"
               type="number"
               value={formData.thresholdAmount}
               name="thresholdAmount"
