@@ -4,50 +4,96 @@ import ItenararyService from "../services/ItenararyService";
 import { useParams } from "react-router-dom";
 import ClaimInput from "../general/ClaimInput";
 import ClaimDropDown from "./ClainDropDown";
+import RateServices from "../services/RateServices";
+
 
 const DsaClaim = () => {
-  const [returnChecked, setReturnChecked] = useState(false);
-  const [isEditable, setIsEditable] = useState(true);
   const [itinararies, setItineraries] = useState([]);
   const { id } = useParams();
   const [formData, setFormData] = useState(null);
   const [dsa_amount, setDsaAmount] = useState(0);
+  const [countries, setCountries] = useState([]);
+  const [newForm, setNewForm] = useState(false);
 
   const handleRowClicked = (row) => {
+    setFormData(row);
+  };
+
+  const fetchCountry = async () => {
+    try {
+      const response = await RateServices.getCountryTo();
+      if (response && response.status === 200) {
+        setCountries(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+
+  const calculateDsa = () => {
+    let totalRate = 0;
+
+    for (let it of itinararies) {
+      totalRate += it.rate;
+    }
+    setDsaAmount(totalRate);
+  }
+
+  const handleSave = async () => {
+    try {
+      const response = await ItenararyService.updateRow(formData);
+      console.log('save response', response);
+      if (response && response.status === 200) {
+        fetchItinaries();
+      }
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await ItenararyService.deleteRow(formData.id);
+      console.log('delete response', response);
+      if (response) {
+        fetchItinaries();
+      }
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+
+  const handleAddRow = async () => {
+    if (newForm) {
+      try {
+        const response = await ItenararyService.addRow(formData);
+        if (response) {
+          fetchItinaries();
+        }
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+      }
+    }
+    setNewForm(false);
+  };
+
+
+  const handleResetForm = () => {
+    setNewForm(true);
     setFormData({
-      fromDate: formatDateForInput(row.fromDate),
-      toDate: formatDateForInput(row.toDate),
-      halt: row.halt === "true",
-      dsaPercent: row.dsaPercent,
-      day: row.days,
-      dsaAmount: row.dsaAmount,
+      start_date: null,
+      end_date: null,
+      to: null,
+      halt_at: null,
+      mode: null,
+      mileage: null,
+      dsa_percentage: null,
+      days: null,
+      rate: 100,
+      advance_id: id,
     });
-    setHaltChecked(row.halt === "true");
-    setReturnChecked(row.halt !== "true");
-    setIsEditable(false);
   };
-
-  const handleEditClick = () => {
-    setIsEditable(true);
-  };
-
-  const handleResetClick = () => {
-    setFormData({
-      start_date: "",
-      end_date: "",
-      from: "",
-      to: "",
-      mode: "",
-      halt_at: "",
-      dsa_percentage: "",
-      days: "",
-      rate: "",
-    });
-    setHaltChecked(true);
-    setReturnChecked(false);
-    setIsEditable(true);
-  };
-
+  
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -131,13 +177,19 @@ const DsaClaim = () => {
 
   useEffect(() => {
     fetchItinaries();
+    fetchCountry();
   }, []);
+
+  useEffect(() => {
+    calculateDsa();
+  }, [formData]);
 
   if (formData === null) {
     return null;
   }
 
   console.log("formData:", formData);
+  console.log("itineraries", itinararies);
 
   return (
     <div className="bg-white px-4 py-4">
@@ -161,14 +213,14 @@ const DsaClaim = () => {
           name="from"
           value={formData.from}
           handleChange={handleFormChange}
-          dropDown={["In", "Out"]}
+          dropDown={countries}
         />
         <ClaimDropDown
           label="To"
           name="to"
           value={formData.to}
           handleChange={handleFormChange}
-          dropDown={["In", "Out"]}
+          dropDown={countries}
         />
         <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
           <label></label>
@@ -176,9 +228,9 @@ const DsaClaim = () => {
             <input
               className="form-check-input"
               type="checkbox"
-              name="halt"
-              checked={formData.halt_at ? true : false}
-              disabled={!isEditable}
+              name="halt_at"
+              checked={ formData.halt_at? true : false}
+              onChange={handleFormChange}
             />
             <label className="form-check-label">Halt?</label>
           </div>
@@ -187,7 +239,7 @@ const DsaClaim = () => {
               className="form-check-input"
               type="checkbox"
               name="return"
-              disabled={!isEditable}
+              onChange={handleFormChange}
             />
             <label className="form-check-label">Return on the same day?</label>
           </div>
@@ -197,7 +249,7 @@ const DsaClaim = () => {
           name="halt_at"
           value={formData.halt_at}
           handleChange={handleFormChange}
-          dropDown={["In", "Out"]}
+          dropDown={countries}
           isDisable={formData?.halt_at ? false : true}
         />
         <ClaimDropDown
@@ -235,22 +287,30 @@ const DsaClaim = () => {
         <button
           type="button"
           className="btn btn-primary me-5 mb-2 mybtn"
-          onClick={handleResetClick}
+          onClick={handleResetForm}
         >
           Reset
         </button>
         <button
           type="button"
           className="btn btn-primary me-5 mb-2 mybtn"
-          onClick={handleEditClick}
+          onClick={handleSave}
         >
-          Edit
-        </button>
-        <button type="submit" className="btn btn-primary me-5 mb-2 mybtn">
           Save
         </button>
-        <button type="submit" className="btn btn-primary me-5 mb-2 mybtn">
+        <button 
+        type="button" 
+        className="btn btn-primary me-5 mb-2 mybtn"
+        onClick={handleDelete}
+        >
           Delete
+        </button>
+        <button 
+        type="button" 
+        className="btn btn-primary me-5 mb-2 mybtn"
+        onClick={handleAddRow}
+        >
+          Add Row
         </button>
       </div>
       <div className="divider1"></div>

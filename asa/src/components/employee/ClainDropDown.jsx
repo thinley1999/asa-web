@@ -7,11 +7,11 @@ const ClaimDropDown = ({label, name, value, handleChange, errors, dropDown, isDi
       <select
         className={`form-select ${errors ? "is-invalid" : ""}`}
         name={name}
-        value={value}
+        value={value || ""}
         onChange={handleChange}
         disabled={isDisable}
       >
-        <option value="" disabled>
+        <option value="" disabled >
           Select Location
         </option>
         {dropDown.map((country, index) => (
