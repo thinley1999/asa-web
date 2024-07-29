@@ -14,6 +14,7 @@ const DsaClaim = () => {
   const [dsa_amount, setDsaAmount] = useState(0);
   const [countries, setCountries] = useState([]);
   const [newForm, setNewForm] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleRowClicked = (row) => {
     setFormData(row);
@@ -40,6 +41,10 @@ const DsaClaim = () => {
   }
 
   const handleSave = async () => {
+    const { isValid, errors } = validateData();
+    setErrors(errors);
+    if (!isValid) return;
+
     try {
       const response = await ItenararyService.updateRow(formData);
       console.log('save response', response);
@@ -64,6 +69,10 @@ const DsaClaim = () => {
   };
 
   const handleAddRow = async () => {
+    const { isValid, errors } = validateData();
+    setErrors(errors);
+    if (!isValid) return;
+
     if (newForm) {
       try {
         const response = await ItenararyService.addRow(formData);
@@ -76,7 +85,6 @@ const DsaClaim = () => {
     }
     setNewForm(false);
   };
-
 
   const handleResetForm = () => {
     setNewForm(true);
@@ -92,6 +100,51 @@ const DsaClaim = () => {
       rate: 100,
       advance_id: id,
     });
+  };
+
+  const validateData = () => {
+    const {
+      start_date,
+      end_date,
+      from,
+      to,
+      mode,
+      mileage,
+      halt_at,
+      dsa_percentage,
+    } = formData;
+    const newErrors = {};
+
+    if (!start_date) newErrors.start_date = "Start date is required";
+    if (!end_date) newErrors.end_date = "End date is required";
+    if (!from) newErrors.from = "From location is required";
+    if (!to) newErrors.to = "To location is required";
+    if (!mode) newErrors.mode = "Mode of travel is required";
+    if (!dsa_percentage)
+      newErrors.dsa_percentage = "DSA percentage is required";
+
+    if (mode === "Private Vehicle" && !mileage) {
+      newErrors.mileage = "Mileage is required for private vehicle";
+    }
+
+    if (start_date && end_date) {
+      const startDate = new Date(start_date);
+      const endDate = new Date(end_date);
+  
+      if (endDate <= startDate) {
+        newErrors.end_date = "End date must be greater than start date";
+      }
+    }
+
+    if (halt_at == "on") {
+      newErrors.halt_at = "Halt location is required when halt is checked";
+    }
+
+    if (Object.keys(newErrors).length === 0) {
+      return { isValid: true, errors: {} };
+    }
+
+    return { isValid: false, errors: newErrors };
   };
   
   const handleFormChange = (e) => {
@@ -123,6 +176,50 @@ const DsaClaim = () => {
       }
     } catch (error) {
       console.error("Error fetching current applications:", error);
+    }
+  };
+
+  const fetchRate = async (
+    from,
+    to,
+    dsaPercentage,
+    days,
+    mode,
+    mileage,
+    halt_at,
+    type
+  ) => {
+    try {
+      if (mode === "Private Vehicle") {
+        return dsaPercentage * 16 * mileage;
+      }
+
+      let response;
+      if (tourType === "inCountry") {
+        response = await RateServices.getRate(from, to);
+      } else if (tourType === "outCountry") {
+        if (halt_at) {
+          response = await RateServices.getStopOverRate(halt_count + 1, halt_at);
+        } else if (from === "India" && to === "India" || from === "Bhutan" && to === "Bhutan") {
+          response = await RateServices.getRate(from, to);
+        }
+        else if (from === "Bhutan" && to === "India" || from === "India" && to === "Bhutan") {
+          response = await RateServices.getRate(from, to);
+        }
+        else if (from != "India" && to === "Bhutan" || from != "India" && to === "India") {
+          response = await RateServices.getRate("Other", to);
+        }
+         else {
+          response = await RateServices.getThirdCountryRate(to);
+        }
+      }
+
+      if (response) {
+        return dsaPercentage * days * response.rate;
+      }
+    } catch (error) {
+      console.error("Error fetching rates:", error);
+      throw error;
     }
   };
 
@@ -200,6 +297,7 @@ const DsaClaim = () => {
           name="start_date"
           value={formatDateForInput(formData.start_date)}
           handleChange={handleFormChange}
+          errors={errors?.start_date}
         />
         <ClaimInput
           label="To Date"
@@ -207,6 +305,7 @@ const DsaClaim = () => {
           name="end_date"
           value={formatDateForInput(formData.end_date)}
           handleChange={handleFormChange}
+          errors={errors?.end_date}
         />
         <ClaimDropDown
           label="From"
@@ -214,6 +313,7 @@ const DsaClaim = () => {
           value={formData.from}
           handleChange={handleFormChange}
           dropDown={countries}
+          errors={errors?.from}
         />
         <ClaimDropDown
           label="To"
@@ -221,6 +321,7 @@ const DsaClaim = () => {
           value={formData.to}
           handleChange={handleFormChange}
           dropDown={countries}
+          errors={errors?.to}
         />
         <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
           <label></label>
@@ -229,7 +330,7 @@ const DsaClaim = () => {
               className="form-check-input"
               type="checkbox"
               name="halt_at"
-              checked={ formData.halt_at? true : false}
+              checked={ formData.halt_at? true : false }
               onChange={handleFormChange}
             />
             <label className="form-check-label">Halt?</label>
@@ -251,6 +352,7 @@ const DsaClaim = () => {
           handleChange={handleFormChange}
           dropDown={countries}
           isDisable={formData?.halt_at ? false : true}
+          errors={errors?.halt_at}
         />
         <ClaimDropDown
           label="Mode of Travel"
@@ -258,6 +360,7 @@ const DsaClaim = () => {
           value={formData.mode}
           handleChange={handleFormChange}
           dropDown={["Airplane", "Train", "Private Vehicle", "Pool Vehicle"]}
+          errors={errors?.mode}
         />
         <ClaimInput
           label="Mileage"
@@ -266,6 +369,7 @@ const DsaClaim = () => {
           value={formData.mileage}
           handleChange={handleFormChange}
           isDisable={formData?.mode === "Private Vehicle" ? false : true}
+          errors={errors?.mileage}
         />
         <ClaimDropDown
           label="DSA Percentage"
@@ -273,6 +377,7 @@ const DsaClaim = () => {
           value={formData.dsa_percentage}
           handleChange={handleFormChange}
           dropDown={["100", "50"]}
+          errors={errors?.dsa_percentage}
         />
         <ClaimInput
           label="No. of Days"

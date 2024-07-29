@@ -1,6 +1,6 @@
 import React from "react";
 
-const ClaimInput = ({label, type, name, value, handleChange, isDisable}) => {
+const ClaimInput = ({label, type, name, value, handleChange, errors, isDisable}) => {
   return (
     <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
       <label className="form-label">
@@ -8,12 +8,13 @@ const ClaimInput = ({label, type, name, value, handleChange, isDisable}) => {
       </label>
       <input
         type={type}
-        className="form-control"
+        className={`form-control ${errors ? "is-invalid" : ""}`}
         name={name}
         value={value ? value : ""}
         onChange={handleChange}
         disabled={isDisable}
       />
+      {errors && <div className="text-danger">{errors}</div>}
     </div>
   );
 };
