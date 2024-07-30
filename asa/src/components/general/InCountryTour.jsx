@@ -30,7 +30,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     remark: " ",
     advance_type: "in_country_tour_advance",
     files: [],
-    advance_percentage: 90,
+    advance_percentage: 0.9,
   };
   const [formData, setFormData] = useState(initialFormData);
   const [rows, setRows] = useState([]);
@@ -45,7 +45,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: total,
+      advanceAmount: total * formData.advance_percentage,
     }));
   };
 
@@ -241,7 +241,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 
   useEffect(() => {
     totalAmount();
-  }, [rows]);
+  }, [rows, formData.advance_percentage]);
 
   const handleCloseSuccessMessage = () => {
     setSuccessMessage("");
@@ -400,7 +400,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
                     : false
                 }
                 onChange={handleChange}
-                value={90}
+                value={0.9}
                 disabled={data ? true : false}
               />
               <label className="form-check-label">90% Advance</label>
@@ -473,9 +473,3 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
 };
 
 export default InCountryTour;
-
-// rows = [
-//   {id: 1, start_date: '2024-07-24T16:25', end_date: '2024-07-26T16:24', from: 'Gasa', to: 'Trashigang'},
-//   {id: 2, start_date: '2024-07-26T16:25', end_date: '2024-07-27T16:25', from: 'Gasa', to: 'Sarpang'},
-//   {id: 3, start_date: '2024-07-30T16:25', end_date: '2024-07-31T16:25', from: 'Lhuentse', to: 'Trashigang'}
-// ]
