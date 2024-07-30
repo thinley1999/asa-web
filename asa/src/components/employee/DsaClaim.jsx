@@ -7,6 +7,8 @@ import ClaimDropDown from "./ClainDropDown";
 import RateServices from "../services/RateServices";
 import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
+import AdvanceServices from "../services/AdvanceServices";
+import { dzongkhags } from "../datas/dzongkhag_lists";
 
 const DsaClaim = () => {
   const [itinararies, setItineraries] = useState([]);
@@ -18,6 +20,7 @@ const DsaClaim = () => {
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [advance, setAdvance] = useState(null);
 
   const handleRowClicked = (row) => {
     setFormData(row);
@@ -25,6 +28,11 @@ const DsaClaim = () => {
   };
 
   const fetchCountry = async () => {
+    if (advance?.advance_type === "in_country_tour_advance") {
+      setCountries(dzongkhags);
+      return;
+    }
+
     try {
       const response = await RateServices.getCountryTo();
       if (response && response.status === 200) {
@@ -85,6 +93,23 @@ const DsaClaim = () => {
 
     if (newForm) {
       try {
+        const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
+
+        const rate = await fetchRate(
+          from,
+          to,
+          dsa_percentage,
+          days,
+          mode,
+          mileage,
+          halt_at,
+        );
+
+        setFormData((prevData) => ({
+          ...prevData,
+          rate,
+        }));
+
         const response = await ItenararyService.addRow(formData);
         if (response) {
           fetchItinaries();
@@ -110,9 +135,17 @@ const DsaClaim = () => {
       mileage: null,
       dsa_percentage: null,
       days: null,
-      rate: 100,
+      rate: null,
       advance_id: id,
     });
+  };
+
+  const getNumberOfDays = (start_date, end_date) => {
+    const start = new Date(start_date);
+    const end = new Date(end_date);
+    const differenceInTime = end.getTime() - start.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    return Math.ceil(differenceInDays);
   };
 
   const validateData = () => {
@@ -166,6 +199,22 @@ const DsaClaim = () => {
       ...prevFormData,
       [name]: value,
     }));
+
+    if (name === "start_date" || name === "end_date") {
+      const { start_date, end_date } = { ...formData, [name]: value };
+      if (start_date && end_date) {
+        if (new Date(start_date) >= new Date(end_date)) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            end_date: "End date must be greater than start date",
+          }));
+        } else {
+          setErrors((prevErrors) => ({ ...prevErrors, end_date: "" }));
+          const days = getNumberOfDays(start_date, end_date);
+          setFormData((prevData) => ({ ...prevData, days: days }));
+        }
+      }
+    }
   };
 
   const formatDateForInput = (date) => {
@@ -192,6 +241,17 @@ const DsaClaim = () => {
     }
   };
 
+  const fetchAdvance = async () => {
+    try {
+      const response = await AdvanceServices.showDetail(id);
+      if (response) {
+        setAdvance(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching advance:", error);
+    }
+  };
+
   const fetchRate = async (
     from,
     to,
@@ -208,9 +268,9 @@ const DsaClaim = () => {
       }
 
       let response;
-      if (tourType === "inCountry") {
-        response = await RateServices.getRate(from, to);
-      } else if (tourType === "outCountry") {
+      if (advance.advance_type === "in_country_tour_advance") {
+        response = await RateServices.getRate("Bhutan", "Bhutan");
+      } else if (advance.advance_type === "out_country_tour_advance") {
         if (halt_at) {
           response = await RateServices.getStopOverRate(
             halt_count + 1,
@@ -296,8 +356,12 @@ const DsaClaim = () => {
 
   useEffect(() => {
     fetchItinaries();
-    fetchCountry();
+    fetchAdvance();
   }, []);
+
+  useEffect(() => {
+    fetchCountry();
+  }, [advance]);
 
   useEffect(() => {
     calculateDsa();

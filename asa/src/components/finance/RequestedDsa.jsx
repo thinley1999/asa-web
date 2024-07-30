@@ -125,7 +125,7 @@ const RequestedDsa = () => {
       advance_type: all_advances,
       page: pageNum,
       per_page: perPage,
-      search_query: searchTerm,
+      type: "claim_dsa"
     };
 
     try {

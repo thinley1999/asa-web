@@ -37,7 +37,7 @@ const OutCountryTour = ({
     remark: " ",
     advance_type: "ex_country_tour_advance",
     files: [],
-    advance_percentage: 90,
+    advance_percentage: "",
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -52,7 +52,7 @@ const OutCountryTour = ({
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: total,
+      advanceAmount: total * formData.advance_percentage,
     }));
   };
 
@@ -395,10 +395,10 @@ const OutCountryTour = ({
                 className="form-check-input"
                 type="checkbox"
                 name="advance_percentage"
-                value={90}
+                value={0.9}
                 checked={
-                  data?.advance_percentage == 90 ||
-                  formData.advance_percentage == 90
+                  parseFloat(data?.advance_percentage) === 0.9 ||
+                  parseFloat(formData.advance_percentage)  === 0.9
                     ? true
                     : false
                 }
@@ -412,8 +412,8 @@ const OutCountryTour = ({
                 type="checkbox"
                 name="advance_percentage"
                 checked={
-                  data?.advance_percentage == 0 ||
-                  formData.advance_percentage == 0
+                  parseFloat(data?.advance_percentage) === 0 ||
+                  parseFloat(formData.advance_percentage) === 0 
                     ? true
                     : false
                 }
