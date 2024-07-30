@@ -5,7 +5,8 @@ import { useParams } from "react-router-dom";
 import ClaimInput from "../general/ClaimInput";
 import ClaimDropDown from "./ClainDropDown";
 import RateServices from "../services/RateServices";
-
+import SuccessMessage from "../general/SuccessMessage";
+import ErrorMessage from "../general/ErrorMessage";
 
 const DsaClaim = () => {
   const [itinararies, setItineraries] = useState([]);
@@ -15,9 +16,12 @@ const DsaClaim = () => {
   const [countries, setCountries] = useState([]);
   const [newForm, setNewForm] = useState(false);
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleRowClicked = (row) => {
     setFormData(row);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const fetchCountry = async () => {
@@ -38,7 +42,7 @@ const DsaClaim = () => {
       totalRate += it.rate;
     }
     setDsaAmount(totalRate);
-  }
+  };
 
   const handleSave = async () => {
     const { isValid, errors } = validateData();
@@ -47,25 +51,31 @@ const DsaClaim = () => {
 
     try {
       const response = await ItenararyService.updateRow(formData);
-      console.log('save response', response);
+      console.log("save response", response);
       if (response && response.status === 200) {
         fetchItinaries();
       }
+      setSuccessMessage("Data Updated Successfully");
     } catch (error) {
       console.error("Error fetching countries:", error);
+      setErrorMessage(error);
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async () => {
     try {
       const response = await ItenararyService.deleteRow(formData.id);
-      console.log('delete response', response);
+      console.log("delete response", response);
       if (response) {
         fetchItinaries();
       }
+      setSuccessMessage("Delete Successful");
     } catch (error) {
       console.error("Error fetching countries:", error);
+      setErrorMessage(error);
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleAddRow = async () => {
@@ -79,11 +89,14 @@ const DsaClaim = () => {
         if (response) {
           fetchItinaries();
         }
+        setSuccessMessage("New rows added successfully");
       } catch (error) {
         console.error("Error fetching countries:", error);
+        setErrorMessage(error);
       }
     }
     setNewForm(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleResetForm = () => {
@@ -130,7 +143,7 @@ const DsaClaim = () => {
     if (start_date && end_date) {
       const startDate = new Date(start_date);
       const endDate = new Date(end_date);
-  
+
       if (endDate <= startDate) {
         newErrors.end_date = "End date must be greater than start date";
       }
@@ -146,7 +159,7 @@ const DsaClaim = () => {
 
     return { isValid: false, errors: newErrors };
   };
-  
+
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -199,17 +212,26 @@ const DsaClaim = () => {
         response = await RateServices.getRate(from, to);
       } else if (tourType === "outCountry") {
         if (halt_at) {
-          response = await RateServices.getStopOverRate(halt_count + 1, halt_at);
-        } else if (from === "India" && to === "India" || from === "Bhutan" && to === "Bhutan") {
+          response = await RateServices.getStopOverRate(
+            halt_count + 1,
+            halt_at
+          );
+        } else if (
+          (from === "India" && to === "India") ||
+          (from === "Bhutan" && to === "Bhutan")
+        ) {
           response = await RateServices.getRate(from, to);
-        }
-        else if (from === "Bhutan" && to === "India" || from === "India" && to === "Bhutan") {
+        } else if (
+          (from === "Bhutan" && to === "India") ||
+          (from === "India" && to === "Bhutan")
+        ) {
           response = await RateServices.getRate(from, to);
-        }
-        else if (from != "India" && to === "Bhutan" || from != "India" && to === "India") {
+        } else if (
+          (from != "India" && to === "Bhutan") ||
+          (from != "India" && to === "India")
+        ) {
           response = await RateServices.getRate("Other", to);
-        }
-         else {
+        } else {
           response = await RateServices.getThirdCountryRate(to);
         }
       }
@@ -285,160 +307,186 @@ const DsaClaim = () => {
     return null;
   }
 
+  const handleCloseSuccessMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const handleCloseErrorMessage = () => {
+    setErrors("");
+  };
+
   console.log("formData:", formData);
   console.log("itineraries", itinararies);
 
   return (
-    <div className="bg-white px-4 py-4">
-      <div className="row w-100">
-        <ClaimInput
-          label="From Date"
-          type="datetime-local"
-          name="start_date"
-          value={formatDateForInput(formData.start_date)}
-          handleChange={handleFormChange}
-          errors={errors?.start_date}
+    <div>
+      {successMessage && (
+        <SuccessMessage
+          message={successMessage}
+          onClose={handleCloseSuccessMessage}
         />
-        <ClaimInput
-          label="To Date"
-          type="datetime-local"
-          name="end_date"
-          value={formatDateForInput(formData.end_date)}
-          handleChange={handleFormChange}
-          errors={errors?.end_date}
+      )}
+      {errorMessage && (
+        <ErrorMessage
+          message={errorMessage}
+          onClose={handleCloseErrorMessage}
         />
-        <ClaimDropDown
-          label="From"
-          name="from"
-          value={formData.from}
-          handleChange={handleFormChange}
-          dropDown={countries}
-          errors={errors?.from}
-        />
-        <ClaimDropDown
-          label="To"
-          name="to"
-          value={formData.to}
-          handleChange={handleFormChange}
-          dropDown={countries}
-          errors={errors?.to}
-        />
-        <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-          <label></label>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              name="halt_at"
-              checked={ formData.halt_at? true : false }
-              onChange={handleFormChange}
-            />
-            <label className="form-check-label">Halt?</label>
+      )}
+      <div className="bg-white px-4 py-4">
+        <div className="row w-100">
+          <ClaimInput
+            label="From Date"
+            type="datetime-local"
+            name="start_date"
+            value={formatDateForInput(formData.start_date)}
+            handleChange={handleFormChange}
+            errors={errors?.start_date}
+          />
+          <ClaimInput
+            label="To Date"
+            type="datetime-local"
+            name="end_date"
+            value={formatDateForInput(formData.end_date)}
+            handleChange={handleFormChange}
+            errors={errors?.end_date}
+          />
+          <ClaimDropDown
+            label="From"
+            name="from"
+            value={formData.from}
+            handleChange={handleFormChange}
+            dropDown={countries}
+            errors={errors?.from}
+          />
+          <ClaimDropDown
+            label="To"
+            name="to"
+            value={formData.to}
+            handleChange={handleFormChange}
+            dropDown={countries}
+            errors={errors?.to}
+          />
+          <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
+            <label></label>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="halt_at"
+                checked={formData.halt_at ? true : false}
+                onChange={handleFormChange}
+              />
+              <label className="form-check-label">Halt?</label>
+            </div>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name="return"
+                onChange={handleFormChange}
+              />
+              <label className="form-check-label">
+                Return on the same day?
+              </label>
+            </div>
           </div>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              name="return"
-              onChange={handleFormChange}
-            />
-            <label className="form-check-label">Return on the same day?</label>
-          </div>
+          <ClaimDropDown
+            label="Halt AT"
+            name="halt_at"
+            value={formData.halt_at}
+            handleChange={handleFormChange}
+            dropDown={countries}
+            isDisable={formData?.halt_at ? false : true}
+            errors={errors?.halt_at}
+            disoptions="Select Halt Location"
+          />
+          <ClaimDropDown
+            label="Mode of Travel"
+            name="mode"
+            value={formData.mode}
+            handleChange={handleFormChange}
+            dropDown={["Airplane", "Train", "Private Vehicle", "Pool Vehicle"]}
+            errors={errors?.mode}
+          />
+          <ClaimInput
+            label="Mileage"
+            type="number"
+            name="mileage"
+            value={formData.mileage}
+            handleChange={handleFormChange}
+            isDisable={formData?.mode === "Private Vehicle" ? false : true}
+            errors={errors?.mileage}
+          />
+          <ClaimDropDown
+            label="DSA Percentage"
+            name="dsa_percentage"
+            value={formData.dsa_percentage}
+            handleChange={handleFormChange}
+            dropDown={["100", "50"]}
+            errors={errors?.dsa_percentage}
+            disoptions="Select Percentage"
+          />
+          <ClaimInput
+            label="No. of Days"
+            type="number"
+            name="days"
+            value={formData.days}
+            handleChange={handleFormChange}
+            isDisable={true}
+          />
         </div>
-        <ClaimDropDown
-          label="Halt AT"
-          name="halt_at"
-          value={formData.halt_at}
-          handleChange={handleFormChange}
-          dropDown={countries}
-          isDisable={formData?.halt_at ? false : true}
-          errors={errors?.halt_at}
-        />
-        <ClaimDropDown
-          label="Mode of Travel"
-          name="mode"
-          value={formData.mode}
-          handleChange={handleFormChange}
-          dropDown={["Airplane", "Train", "Private Vehicle", "Pool Vehicle"]}
-          errors={errors?.mode}
-        />
+        <div className="d-flex justify-content-center">
+          <button
+            type="button"
+            className="btn btn-primary me-5 mb-2 mybtn"
+            onClick={handleResetForm}
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary me-5 mb-2 mybtn"
+            onClick={handleSave}
+          >
+            Update
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary me-5 mb-2 mybtn"
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary me-5 mb-2 mybtn"
+            onClick={handleAddRow}
+          >
+            Add Row
+          </button>
+        </div>
+        <div className="divider1"></div>
+        <div className="row w-100">
+          <DataTable
+            columns={columns}
+            data={itinararies}
+            customStyles={customStyles}
+            onRowClicked={handleRowClicked}
+          />
+        </div>
+        <div className="divider1"></div>
         <ClaimInput
-          label="Mileage"
-          type="number"
-          name="mileage"
-          value={formData.mileage}
-          handleChange={handleFormChange}
-          isDisable={formData?.mode === "Private Vehicle" ? false : true}
-          errors={errors?.mileage}
-        />
-        <ClaimDropDown
-          label="DSA Percentage"
-          name="dsa_percentage"
-          value={formData.dsa_percentage}
-          handleChange={handleFormChange}
-          dropDown={["100", "50"]}
-          errors={errors?.dsa_percentage}
-        />
-        <ClaimInput
-          label="No. of Days"
-          type="number"
-          name="days"
-          value={formData.days}
-          handleChange={handleFormChange}
+          label="DSA Amount"
+          type="text"
+          name="dsa_amount"
+          value={dsa_amount}
           isDisable={true}
         />
-      </div>
-      <div className="d-flex justify-content-center">
-        <button
-          type="button"
-          className="btn btn-primary me-5 mb-2 mybtn"
-          onClick={handleResetForm}
-        >
-          Reset
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary me-5 mb-2 mybtn"
-          onClick={handleSave}
-        >
-          Save
-        </button>
-        <button 
-        type="button" 
-        className="btn btn-primary me-5 mb-2 mybtn"
-        onClick={handleDelete}
-        >
-          Delete
-        </button>
-        <button 
-        type="button" 
-        className="btn btn-primary me-5 mb-2 mybtn"
-        onClick={handleAddRow}
-        >
-          Add Row
-        </button>
-      </div>
-      <div className="divider1"></div>
-      <div className="row w-100">
-        <DataTable
-          columns={columns}
-          data={itinararies}
-          customStyles={customStyles}
-          onRowClicked={handleRowClicked}
-        />
-      </div>
-      <div className="divider1"></div>
-      <ClaimInput
-        label="DSA Amount"
-        type="text"
-        name="dsa_amount"
-        value={dsa_amount}
-        isDisable={true}
-      />
-      <div className="bg-white px-4 pb-3 text-center">
-        <button type="submit" className="btn btn-primary px-5">
-          Claim Now
-        </button>
+        <div className="bg-white px-4 pb-3 text-center">
+          <button type="submit" className="btn btn-primary px-5">
+            Claim Now
+          </button>
+        </div>
       </div>
     </div>
   );

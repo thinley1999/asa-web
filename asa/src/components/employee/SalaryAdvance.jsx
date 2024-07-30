@@ -70,7 +70,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
       middleName: user.middle_name || prevFormData.middleName,
       lastName: user.last_name || prevFormData.lastName,
       designation: user.position_title || prevFormData.designation,
-      thresholdAmount: user.basic_pay * 2 || prevFormData.thresholdAmount,
+      thresholdAmount: user.net_pay * 2 || prevFormData.thresholdAmount,
       department: user.department_name || prevFormData.department,
     }));
   };
@@ -150,6 +150,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
         setErrorMessage(error.response?.data || "An error occurred");
       }
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const resetForm = () => {
@@ -254,7 +255,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
               error={formErrors.advanceAmount}
             />
             <CustomInput
-              label="Threshold Amount (Basic pay * 2)"
+              label="Threshold Amount (Net pay * 2)"
               type="number"
               value={formData.thresholdAmount}
               name="thresholdAmount"
