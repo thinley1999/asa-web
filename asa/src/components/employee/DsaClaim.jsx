@@ -5,7 +5,8 @@ import { useParams } from "react-router-dom";
 import ClaimInput from "../general/ClaimInput";
 import ClaimDropDown from "./ClainDropDown";
 import RateServices from "../services/RateServices";
-
+import AdvanceServices from "../services/AdvanceServices";
+import { dzongkhags } from "../datas/dzongkhag_lists";
 
 const DsaClaim = () => {
   const [itinararies, setItineraries] = useState([]);
@@ -15,12 +16,18 @@ const DsaClaim = () => {
   const [countries, setCountries] = useState([]);
   const [newForm, setNewForm] = useState(false);
   const [errors, setErrors] = useState({});
+  const [advance, setAdvance] = useState(null);
 
   const handleRowClicked = (row) => {
     setFormData(row);
   };
 
   const fetchCountry = async () => {
+    if (advance?.advance_type === "in_country_tour_advance") {
+      setCountries(dzongkhags);
+      return;
+    }
+
     try {
       const response = await RateServices.getCountryTo();
       if (response && response.status === 200) {
@@ -38,7 +45,7 @@ const DsaClaim = () => {
       totalRate += it.rate;
     }
     setDsaAmount(totalRate);
-  }
+  };
 
   const handleSave = async () => {
     const { isValid, errors } = validateData();
@@ -47,7 +54,7 @@ const DsaClaim = () => {
 
     try {
       const response = await ItenararyService.updateRow(formData);
-      console.log('save response', response);
+      console.log("save response", response);
       if (response && response.status === 200) {
         fetchItinaries();
       }
@@ -59,7 +66,7 @@ const DsaClaim = () => {
   const handleDelete = async () => {
     try {
       const response = await ItenararyService.deleteRow(formData.id);
-      console.log('delete response', response);
+      console.log("delete response", response);
       if (response) {
         fetchItinaries();
       }
@@ -75,6 +82,23 @@ const DsaClaim = () => {
 
     if (newForm) {
       try {
+        const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
+
+        const rate = await fetchRate(
+          from,
+          to,
+          dsa_percentage,
+          days,
+          mode,
+          mileage,
+          halt_at,
+        );
+
+        setFormData((prevData) => ({
+          ...prevData,
+          rate,
+        }));
+
         const response = await ItenararyService.addRow(formData);
         if (response) {
           fetchItinaries();
@@ -97,9 +121,17 @@ const DsaClaim = () => {
       mileage: null,
       dsa_percentage: null,
       days: null,
-      rate: 100,
+      rate: null,
       advance_id: id,
     });
+  };
+
+  const getNumberOfDays = (start_date, end_date) => {
+    const start = new Date(start_date);
+    const end = new Date(end_date);
+    const differenceInTime = end.getTime() - start.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    return Math.ceil(differenceInDays);
   };
 
   const validateData = () => {
@@ -130,7 +162,7 @@ const DsaClaim = () => {
     if (start_date && end_date) {
       const startDate = new Date(start_date);
       const endDate = new Date(end_date);
-  
+
       if (endDate <= startDate) {
         newErrors.end_date = "End date must be greater than start date";
       }
@@ -146,13 +178,29 @@ const DsaClaim = () => {
 
     return { isValid: false, errors: newErrors };
   };
-  
+
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
+
+    if (name === "start_date" || name === "end_date") {
+      const { start_date, end_date } = { ...formData, [name]: value };
+      if (start_date && end_date) {
+        if (new Date(start_date) >= new Date(end_date)) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            end_date: "End date must be greater than start date",
+          }));
+        } else {
+          setErrors((prevErrors) => ({ ...prevErrors, end_date: "" }));
+          const days = getNumberOfDays(start_date, end_date);
+          setFormData((prevData) => ({ ...prevData, days: days }));
+        }
+      }
+    }
   };
 
   const formatDateForInput = (date) => {
@@ -179,6 +227,17 @@ const DsaClaim = () => {
     }
   };
 
+  const fetchAdvance = async () => {
+    try {
+      const response = await AdvanceServices.showDetail(id);
+      if (response) {
+        setAdvance(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching advance:", error);
+    }
+  };
+
   const fetchRate = async (
     from,
     to,
@@ -195,21 +254,30 @@ const DsaClaim = () => {
       }
 
       let response;
-      if (tourType === "inCountry") {
-        response = await RateServices.getRate(from, to);
-      } else if (tourType === "outCountry") {
+      if (advance.advance_type === "in_country_tour_advance") {
+        response = await RateServices.getRate("Bhutan", "Bhutan");
+      } else if (advance.advance_type === "out_country_tour_advance") {
         if (halt_at) {
-          response = await RateServices.getStopOverRate(halt_count + 1, halt_at);
-        } else if (from === "India" && to === "India" || from === "Bhutan" && to === "Bhutan") {
+          response = await RateServices.getStopOverRate(
+            halt_count + 1,
+            halt_at
+          );
+        } else if (
+          (from === "India" && to === "India") ||
+          (from === "Bhutan" && to === "Bhutan")
+        ) {
           response = await RateServices.getRate(from, to);
-        }
-        else if (from === "Bhutan" && to === "India" || from === "India" && to === "Bhutan") {
+        } else if (
+          (from === "Bhutan" && to === "India") ||
+          (from === "India" && to === "Bhutan")
+        ) {
           response = await RateServices.getRate(from, to);
-        }
-        else if (from != "India" && to === "Bhutan" || from != "India" && to === "India") {
+        } else if (
+          (from != "India" && to === "Bhutan") ||
+          (from != "India" && to === "India")
+        ) {
           response = await RateServices.getRate("Other", to);
-        }
-         else {
+        } else {
           response = await RateServices.getThirdCountryRate(to);
         }
       }
@@ -274,8 +342,12 @@ const DsaClaim = () => {
 
   useEffect(() => {
     fetchItinaries();
-    fetchCountry();
+    fetchAdvance();
   }, []);
+
+  useEffect(() => {
+    fetchCountry();
+  }, [advance]);
 
   useEffect(() => {
     calculateDsa();
@@ -284,9 +356,6 @@ const DsaClaim = () => {
   if (formData === null) {
     return null;
   }
-
-  console.log("formData:", formData);
-  console.log("itineraries", itinararies);
 
   return (
     <div className="bg-white px-4 py-4">
@@ -330,7 +399,7 @@ const DsaClaim = () => {
               className="form-check-input"
               type="checkbox"
               name="halt_at"
-              checked={ formData.halt_at? true : false }
+              checked={formData.halt_at ? true : false}
               onChange={handleFormChange}
             />
             <label className="form-check-label">Halt?</label>
@@ -403,17 +472,17 @@ const DsaClaim = () => {
         >
           Save
         </button>
-        <button 
-        type="button" 
-        className="btn btn-primary me-5 mb-2 mybtn"
-        onClick={handleDelete}
+        <button
+          type="button"
+          className="btn btn-primary me-5 mb-2 mybtn"
+          onClick={handleDelete}
         >
           Delete
         </button>
-        <button 
-        type="button" 
-        className="btn btn-primary me-5 mb-2 mybtn"
-        onClick={handleAddRow}
+        <button
+          type="button"
+          className="btn btn-primary me-5 mb-2 mybtn"
+          onClick={handleAddRow}
         >
           Add Row
         </button>

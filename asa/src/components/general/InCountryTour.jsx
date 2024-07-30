@@ -256,7 +256,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     setEditData(null);
   };
 
-  console.log("rows", rows);
+  console.log("formData", formData);
   return (
     <form onSubmit={handleSubmit}>
       {successMessage && (
@@ -394,8 +394,8 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
                 type="checkbox"
                 name="advance_percentage"
                 checked={
-                  data?.advance_percentage == 90 ||
-                  formData.advance_percentage == 90
+                  data?.advance_percentage == 0.9 ||
+                  formData.advance_percentage == 0.9
                     ? true
                     : false
                 }
