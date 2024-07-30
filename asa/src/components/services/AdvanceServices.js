@@ -165,6 +165,28 @@ const updateStatus = async (params) => {
   }
 };
 
+const claimDsa = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.post(
+      `${API_URL}/api/advances/claim_dsa`,
+      {
+        id: id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   get,
   showDetail,
@@ -174,4 +196,5 @@ export default {
   typeCount,
   monthlyCount,
   updateStatus,
+  claimDsa,
 };

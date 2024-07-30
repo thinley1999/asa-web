@@ -305,6 +305,17 @@ const DsaClaim = () => {
     }
   };
 
+  const handleClaim = async () => { 
+    try {
+      const response = await AdvanceServices.claimDsa(id);
+      if (response) {
+        setSuccessMessage("Dsa Claimed Successfully");
+      }
+    } catch (error) {
+      console.error("Error fetching advance:", error);
+    }
+  }
+
   const customStyles = {
     headRow: {
       style: {
@@ -547,7 +558,7 @@ const DsaClaim = () => {
           isDisable={true}
         />
         <div className="bg-white px-4 pb-3 text-center">
-          <button type="submit" className="btn btn-primary px-5">
+          <button type="submit" className="btn btn-primary px-5" onClick={handleClaim}>
             Claim Now
           </button>
         </div>
