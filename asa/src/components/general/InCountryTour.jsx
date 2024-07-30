@@ -30,7 +30,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     remark: " ",
     advance_type: "in_country_tour_advance",
     files: [],
-    advance_percentage: 0.9,
+    advance_percentage: "",
   };
   const [formData, setFormData] = useState(initialFormData);
   const [rows, setRows] = useState([]);
@@ -394,8 +394,8 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
                 type="checkbox"
                 name="advance_percentage"
                 checked={
-                  data?.advance_percentage == 0.9 ||
-                  formData.advance_percentage == 0.9
+                  parseFloat(data?.advance_percentage) === 0.9 ||
+                  parseFloat(formData.advance_percentage) === 0.9
                     ? true
                     : false
                 }
@@ -411,8 +411,8 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
                 type="checkbox"
                 name="advance_percentage"
                 checked={
-                  data?.advance_percentage == 0 ||
-                  formData.advance_percentage == 0
+                  parseFloat(data?.advance_percentage) === 0 ||
+                  parseFloat(formData.advance_percentage) === 0
                     ? true
                     : false
                 }
