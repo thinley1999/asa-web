@@ -45,7 +45,7 @@ const RequestedDsa = () => {
       ),
     },
     {
-      name: "Advance Type",
+      name: "DSA Type",
       selector: (row) => (
         <div className="tabledetails">
           <p className="dataheading p-0 m-0">{row.advance_type}</p>
@@ -224,7 +224,7 @@ const RequestedDsa = () => {
                   ))}
                 </div>
                 <div className="advancetypediv">
-                  <h6 className="fw-bold">Advance Type</h6>
+                  <h6 className="fw-bold">DSA Type</h6>
                   {Object.keys(initialAdvanceState).map((advance_type) => (
                     <div className="form-check" key={advance_type}>
                       <input
