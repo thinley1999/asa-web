@@ -19,7 +19,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
     date: new Date().toISOString().slice(0, 10),
     department: "IT Department",
     designation: " ",
-    advanceAmount: 0,
+    totalAmount: 0,
     thresholdAmount: " ",
     duration: 0,
     deduction: 0.0,
@@ -37,7 +37,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
       setFormData((prevFormData) => ({
         ...prevFormData,
         date: formatDate(data.created_at) || " -",
-        advanceAmount: data.amount || 0,
+        totalAmount: data.amount || 0,
         thresholdAmount: data.basic_pay * 2 || " ",
         duration: data.advance_detail.duration || 0,
         deduction: data.advance_detail.deduction || 0.0,
@@ -118,8 +118,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
   const validateForm = () => {
     let errors = {};
     if (
-      formData.advanceAmount <= 0 ||
-      formData.advanceAmount > formData.thresholdAmount
+      formData.totalAmount <= 0 ||
+      formData.totalAmount > formData.thresholdAmount
     ) {
       errors.advanceAmount =
         "Advance amount should be more than 0 and less than the threshold amount.";
@@ -248,8 +248,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
             <CustomInput
               label="Advance Amount(Nu)*"
               type="number"
-              value={formData.advanceAmount}
-              name="advanceAmount"
+              value={formData.totalAmount}
+              name="totalAmount"
               isDisable={data ? true : false}
               onChange={handleChange}
               error={formErrors.advanceAmount}
