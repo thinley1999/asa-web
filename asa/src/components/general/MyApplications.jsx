@@ -58,9 +58,11 @@ const MyApplications = ({
                 </span>
               </p>
               <p className="textsubheading">
-                Nu.{" "}
-                {/* {application.claim_dsa ? application.dsa_amount
-                  : application.advance_type === "salary_advance" || application.advance_type === "other_advance" ? application.amount : application.advance_amount} */}
+                {application.advance_type === "ex_country_tour_advance"
+                  ? `Nu.${application.advance_amount?.Nu ?? 0}, INR.${
+                      application.advance_amount?.INR ?? 0
+                    },  USD.${application.advance_amount?.USD ?? 0}`
+                  : `Nu.${application.amount ?? 0}`}
               </p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
