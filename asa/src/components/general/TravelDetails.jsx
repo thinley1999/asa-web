@@ -28,6 +28,7 @@ const TravelDetails = ({
       mode: "",
       mileage: "",
       rate: "",
+      currency: "",
       halt_at: "",
       dsa_percentage: "",
       days: "",
@@ -134,7 +135,7 @@ const TravelDetails = ({
   ) => {
     try {
       if (mode === "Private Vehicle") {
-        return dsaPercentage * 16 * mileage;
+        return { rate: dsaPercentage * 16 * mileage, currency: "Nu" };
       }
 
       let response;
@@ -158,7 +159,7 @@ const TravelDetails = ({
       }
 
       if (response) {
-        return dsaPercentage * days * response.rate;
+        return { rate: dsaPercentage * days * response.rate, currency: response.currency };
       }
     } catch (error) {
       console.error("Error fetching rates:", error);
@@ -178,7 +179,7 @@ const TravelDetails = ({
       const destination =
         type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
 
-      const rate = await fetchRate(
+      const { rate, currency } = await fetchRate(
         destination.from,
         destination.to,
         dsa_percentage,
@@ -188,8 +189,9 @@ const TravelDetails = ({
         halt_at,
       );
 
-      setData((prevData) => ({ ...prevData, rate }));
-      onSave({ ...data, rate });
+      setData((prevData) => ({ ...prevData, rate, currency }));
+      onSave({ ...data, rate, currency });
+      console.log('data....', data);
       onClose();
     } catch (error) {
       console.error("Error while submitting:", error);

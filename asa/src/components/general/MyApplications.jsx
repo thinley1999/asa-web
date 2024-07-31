@@ -55,8 +55,8 @@ const MyApplications = ({
               </p>
               <p className="textsubheading">
                 Nu.{" "}
-                {application.claim_dsa ? application.dsa_amount
-                  : application.advance_type === "salary_advance" || application.advance_type === "other_advance" ? application.amount : application.advance_amount}
+                {/* {application.claim_dsa ? application.dsa_amount
+                  : application.advance_type === "salary_advance" || application.advance_type === "other_advance" ? application.amount : application.advance_amount} */}
               </p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">

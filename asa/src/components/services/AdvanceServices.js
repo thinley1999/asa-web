@@ -58,7 +58,7 @@ const create = async (params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
-    console.log('travel_itinerary', travel_itinerary);
+    console.log('advance amount', params.advanceAmount);
 
     const filteredTravelItinerary = travel_itinerary.map(({ id, ...rest }) => rest);
 
@@ -68,7 +68,7 @@ const create = async (params, travel_itinerary = []) => {
         advance: {
           advance_type: params.advance_type,
           status: "pending",
-          advance_amount: parseFloat(params.advanceAmount),
+          advance_amount: params.advanceAmount,
           amount: parseFloat(params.totalAmount),
           purpose: params.purpose,
           remark: params.remark || params.other_advance_type,

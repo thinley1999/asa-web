@@ -26,7 +26,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
     date: new Date().toISOString().slice(0, 10),
     department: "IT Department",
     designation: " ",
-    advanceAmount: 0,
+    advanceAmount: {},
     totalAmount: 0,
     remark: " ",
     advance_type: "in_country_tour_advance",
@@ -46,7 +46,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: total * formData.advance_percentage,
+      advanceAmount: { "Nu" : total * formData.advance_percentage },
       totalAmount: total,
     }));
   };
@@ -260,6 +260,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
   };
 
   console.log("formData", formData);
+  console.log("travelItinerary", rows);
   return (
     <form onSubmit={handleSubmit}>
       {successMessage && (
@@ -382,14 +383,14 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
             </button>
           </div>
           <CustomInput
-            label="Total Amount"
+            label="Total Amount (Nu)"
             type="text"
             value={
               isDSA
                 ? data.dsa_amount
                 : data
-                ? data.advance_amount
-                : formData.advanceAmount
+                ? data.advance_amount?.Nu
+                : formData.advanceAmount?.Nu
             }
             name="advanceAmount"
             isDisable={true}
