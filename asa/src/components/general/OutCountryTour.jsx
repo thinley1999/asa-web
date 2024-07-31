@@ -33,7 +33,7 @@ const OutCountryTour = ({
     date: new Date().toISOString().slice(0, 10),
     department: "IT Department",
     designation: " ",
-    advanceAmount: 0,
+    advanceAmount: { Nu: 0, USD: 0, INR: 0 },
     totalAmount: 0,
     purpose: " ",
     remark: " ",
@@ -45,17 +45,29 @@ const OutCountryTour = ({
   const [formData, setFormData] = useState(initialFormData);
 
   const totalAmount = () => {
-    let total = 0;
+    let Nu = 0;
+    let INR = 0;
+    let USD = 0;
     rows.forEach((row) => {
-      if (row.rate) {
-        total += parseFloat(row.rate);
+      if (row.currency == "Nu") {
+        Nu += parseFloat(row.rate);
+      }
+      if (row.currency == "INR") {
+        INR += parseFloat(row.rate);
+      }
+      if (row.currency == "USD") {
+        USD += parseFloat(row.rate);
       }
     });
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: total * formData.advance_percentage,
-      totalAmount: total,
+      advanceAmount: {
+        Nu: Nu * formData.advance_percentage,
+        INR: INR * formData.advance_percentage,
+        USD: USD * formData.advance_percentage,
+        Total: { Nu: Nu, INR: INR, USD: USD },
+      },
     }));
   };
 
@@ -261,7 +273,11 @@ const OutCountryTour = ({
   };
 
   console.log("form data", formData);
+<<<<<<< HEAD
   console.log("data", data);
+=======
+  console.log("rows", rows);
+>>>>>>> 729ccb2f25aa313dfa2b210f1539dc3c047c1bc1
 
   return (
     <form onSubmit={handleSubmit}>
@@ -389,6 +405,7 @@ const OutCountryTour = ({
             type="text"
             value={
               isDSA
+<<<<<<< HEAD
                 ? `Nu.${data.dsa_amount?.Nu ?? 0}, INR.${
                     data.dsa_amount?.INR ?? 0
                   }, USD.${data.dsa_amount?.USD ?? 0}`
@@ -397,6 +414,12 @@ const OutCountryTour = ({
                     data.advance_amount?.INR ?? 0
                   }, USD.${data.advance_amount?.USD ?? 0}`
                 : formData.advanceAmount
+=======
+                ? `${data.dsa_amount?.Nu} Nu, ${data.dsa_amount?.USD} USD, ${data.dsa_amount?.INR} INR`
+                : data
+                ? `${data.advance_amount?.Nu} Nu, ${data.advance_amount?.USD} USD, ${data.advance_amount?.INR} INR`
+                : `${formData.advanceAmount?.Nu} Nu, ${formData.advanceAmount?.USD} USD, ${formData.advanceAmount?.INR} INR`
+>>>>>>> 729ccb2f25aa313dfa2b210f1539dc3c047c1bc1
             }
             name="advanceAmount"
             isDisable={true}
@@ -495,3 +518,10 @@ const OutCountryTour = ({
 };
 
 export default OutCountryTour;
+
+// rows= [
+//   {id: 1, from: 'Albania', to: 'Barbados', rate: 200, currency: 'USD'},
+//   {id: 2, from: 'Armenia', to: 'Bhutan', rate: 300, currency: 'Nu'},
+//   {id: 3, from: 'Albania', to: 'Barbados', rate: 200, currency: 'INR'},
+//   {id: 4, from: 'Armenia', to: 'Bhutan', rate: 300, currency: 'Nu'},
+// ]
