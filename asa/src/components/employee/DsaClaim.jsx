@@ -14,7 +14,7 @@ const DsaClaim = () => {
   const [itinararies, setItineraries] = useState([]);
   const { id } = useParams();
   const [formData, setFormData] = useState(null);
-  const [dsa_amount, setDsaAmount] = useState(0);
+  const [dsa_amount, setDsaAmount] = useState({"Nu": 0, "INR": 0, "USD": 0});
   const [countries, setCountries] = useState([]);
   const [newForm, setNewForm] = useState(false);
   const [errors, setErrors] = useState({});
@@ -44,13 +44,28 @@ const DsaClaim = () => {
   };
 
   const calculateDsa = () => {
-    let totalRate = 0;
-
-    for (let it of itinararies) {
-      totalRate += it.rate;
-    }
+    let Nu = 0;
+    let INR = 0;
+    let USD = 0;
+    itinararies.forEach((row) => {
+      if (row.currency == "Nu") {
+        Nu += parseFloat(row.rate);
+      }
+      if (row.currency == "INR") {
+        INR += parseFloat(row.rate);
+      }
+      if (row.currency == "USD") {
+        USD += parseFloat(row.rate);
+      }
+    });
     
-    setDsaAmount((totalRate *  (1 - parseFloat(advance?.advance_percentage))).toFixed(2));
+    setDsaAmount(
+      {
+      "Nu": (Nu *  (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+      "INR": (INR *  (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+      "USD": (USD *  (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+      }
+    );
   };
 
   const handleSave = async () => {
@@ -124,8 +139,6 @@ const DsaClaim = () => {
     setNewForm(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-
 
   const handleResetForm = () => {
     setNewForm(true);
@@ -559,7 +572,7 @@ const DsaClaim = () => {
           label="DSA Amount"
           type="text"
           name="dsa_amount"
-          value={dsa_amount}
+          value={`${dsa_amount?.Nu} Nu, ${dsa_amount?.USD} USD, ${dsa_amount?.INR} INR`}
           isDisable={true}
         />
         <div className="bg-white px-4 pb-3 text-center">
