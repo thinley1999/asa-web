@@ -58,7 +58,6 @@ const ViewRequestedAdvance = () => {
     setDialogMessage(message);
     setShowDialog(true);
   };
-  console.log("Hello", showButtons.m);
 
   const handleDialogClose = () => {
     setShowDialog(false);
@@ -145,6 +144,7 @@ const ViewRequestedAdvance = () => {
         {advanceData.advance_type === "in_country_tour_advance" && (
           <InCountryTour
             data={advanceData}
+            isDSA= {advanceData.claim_dsa}
             showButtons={showButtons}
             handleDialogOpen={handleDialogOpen}
           />
@@ -159,6 +159,7 @@ const ViewRequestedAdvance = () => {
         {advanceData.advance_type === "ex_country_tour_advance" && (
           <OutCountryTour
             data={advanceData}
+            isDSA= {advanceData.claim_dsa}
             showButtons={showButtons}
             handleDialogOpen={handleDialogOpen}
           />

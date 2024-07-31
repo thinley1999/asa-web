@@ -14,6 +14,7 @@ import TravelDetailsTable from "./TravelDetailsTable";
 const OutCountryTour = ({
   data,
   setActiveTab,
+  isDSA,
   showButtons,
   handleDialogOpen,
 }) => {
@@ -385,57 +386,71 @@ const OutCountryTour = ({
           <CustomInput
             label="Total Amount"
             type="text"
-            value={data ? data.amount : formData.advanceAmount}
+            value={
+              isDSA
+                ? data.dsa_amount
+                : data
+                ? data.advance_amount
+                : formData.advanceAmount
+            }
             name="advanceAmount"
             isDisable={true}
             onChange={handleChange}
           />
-          <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-            <label className="form-label">Claim Advance</label>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="advance_percentage"
-                value={0.9}
-                checked={
-                  parseFloat(data?.advance_percentage) === 0.9 ||
-                  parseFloat(formData.advance_percentage)  === 0.9
-                    ? true
-                    : false
-                }
-                onChange={handleChange}
-              />
-              <label className="form-check-label">90% Advance</label>
-            </div>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="advance_percentage"
-                checked={
-                  parseFloat(data?.advance_percentage) === 0 ||
-                  parseFloat(formData.advance_percentage) === 0 
-                    ? true
-                    : false
-                }
-                onChange={handleChange}
-                value={0}
-              />
-              <label className="form-check-label">Claim DSA after tour</label>
-            </div>
-          </div>
-          <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
-            <label className="form-label">Remarks</label>
-            <textarea
-              className="form-control"
-              name="remark"
-              rows="4"
-              disabled={data ? true : false}
-              value={data ? data.remark : formData.remark}
-              onChange={handleChange}
-            ></textarea>
-          </div>
+          {!isDSA && (
+            <>
+              <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+                <label className="form-label">Claim Advance</label>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="advance_percentage"
+                    value={0.9}
+                    checked={
+                      parseFloat(data?.advance_percentage) === 0.9 ||
+                      parseFloat(formData.advance_percentage) === 0.9
+                        ? true
+                        : false
+                    }
+                    onChange={handleChange}
+                    disabled={data ? true : false}
+                  />
+                  <label className="form-check-label">90% Advance</label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="advance_percentage"
+                    checked={
+                      parseFloat(data?.advance_percentage) === 0 ||
+                      parseFloat(formData.advance_percentage) === 0
+                        ? true
+                        : false
+                    }
+                    onChange={handleChange}
+                    value={0}
+                    disabled={data ? true : false}
+                  />
+                  <label className="form-check-label">
+                    Claim DSA after tour
+                  </label>
+                </div>
+              </div>
+              <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
+                <label className="form-label">Remarks</label>
+                <textarea
+                  className="form-control"
+                  name="remark"
+                  rows="4"
+                  disabled={data ? true : false}
+                  value={data ? data.remark : formData.remark}
+                  onChange={handleChange}
+                ></textarea>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
