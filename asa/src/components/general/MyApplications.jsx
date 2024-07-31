@@ -50,11 +50,19 @@ const MyApplications = ({
               </div>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Claim</p>
-              <p className="textsubheading">Nu.{application.amount}</p>
+              <p className="textheading">
+                {application.claim_dsa ? "DSA Claim" : "Advance Claim"}
+              </p>
+              <p className="textsubheading">
+                Nu.{" "}
+                {application.claim_dsa ? application.dsa_amount
+                  : application.advance_type === "salary_advance" || application.advance_type === "other_advance" ? application.amount : application.advance_amount}
+              </p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
-              <p className="textheading">Advance Type</p>
+              <p className="textheading">
+                {application.claim_dsa ? "DSA Type" : "Advance Type"}
+              </p>
               <p className="textsubheading">{application.advance_type}</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">

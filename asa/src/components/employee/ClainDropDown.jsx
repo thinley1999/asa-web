@@ -24,7 +24,10 @@ const ClaimDropDown = ({
           {disoptions}
         </option>
         {dropDown.map((country, index) => (
-          <option key={index} value={country}>
+          <option
+            key={index}
+            value={country === "100" ? 1 : country === "50" ? 0.5 : country}
+          >
             {country}
           </option>
         ))}

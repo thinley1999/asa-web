@@ -68,7 +68,8 @@ const create = async (params, travel_itinerary = []) => {
         advance: {
           advance_type: params.advance_type,
           status: "pending",
-          amount: parseFloat(params.advanceAmount),
+          advance_amount: parseFloat(params.advanceAmount),
+          amount: parseFloat(params.totalAmount),
           purpose: params.purpose,
           remark: params.remark || params.other_advance_type,
           advance_percentage: parseFloat(params.advance_percentage),
@@ -165,6 +166,29 @@ const updateStatus = async (params) => {
   }
 };
 
+const claimDsa = async (id, dsa_amount) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.post(
+      `${API_URL}/api/advances/claim_dsa`,
+      {
+        id: id,
+        dsa_amount: dsa_amount
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   get,
   showDetail,
@@ -174,4 +198,5 @@ export default {
   typeCount,
   monthlyCount,
   updateStatus,
+  claimDsa,
 };

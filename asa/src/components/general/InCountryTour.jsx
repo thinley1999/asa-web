@@ -27,6 +27,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     department: "IT Department",
     designation: " ",
     advanceAmount: 0,
+    totalAmount: 0,
     remark: " ",
     advance_type: "in_country_tour_advance",
     files: [],
@@ -46,6 +47,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       advanceAmount: total * formData.advance_percentage,
+      totalAmount: total,
     }));
   };
 

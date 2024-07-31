@@ -49,7 +49,8 @@ const DsaClaim = () => {
     for (let it of itinararies) {
       totalRate += it.rate;
     }
-    setDsaAmount(totalRate);
+    
+    setDsaAmount((totalRate *  (1 - parseFloat(advance?.advance_percentage))).toFixed(2));
   };
 
   const handleSave = async () => {
@@ -60,7 +61,7 @@ const DsaClaim = () => {
     try {
       const response = await ItenararyService.updateRow(formData);
       console.log("save response", response);
-      if (response && response.status === 200) {
+      if (response) {
         fetchItinaries();
       }
       setSuccessMessage("Data Updated Successfully");
@@ -105,12 +106,12 @@ const DsaClaim = () => {
           halt_at,
         );
 
-        setFormData((prevData) => ({
-          ...prevData,
+        const updatedFormData = {
+          ...formData,
           rate,
-        }));
+        };
 
-        const response = await ItenararyService.addRow(formData);
+        const response = await ItenararyService.addRow(updatedFormData);
         if (response) {
           fetchItinaries();
         }
@@ -123,6 +124,8 @@ const DsaClaim = () => {
     setNewForm(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+
 
   const handleResetForm = () => {
     setNewForm(true);
@@ -305,6 +308,26 @@ const DsaClaim = () => {
     }
   };
 
+  const handleClaim = async () => { 
+    try {
+      const response = await AdvanceServices.claimDsa(id, dsa_amount);
+      if (response) {
+        setSuccessMessage("Dsa Claimed Successfully");
+      }
+    } catch (error) {
+      console.error("Error fetching advance:", error);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  const handleCloseSuccessMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const handleCloseErrorMessage = () => {
+    setErrors("");
+  };
+
   const customStyles = {
     headRow: {
       style: {
@@ -371,16 +394,9 @@ const DsaClaim = () => {
     return null;
   }
 
-  const handleCloseSuccessMessage = () => {
-    setSuccessMessage("");
-  };
-
-  const handleCloseErrorMessage = () => {
-    setErrors("");
-  };
-
   console.log("formData:", formData);
   console.log("itineraries", itinararies);
+  console.log("advance", advance);
 
   return (
     <div>
@@ -547,7 +563,7 @@ const DsaClaim = () => {
           isDisable={true}
         />
         <div className="bg-white px-4 pb-3 text-center">
-          <button type="submit" className="btn btn-primary px-5">
+          <button type="submit" className="btn btn-primary px-5" onClick={handleClaim}>
             Claim Now
           </button>
         </div>

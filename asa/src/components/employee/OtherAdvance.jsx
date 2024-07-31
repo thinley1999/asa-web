@@ -23,7 +23,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
     department: "IT Department",
     designation: " ",
     employeeID: " ",
-    advanceAmount: 0,
+    totalAmount: 0,
     purpose: " ",
     other_advance_type: "",
     advance_type: "other_advance",
@@ -125,7 +125,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
 
   const validateForm = () => {
     let errors = {};
-    if (formData.advanceAmount <= 0) {
+    if (formData.totalAmount <= 0) {
       errors.advanceAmount = "Advance amount should be more than 0!";
     }
     if (!formData.other_advance_type.trim()) {
@@ -171,7 +171,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
   const resetForm = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: initialFormData.advanceAmount,
+      totalAmount: initialFormData.totalAmount,
       advance_type: initialFormData.advance_type,
       files: initialFormData.files,
       purpose: initialFormData.purpose,
@@ -184,7 +184,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
         ...prevFormData,
         purpose: data.purpose || " - ",
         other_advance_type: data.remark || " - ",
-        advanceAmount: data.amount || " - ",
+        totalAmount: data.amount || " - ",
       }));
     }
   }, [data]);
@@ -280,8 +280,8 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
             <CustomInput
               label="Advance Amount(Nu)*"
               type="number"
-              value={formData.advanceAmount}
-              name="advanceAmount"
+              value={formData.totalAmount}
+              name="totalAmount"
               isDisable={data ? true : false}
               onChange={handleChange}
               error={formErrors.advanceAmount}

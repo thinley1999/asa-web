@@ -56,7 +56,7 @@ const RequestedAdvance = () => {
       name: "Amount",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">{row.amount}</p>
+          <p className="dataheading p-0 m-0">{row.advance_type === "salary_advance" || row.advance_type === "other_advance" ? row.amount : row.advance_amount }</p>
           <p className="datasubheading p-0 m-0 text-end">NU</p>
         </div>
       ),
