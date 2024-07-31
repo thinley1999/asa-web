@@ -58,6 +58,7 @@ const ViewRequestedAdvance = () => {
     setDialogMessage(message);
     setShowDialog(true);
   };
+  console.log("Hello", showButtons.m);
 
   const handleDialogClose = () => {
     setShowDialog(false);
@@ -167,6 +168,8 @@ const ViewRequestedAdvance = () => {
             isOpen={showDialog}
             onClose={handleDialogClose}
             onSubmit={handleDialogSubmit}
+            preFilledMessage={dialogMessage}
+            actionMessage={showButtons.message}
           />
         )}
       </div>

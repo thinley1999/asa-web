@@ -1,10 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PiWarningDiamondFill } from "react-icons/pi";
 
-const DialogBox = ({ isOpen, onClose, onSubmit }) => {
-  const [name, setName] = useState("");
+const DialogBox = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  preFilledMessage,
+  actionMessage,
+}) => {
+  let finalMessage = "";
+  if (actionMessage === "Approve" && preFilledMessage == "approved") {
+    finalMessage = "Verified for approval.";
+  } else if (actionMessage === "Confirm" && preFilledMessage == "approved") {
+    finalMessage = "Approved/Confirmed.";
+  } else if (
+    actionMessage === "Dispatch Fund" &&
+    preFilledMessage == "approved"
+  ) {
+    finalMessage = "Disbursement of payment.";
+  } else {
+    finalMessage = "Rejected.";
+  }
 
-  if (!isOpen) return null;
+  const [name, setName] = useState(finalMessage);
 
   const handleSubmit = (e) => {
     e.preventDefault();
