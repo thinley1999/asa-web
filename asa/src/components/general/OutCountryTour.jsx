@@ -273,11 +273,6 @@ const OutCountryTour = ({
   };
 
   console.log("form data", formData);
-<<<<<<< HEAD
-  console.log("data", data);
-=======
-  console.log("rows", rows);
->>>>>>> 729ccb2f25aa313dfa2b210f1539dc3c047c1bc1
 
   return (
     <form onSubmit={handleSubmit}>
@@ -405,7 +400,6 @@ const OutCountryTour = ({
             type="text"
             value={
               isDSA
-<<<<<<< HEAD
                 ? `Nu.${data.dsa_amount?.Nu ?? 0}, INR.${
                     data.dsa_amount?.INR ?? 0
                   }, USD.${data.dsa_amount?.USD ?? 0}`
@@ -414,12 +408,6 @@ const OutCountryTour = ({
                     data.advance_amount?.INR ?? 0
                   }, USD.${data.advance_amount?.USD ?? 0}`
                 : formData.advanceAmount
-=======
-                ? `${data.dsa_amount?.Nu} Nu, ${data.dsa_amount?.USD} USD, ${data.dsa_amount?.INR} INR`
-                : data
-                ? `${data.advance_amount?.Nu} Nu, ${data.advance_amount?.USD} USD, ${data.advance_amount?.INR} INR`
-                : `${formData.advanceAmount?.Nu} Nu, ${formData.advanceAmount?.USD} USD, ${formData.advanceAmount?.INR} INR`
->>>>>>> 729ccb2f25aa313dfa2b210f1539dc3c047c1bc1
             }
             name="advanceAmount"
             isDisable={true}
@@ -519,9 +507,3 @@ const OutCountryTour = ({
 
 export default OutCountryTour;
 
-// rows= [
-//   {id: 1, from: 'Albania', to: 'Barbados', rate: 200, currency: 'USD'},
-//   {id: 2, from: 'Armenia', to: 'Bhutan', rate: 300, currency: 'Nu'},
-//   {id: 3, from: 'Albania', to: 'Barbados', rate: 200, currency: 'INR'},
-//   {id: 4, from: 'Armenia', to: 'Bhutan', rate: 300, currency: 'Nu'},
-// ]
