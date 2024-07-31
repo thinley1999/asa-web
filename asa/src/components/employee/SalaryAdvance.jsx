@@ -156,9 +156,10 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
   const resetForm = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: initialFormData.totalAmount,
+      totalAmount: initialFormData.totalAmount,
       duration: initialFormData.duration,
       purpose: initialFormData.purpose,
+      deduction: initialFormData.deduction,
     }));
   };
 
