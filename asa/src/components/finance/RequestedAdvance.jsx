@@ -56,8 +56,18 @@ const RequestedAdvance = () => {
       name: "Amount",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">{row.advance_type === "salary_advance" || row.advance_type === "other_advance" ? row.amount : row.advance_amount }</p>
-          <p className="datasubheading p-0 m-0 text-end">NU</p>
+          <p className="dataheading p-0 m-0">
+            {row.advance_type === "ex_country_tour_advance"
+              ? `${row.advance_amount?.Nu ?? 0}, ${
+                  row.advance_amount?.INR ?? 0
+                }, ${row.advance_amount?.USD ?? 0}`
+              : row.amount}
+          </p>
+          <p className="datasubheading p-0 m-0 text-end">
+            {row.advance_type === "ex_country_tour_advance"
+              ? `NU., INR., USD.`
+              : `NU.`}
+          </p>
         </div>
       ),
     },

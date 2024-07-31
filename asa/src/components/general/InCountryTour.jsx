@@ -46,7 +46,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: { "Nu" : total * formData.advance_percentage },
+      advanceAmount: { Nu: total * formData.advance_percentage },
       totalAmount: total,
     }));
   };
@@ -387,7 +387,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
             type="text"
             value={
               isDSA
-                ? data.dsa_amount
+                ? data.dsa_amount?.Nu
                 : data
                 ? data.advance_amount?.Nu
                 : formData.advanceAmount?.Nu

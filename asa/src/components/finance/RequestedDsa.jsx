@@ -56,8 +56,11 @@ const RequestedDsa = () => {
       name: "Amount",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">{row.dsa_amount}</p>
-          <p className="datasubheading p-0 m-0 text-end">NU</p>
+          <p className="dataheading p-0 m-0">
+            {row.dsa_amount?.Nu ?? 0}, {row.dsa_amount?.INR ?? 0},{" "}
+            {row.dsa_amount?.USD ?? 0}
+          </p>
+          <p className="datasubheading p-0 m-0 text-end">NU., INR., USD.</p>
         </div>
       ),
     },
@@ -125,7 +128,7 @@ const RequestedDsa = () => {
       advance_type: all_advances,
       page: pageNum,
       per_page: perPage,
-      type: "claim_dsa"
+      type: "claim_dsa",
     };
 
     try {

@@ -261,6 +261,7 @@ const OutCountryTour = ({
   };
 
   console.log("form data", formData);
+  console.log("data", data);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -388,9 +389,13 @@ const OutCountryTour = ({
             type="text"
             value={
               isDSA
-                ? data.dsa_amount
+                ? `Nu.${data.dsa_amount?.Nu ?? 0}, INR.${
+                    data.dsa_amount?.INR ?? 0
+                  }, USD.${data.dsa_amount?.USD ?? 0}`
                 : data
-                ? data.advance_amount
+                ? `Nu.${data.advance_amount?.Nu ?? 0}, INR.${
+                    data.advance_amount?.INR ?? 0
+                  }, USD.${data.advance_amount?.USD ?? 0}`
                 : formData.advanceAmount
             }
             name="advanceAmount"
