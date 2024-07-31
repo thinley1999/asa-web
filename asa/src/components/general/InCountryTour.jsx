@@ -11,7 +11,7 @@ import { FaPlus } from "react-icons/fa";
 import TravelDetails from "./TravelDetails";
 import TravelDetailsTable from "./TravelDetailsTable";
 
-const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
+const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -115,7 +115,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     setFormErrors((prevErrors) => ({
       ...prevErrors,
       itinerary_error: "",
-    }))
+    }));
 
     if (rows.length == 0) {
       errors.itinerary_error = "Please add travel itinerary for the advance.";
@@ -202,7 +202,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     }
     return count;
   };
-  
+
   const handleTravelItinerary = (newData) => {
     setFormErrors((prevErrors) => ({
       ...prevErrors,
@@ -210,11 +210,12 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
     }));
     const dataToCheck = editData || newData;
     const currentHaltCount = haltCount();
-  
-    if (dataToCheck.halt_at && currentHaltCount >= 2) { 
+
+    if (dataToCheck.halt_at && currentHaltCount >= 2) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
-        itinerary_error: "Travel itinerary dates are not valid. User can only add 2 halts.",
+        itinerary_error:
+          "Travel itinerary dates are not valid. User can only add 2 halts.",
       }));
     } else {
       if (editData) {
@@ -223,7 +224,7 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
         setRows([...rows, { id: rows.length + 1, ...newData }]);
       }
     }
-  
+
     handleDialogClose();
   };
 
@@ -383,59 +384,72 @@ const InCountryTour = ({ data, showButtons, handleDialogOpen }) => {
           <CustomInput
             label="Total Amount"
             type="text"
-            value={data ? data.amount : formData.advanceAmount}
+            value={
+              isDSA
+                ? data.dsa_amount
+                : data
+                ? data.advance_amount
+                : formData.advanceAmount
+            }
             name="advanceAmount"
             isDisable={true}
             onChange={handleChange}
           />
-          <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-            <label className="form-label">Claim Advance</label>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="advance_percentage"
-                checked={
-                  parseFloat(data?.advance_percentage) === 0.9 ||
-                  parseFloat(formData.advance_percentage) === 0.9
-                    ? true
-                    : false
-                }
-                onChange={handleChange}
-                value={0.9}
-                disabled={data ? true : false}
-              />
-              <label className="form-check-label">90% Advance</label>
-            </div>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="advance_percentage"
-                checked={
-                  parseFloat(data?.advance_percentage) === 0 ||
-                  parseFloat(formData.advance_percentage) === 0
-                    ? true
-                    : false
-                }
-                onChange={handleChange}
-                value={0}
-                disabled={data ? true : false}
-              />
-              <label className="form-check-label">Claim DSA after tour</label>
-            </div>
-          </div>
-          <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
-            <label className="form-label">Remarks</label>
-            <textarea
-              className="form-control"
-              name="remark"
-              rows="4"
-              disabled={data ? true : false}
-              value={data ? data.remark : formData.remark}
-              onChange={handleChange}
-            ></textarea>
-          </div>
+
+          {!isDSA && (
+            <>
+              <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+                <label className="form-label">Claim Advance</label>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="advance_percentage"
+                    checked={
+                      parseFloat(data?.advance_percentage) === 0.9 ||
+                      parseFloat(formData.advance_percentage) === 0.9
+                        ? true
+                        : false
+                    }
+                    onChange={handleChange}
+                    value={0.9}
+                    disabled={data ? true : false}
+                  />
+                  <label className="form-check-label">90% Advance</label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="advance_percentage"
+                    checked={
+                      parseFloat(data?.advance_percentage) === 0 ||
+                      parseFloat(formData.advance_percentage) === 0
+                        ? true
+                        : false
+                    }
+                    onChange={handleChange}
+                    value={0}
+                    disabled={data ? true : false}
+                  />
+                  <label className="form-check-label">
+                    Claim DSA after tour
+                  </label>
+                </div>
+              </div>
+              <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
+                <label className="form-label">Remarks</label>
+                <textarea
+                  className="form-control"
+                  name="remark"
+                  rows="4"
+                  disabled={data ? true : false}
+                  value={data ? data.remark : formData.remark}
+                  onChange={handleChange}
+                ></textarea>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
