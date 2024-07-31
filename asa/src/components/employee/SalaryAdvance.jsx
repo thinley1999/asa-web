@@ -76,11 +76,11 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
   };
 
   const calculateDeduction = () => {
-    const { advanceAmount, duration } = formData;
+    const { totalAmount, duration } = formData;
     if (duration <= 0) {
       return 0;
     }
-    const deduction = parseFloat(advanceAmount) / parseFloat(duration);
+    const deduction = parseFloat(totalAmount) / parseFloat(duration);
     setFormData((prevFormData) => ({
       ...prevFormData,
       deduction: deduction,
@@ -156,7 +156,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
   const resetForm = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: initialFormData.advanceAmount,
+      advanceAmount: initialFormData.totalAmount,
       duration: initialFormData.duration,
       purpose: initialFormData.purpose,
     }));
@@ -175,10 +175,10 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
   }, []);
 
   useEffect(() => {
-    if (formData.advanceAmount && formData.duration) {
+    if (formData.totalAmount && formData.duration) {
       calculateDeduction();
     }
-  }, [formData.advanceAmount, formData.duration]);
+  }, [formData.totalAmount, formData.duration]);
 
   return (
     <div>
