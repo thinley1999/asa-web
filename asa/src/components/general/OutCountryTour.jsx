@@ -245,7 +245,7 @@ const OutCountryTour = ({
 
   useEffect(() => {
     totalAmount();
-  }, [rows]);
+  }, [rows, formData.advance_percentage]);
 
   const handleCloseSuccessMessage = () => {
     setSuccessMessage("");
