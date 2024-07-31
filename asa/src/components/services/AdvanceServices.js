@@ -68,7 +68,8 @@ const create = async (params, travel_itinerary = []) => {
         advance: {
           advance_type: params.advance_type,
           status: "pending",
-          amount: parseFloat(params.advanceAmount),
+          advance_amount: parseFloat(params.advanceAmount),
+          amount: parseFloat(params.totalAmount),
           purpose: params.purpose,
           remark: params.remark || params.other_advance_type,
           advance_percentage: parseFloat(params.advance_percentage),

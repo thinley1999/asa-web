@@ -33,6 +33,7 @@ const OutCountryTour = ({
     department: "IT Department",
     designation: " ",
     advanceAmount: 0,
+    totalAmount: 0,
     purpose: " ",
     remark: " ",
     advance_type: "ex_country_tour_advance",
@@ -53,6 +54,7 @@ const OutCountryTour = ({
     setFormData((prevFormData) => ({
       ...prevFormData,
       advanceAmount: total * formData.advance_percentage,
+      totalAmount: total,
     }));
   };
 
