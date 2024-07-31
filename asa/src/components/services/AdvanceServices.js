@@ -166,7 +166,7 @@ const updateStatus = async (params) => {
   }
 };
 
-const claimDsa = async (id) => {
+const claimDsa = async (id, dsa_amount) => {
   try {
     const token = localStorage.getItem("token");
 
@@ -174,6 +174,7 @@ const claimDsa = async (id) => {
       `${API_URL}/api/advances/claim_dsa`,
       {
         id: id,
+        dsa_amount: dsa_amount
       },
       {
         headers: {

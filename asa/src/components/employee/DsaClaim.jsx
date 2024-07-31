@@ -310,7 +310,7 @@ const DsaClaim = () => {
 
   const handleClaim = async () => { 
     try {
-      const response = await AdvanceServices.claimDsa(id);
+      const response = await AdvanceServices.claimDsa(id, dsa_amount);
       if (response) {
         setSuccessMessage("Dsa Claimed Successfully");
       }
