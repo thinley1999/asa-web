@@ -51,7 +51,11 @@ const MyApplications = ({
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
               <p className="textheading">
-                {application.claim_dsa ? "DSA Claim" : "Advance Claim"}
+                <span
+                  className={`${application.claim_dsa ? "p-1 bg-warning" : ""}`}
+                >
+                  {application.claim_dsa ? "DSA Claim" : "Advance Claim"}
+                </span>
               </p>
               <p className="textsubheading">
                 Nu.{" "}
