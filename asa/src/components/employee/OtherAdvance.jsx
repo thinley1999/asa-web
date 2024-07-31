@@ -73,7 +73,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await UserServices.showDetail(data ? data.user.id : null);
+      const response = await UserServices.showDetail(
+        data ? data.user.id : null
+      );
       if (response && response.status) {
         setUser(response.data);
         updateFormDataWithUserName(response.data);
@@ -172,7 +174,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       totalAmount: initialFormData.totalAmount,
-      advance_type: initialFormData.advance_type,
+      other_advance_type: initialFormData.other_advance_type,
       files: initialFormData.files,
       purpose: initialFormData.purpose,
     }));
