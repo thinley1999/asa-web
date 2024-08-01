@@ -57,10 +57,17 @@ const RequestedDsa = () => {
       selector: (row) => (
         <div className="tabledetails">
           <p className="dataheading p-0 m-0">
-            {row.dsa_amount?.Nu ?? 0}, {row.dsa_amount?.INR ?? 0},{" "}
-            {row.dsa_amount?.USD ?? 0}
+            {row.advance_type === "ex_country_tour_advance"
+              ? `${row.advance_amount?.Nu ?? 0}, ${
+                  row.advance_amount?.INR ?? 0
+                }, ${row.advance_amount?.USD ?? 0}`
+              : row.amount}
           </p>
-          <p className="datasubheading p-0 m-0 text-end">NU., INR., USD.</p>
+          <p className="datasubheading p-0 m-0 text-end">
+            {row.advance_type === "ex_country_tour_advance"
+              ? `NU., INR., USD.`
+              : `NU.`}
+          </p>
         </div>
       ),
     },

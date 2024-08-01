@@ -407,7 +407,9 @@ const OutCountryTour = ({
                 ? `Nu.${data.advance_amount?.Nu ?? 0}, INR.${
                     data.advance_amount?.INR ?? 0
                   }, USD.${data.advance_amount?.USD ?? 0}`
-                : formData.advanceAmount
+                : `Nu.${formData.advanceAmount?.Nu ?? 0}, INR.${
+                    formData.advanceAmount?.INR ?? 0
+                  }, USD.${formData.advanceAmount?.USD ?? 0}`
             }
             name="advanceAmount"
             isDisable={true}
@@ -506,4 +508,3 @@ const OutCountryTour = ({
 };
 
 export default OutCountryTour;
-

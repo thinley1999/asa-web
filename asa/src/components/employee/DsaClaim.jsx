@@ -14,13 +14,14 @@ const DsaClaim = () => {
   const [itinararies, setItineraries] = useState([]);
   const { id } = useParams();
   const [formData, setFormData] = useState(null);
-  const [dsa_amount, setDsaAmount] = useState({"Nu": 0, "INR": 0, "USD": 0});
+  const [dsa_amount, setDsaAmount] = useState({ Nu: 0, INR: 0, USD: 0 });
   const [countries, setCountries] = useState([]);
   const [newForm, setNewForm] = useState(false);
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [advance, setAdvance] = useState(null);
+  const [showButton, setShowButton] = useState(true);
 
   const handleRowClicked = (row) => {
     setFormData(row);
@@ -58,14 +59,12 @@ const DsaClaim = () => {
         USD += parseFloat(row.rate);
       }
     });
-    
-    setDsaAmount(
-      {
-      "Nu": (Nu *  (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
-      "INR": (INR *  (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
-      "USD": (USD *  (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
-      }
-    );
+
+    setDsaAmount({
+      Nu: (Nu * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+      INR: (INR * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+      USD: (USD * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+    });
   };
 
   const handleSave = async () => {
@@ -109,7 +108,8 @@ const DsaClaim = () => {
 
     if (newForm) {
       try {
-        const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
+        const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
+          formData;
 
         const rate = await fetchRate(
           from,
@@ -118,7 +118,7 @@ const DsaClaim = () => {
           days,
           mode,
           mileage,
-          halt_at,
+          halt_at
         );
 
         const updatedFormData = {
@@ -321,17 +321,18 @@ const DsaClaim = () => {
     }
   };
 
-  const handleClaim = async () => { 
+  const handleClaim = async () => {
     try {
       const response = await AdvanceServices.claimDsa(id, dsa_amount);
       if (response) {
         setSuccessMessage("Dsa Claimed Successfully");
+        setShowButton(false);
       }
     } catch (error) {
       console.error("Error fetching advance:", error);
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  };
 
   const handleCloseSuccessMessage = () => {
     setSuccessMessage("");
@@ -401,7 +402,7 @@ const DsaClaim = () => {
 
   useEffect(() => {
     calculateDsa();
-  }, [formData]);
+  }, [formData, itinararies]);
 
   if (formData === null) {
     return null;
@@ -528,14 +529,7 @@ const DsaClaim = () => {
             isDisable={true}
           />
         </div>
-        <div className="d-flex justify-content-center">
-          <button
-            type="button"
-            className="btn btn-primary me-5 mb-2 mybtn"
-            onClick={handleResetForm}
-          >
-            Reset
-          </button>
+        <div className="d-flex justify-content-start">
           <button
             type="button"
             className="btn btn-primary me-5 mb-2 mybtn"
@@ -549,13 +543,6 @@ const DsaClaim = () => {
             onClick={handleDelete}
           >
             Delete
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary me-5 mb-2 mybtn"
-            onClick={handleAddRow}
-          >
-            Add Row
           </button>
         </div>
         <div className="divider1"></div>
@@ -572,14 +559,24 @@ const DsaClaim = () => {
           label="DSA Amount"
           type="text"
           name="dsa_amount"
-          value={`${dsa_amount?.Nu} Nu, ${dsa_amount?.USD} USD, ${dsa_amount?.INR} INR`}
+          value={
+            advance?.advance_type === "ex_country_tour_advance"
+              ? `Nu.${dsa_amount?.Nu}, INR.${dsa_amount?.INR}, USD.${dsa_amount?.USD}`
+              : `Nu.${dsa_amount?.Nu}`
+          }
           isDisable={true}
         />
-        <div className="bg-white px-4 pb-3 text-center">
-          <button type="submit" className="btn btn-primary px-5" onClick={handleClaim}>
-            Claim Now
-          </button>
-        </div>
+        {showButton && (
+          <div className="bg-white px-4 pb-3 text-center">
+            <button
+              type="submit"
+              className="btn btn-primary px-5"
+              onClick={handleClaim}
+            >
+              Claim Now
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
