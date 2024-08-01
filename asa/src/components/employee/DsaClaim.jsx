@@ -89,6 +89,8 @@ const DsaClaim = () => {
         rate,
       };
 
+      console.log("updatedFormData", updatedFormData);
+
       const response = await ItenararyService.updateRow(updatedFormData);
       if (response) {
         fetchItinaries();
@@ -300,7 +302,7 @@ const DsaClaim = () => {
       let response;
       if (advance.advance_type === "in_country_tour_advance") {
         response = await RateServices.getRate("Bhutan", "Bhutan");
-      } else if (advance.advance_type === "out_country_tour_advance") {
+      } else if (advance.advance_type === "ex_country_tour_advance") {
         if (halt_at) {
           response = await RateServices.getStopOverRate(
             halt_count + 1,
@@ -315,7 +317,7 @@ const DsaClaim = () => {
           (from === "Bhutan" && to === "India") ||
           (from === "India" && to === "Bhutan")
         ) {
-          response = await RateServices.getRate(from, to);
+          response = await RateServices.getRate("Other", to);
         } else if (
           (from != "India" && to === "Bhutan") ||
           (from != "India" && to === "India")
