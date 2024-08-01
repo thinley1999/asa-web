@@ -44,25 +44,39 @@ const DsaClaim = () => {
   };
 
   const calculateDsa = () => {
+    if (!advance || !advance.advance_percentage) {
+      console.error("Advance or advance_percentage is not defined");
+      return;
+    }
+
     let Nu = 0;
     let INR = 0;
     let USD = 0;
+
     itinararies.forEach((row) => {
-      if (row.currency == "Nu") {
-        Nu += parseFloat(row.rate);
-      }
-      if (row.currency == "INR") {
-        INR += parseFloat(row.rate);
-      }
-      if (row.currency == "USD") {
-        USD += parseFloat(row.rate);
+      const rate = parseFloat(row.rate);
+      if (row.currency === "Nu" && !isNaN(rate)) {
+        Nu += rate;
+      } else if (row.currency === "INR" && !isNaN(rate)) {
+        INR += rate;
+      } else if (row.currency === "USD" && !isNaN(rate)) {
+        USD += rate;
+      } else {
+        console.error("Invalid rate or currency:", row);
       }
     });
 
+    const advancePercentage = parseFloat(advance.advance_percentage);
+
+    if (isNaN(advancePercentage)) {
+      console.error("Advance percentage is NaN:", advance.advance_percentage);
+      return;
+    }
+
     setDsaAmount({
-      Nu: (Nu * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
-      INR: (INR * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
-      USD: (USD * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+      Nu: (Nu * (1 - advancePercentage)).toFixed(2),
+      INR: (INR * (1 - advancePercentage)).toFixed(2),
+      USD: (USD * (1 - advancePercentage)).toFixed(2),
     });
   };
 
@@ -72,7 +86,8 @@ const DsaClaim = () => {
     if (!isValid) return;
 
     try {
-      const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
+      const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
+        formData;
 
       const rate = await fetchRate(
         from,
@@ -106,7 +121,7 @@ const DsaClaim = () => {
   const handleDelete = async () => {
     try {
       const response = await ItenararyService.deleteRow(formData.id);
-      
+
       if (response) {
         fetchItinaries();
       }
@@ -125,7 +140,8 @@ const DsaClaim = () => {
 
     if (newForm) {
       try {
-        const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
+        const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
+          formData;
 
         const rate = await fetchRate(
           from,
@@ -260,27 +276,34 @@ const DsaClaim = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  const fetchItinaries = async () => {
-    try {
-      const response = await ItenararyService.getItineraries(id);
-
-      if (response) {
-        setItineraries(response);
-        setFormData(response[0]);
-      }
-    } catch (error) {
-      console.error("Error fetching current applications:", error);
-    }
-  };
-
   const fetchAdvance = async () => {
     try {
       const response = await AdvanceServices.showDetail(id);
-      if (response) {
+      if (response && response.data) {
         setAdvance(response.data);
+      } else {
+        console.error("No data received from advance API");
       }
     } catch (error) {
       console.error("Error fetching advance:", error);
+    }
+  };
+
+  const fetchItinaries = async () => {
+    try {
+      const response = await ItenararyService.getItineraries(id);
+      if (response) {
+        setItineraries(response);
+        if (response.length > 0) {
+          setFormData(response[0]);
+        } else {
+          console.error("No itineraries found");
+        }
+      } else {
+        console.error("No response from itineraries API");
+      }
+    } catch (error) {
+      console.error("Error fetching current applications:", error);
     }
   };
 
@@ -417,8 +440,10 @@ const DsaClaim = () => {
   }, [advance]);
 
   useEffect(() => {
-    calculateDsa();
-  }, [itinararies]);
+    if (formData && itinararies.length > 0 && advance) {
+      calculateDsa();
+    }
+  }, [formData, itinararies, advance]);
 
   if (formData === null) {
     return null;
