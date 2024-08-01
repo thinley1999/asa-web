@@ -148,7 +148,7 @@ const TravelDetails = ({
           response = await RateServices.getRate(from, to);
         }
         else if (from === "Bhutan" && to === "India" || from === "India" && to === "Bhutan") {
-          response = await RateServices.getRate(from, to);
+          response = await RateServices.getRate("Other", to);
         }
         else if (from != "India" && to === "Bhutan" || from != "India" && to === "India") {
           response = await RateServices.getRate("Other", to);
