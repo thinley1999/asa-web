@@ -31,16 +31,15 @@ const DsaClaim = () => {
   const fetchCountry = async () => {
     if (advance?.advance_type === "in_country_tour_advance") {
       setCountries(dzongkhags);
-      return;
-    }
-
-    try {
-      const response = await RateServices.getCountryTo();
-      if (response && response.status === 200) {
-        setCountries(response.data);
+    } else if (advance?.advance_type === "ex_country_tour_advance") {
+      try {
+        const response = await RateServices.getCountryTo();
+        if (response && response.status === 200) {
+          setCountries(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching countries:", error);
       }
-    } catch (error) {
-      console.error("Error fetching countries:", error);
     }
   };
 
@@ -73,8 +72,24 @@ const DsaClaim = () => {
     if (!isValid) return;
 
     try {
-      const response = await ItenararyService.updateRow(formData);
-      console.log("save response", response);
+      const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
+
+      const rate = await fetchRate(
+        from,
+        to,
+        dsa_percentage,
+        days,
+        mode,
+        mileage,
+        halt_at
+      );
+
+      const updatedFormData = {
+        ...formData,
+        rate,
+      };
+
+      const response = await ItenararyService.updateRow(updatedFormData);
       if (response) {
         fetchItinaries();
       }
@@ -89,7 +104,7 @@ const DsaClaim = () => {
   const handleDelete = async () => {
     try {
       const response = await ItenararyService.deleteRow(formData.id);
-      console.log("delete response", response);
+      
       if (response) {
         fetchItinaries();
       }
@@ -108,8 +123,7 @@ const DsaClaim = () => {
 
     if (newForm) {
       try {
-        const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
-          formData;
+        const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
 
         const rate = await fetchRate(
           from,
@@ -402,7 +416,7 @@ const DsaClaim = () => {
 
   useEffect(() => {
     calculateDsa();
-  }, [formData, itinararies]);
+  }, [itinararies]);
 
   if (formData === null) {
     return null;
