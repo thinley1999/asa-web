@@ -87,12 +87,12 @@ const SideBar = () => {
               label: "Requested DSA",
               value: 7,
             },
-            {
-              path: "/reports",
-              icon: <BiSolidReport size={24} />,
-              label: "Reports",
-              value: 8,
-            },
+            // {
+            //   path: "/reports",
+            //   icon: <BiSolidReport size={24} />,
+            //   label: "Reports",
+            //   value: 8,
+            // },
           ];
 
           // Sort the updated items by value before returning
