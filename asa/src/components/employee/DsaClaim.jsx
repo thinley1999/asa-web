@@ -420,7 +420,7 @@ const DsaClaim = () => {
 
   useEffect(() => {
     calculateDsa();
-  }, [formData, itinararies]);
+  }, [advance, itinararies]);
 
   if (formData === null) {
     return null;
