@@ -463,6 +463,7 @@ const DsaClaim = () => {
           <ClaimDropDown
             label="From"
             name="from"
+            disoptions="Select From"
             value={formData.from}
             handleChange={handleFormChange}
             dropDown={countries}
@@ -471,6 +472,7 @@ const DsaClaim = () => {
           <ClaimDropDown
             label="To"
             name="to"
+            disoptions="Select To"
             value={formData.to}
             handleChange={handleFormChange}
             dropDown={countries}
@@ -513,6 +515,7 @@ const DsaClaim = () => {
           <ClaimDropDown
             label="Mode of Travel"
             name="mode"
+            disoptions="Select Mode"
             value={formData.mode}
             handleChange={handleFormChange}
             dropDown={["Airplane", "Train", "Private Vehicle", "Pool Vehicle"]}
