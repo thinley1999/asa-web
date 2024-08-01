@@ -72,7 +72,8 @@ const DsaClaim = () => {
     if (!isValid) return;
 
     try {
-      const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
+      const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
+        formData;
 
       const rate = await fetchRate(
         from,
@@ -106,7 +107,7 @@ const DsaClaim = () => {
   const handleDelete = async () => {
     try {
       const response = await ItenararyService.deleteRow(formData.id);
-      
+
       if (response) {
         fetchItinaries();
       }
@@ -125,7 +126,8 @@ const DsaClaim = () => {
 
     if (newForm) {
       try {
-        const { from, to, dsa_percentage, days, mode, mileage, halt_at } = formData;
+        const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
+          formData;
 
         const rate = await fetchRate(
           from,
