@@ -418,7 +418,7 @@ const DsaClaim = () => {
 
   useEffect(() => {
     calculateDsa();
-  }, [itinararies]);
+  }, [formData, itinararies]);
 
   if (formData === null) {
     return null;
