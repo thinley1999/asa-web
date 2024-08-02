@@ -177,7 +177,10 @@ const OutCountryTour = ({
           setErrorMessage("Your application subbmission has been failed");
         }
       } catch (error) {
-        setErrorMessage("Error:", error.response?.data);
+        setErrorMessage(
+          error.response?.data?.message ||
+          "An error occurred during submission. Please try again."
+        );
       }
     }
 

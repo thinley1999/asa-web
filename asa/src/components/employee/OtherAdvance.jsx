@@ -165,7 +165,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
           setErrorMessage("Internal Server Error");
         }
       } catch (error) {
-        setErrorMessage(error.response?.data || "An error occurred");
+        setErrorMessage(error.response?.data?.message || "An error occurred");
       }
     }
   };

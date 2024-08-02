@@ -163,6 +163,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
         }
       } catch (error) {
         setErrorMessage(
+          error.response?.data?.message ||
           "An error occurred during submission. Please try again."
         );
       }

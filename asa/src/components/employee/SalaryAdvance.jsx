@@ -139,6 +139,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
     if (validateForm()) {
       try {
         const response = await AdvanceServices.create(formData);
+        console.log("response", response);
 
         if (response) {
           setSuccessMessage("Advance created successfully");
@@ -147,7 +148,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
           setErrorMessage("Internal Server Error");
         }
       } catch (error) {
-        setErrorMessage(error.response?.data || "An error occurred");
+        setErrorMessage(error.response?.data?.message || "An error occurred");
       }
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
