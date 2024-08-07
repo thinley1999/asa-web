@@ -11,7 +11,7 @@ const ClaimDropDown = ({
   disoptions,
 }) => {
   return (
-    <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
+    <div className="col-xl-4 col-lg-3 col-md-3 col-12 mb-3">
       <label className="form-label">{label}</label>
       <select
         className={`form-select ${errors ? "is-invalid" : ""}`}

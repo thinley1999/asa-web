@@ -1,0 +1,18 @@
+export const departments = [
+  "Governors Office",
+  "Payment and Settlement System ",
+  "Administration and Finance ",
+  "Currency Management ",
+  "Banking ",
+  "HRD",
+  "Internal Audit ",
+  "Financial Regulation & Supervision ",
+  "Macroeconomic Research and Statistics",
+  "Foreign Exchange and Reserve Management",
+  "Information Technology",
+  "Library",
+  "Management",
+  "Financial Intelligence",
+  "Regional Office Phuntsholing",
+  "Regional Office Mongar",
+];
