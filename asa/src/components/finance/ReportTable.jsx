@@ -1,12 +1,12 @@
 import React from "react";
 import { TbFileTypeXls } from "react-icons/tb";
 import { FaRegFilePdf } from "react-icons/fa6";
-import { data } from "../datas/report_sample";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
+import { format } from "date-fns";
 
-const ReportTable = () => {
+const ReportTable = ({ data, total, filters }) => {
   const exportToPDF = () => {
     // Create a new jsPDF instance
     const doc = new jsPDF();
@@ -53,7 +53,17 @@ const ReportTable = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Advances");
     XLSX.writeFile(workbook, "report.xlsx");
   };
-  
+
+  if (data.length === 0) {
+    return (
+      <div className="bg-white px-4 py-4 my-3">
+        <div className="d-flex justify-content-center mb-3">
+          <p className="text-center">No Reports available to display.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white px-4 py-4 my-3">
       <div className="d-flex justify-content-end mb-3">
@@ -68,11 +78,11 @@ const ReportTable = () => {
         <table className="table table-bordered">
           <thead>
             <tr className="text-center small fw-medium hover-row">
-              <th colSpan="6">Individual Advance Report</th>
+              <th colSpan="6">{filters?.report_type} Advance Report</th>
             </tr>
             <tr className="text-center small fw-medium hover-row">
               <th colSpan="6">
-                Financial Year: 1st July 2024 - 31st July 2024
+                Financial Year: {format(new Date(filters?.start_date), 'dd MMMM yyyy')} - {format(new Date(filters?.end_date), 'dd MMMM yyyy')}
               </th>
             </tr>
             <tr className="text-center small fw-medium hover-row">
@@ -88,12 +98,12 @@ const ReportTable = () => {
           </thead>
           <tbody>
             {data.map((item) => (
-              <tr key={item.id} className="hover-row">
-                <td>{item.name}</td>
-                <td>{item.username}</td>
-                <td>{item.department}</td>
-                <td>{item.advance_type}</td>
-                <td>{item.amount}</td>
+              <tr key={item?.id} className="hover-row">
+                <td>{item?.user?.name}</td>
+                <td>{item?.user?.username}</td>
+                <td>{item?.user?.department}</td>
+                <td>{item?.advance_type}</td>
+                <td>{item?.amount}</td>
               </tr>
             ))}
           </tbody>
@@ -101,7 +111,7 @@ const ReportTable = () => {
             <tr className="small fw-medium hover-row">
               <th>Total Amount</th>
               <th className="text-end" colSpan="5">
-                10,000
+                {total?.Nu} Nu {total?.INR} INR {total?.USD} USD
               </th>
             </tr>
           </tfoot>

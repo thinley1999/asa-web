@@ -1,4 +1,5 @@
 export const departments = [
+  "All",
   "Governors Office",
   "Payment and Settlement System ",
   "Administration and Finance ",

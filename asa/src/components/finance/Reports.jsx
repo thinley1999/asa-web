@@ -3,9 +3,13 @@ import CustomInput from "../general/CustomInput";
 import ReportTable from "./ReportTable";
 import ClaimDropDown from "../employee/ClainDropDown";
 import { departments } from "../datas/department_list";
+import ReportServices from "../services/ReportServices";
 
 const Reports = () => {
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState();
+  const [reportData, setReportData] = useState([]);
+  const [totalAmount, setTotalAmount] = useState({}); 
   const [filters, setFilters] = useState({
     report_type: "",
     start_date: "",
@@ -73,15 +77,26 @@ const Reports = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validateFilters()) {
-      console.log("Form data is valid. Submitting...", filters);
+      try {
+        const response = await ReportServices.get(filters);
+        if (response) {
+          setReportData(response.data.advances);
+          setTotalAmount(response.data.total);
+        }
+      }
+      catch (error) {
+        setErrorMessage("An error occurred");
+      }
     } else {
       console.log("Validation errors", errors);
     }
   };
+
+  console.log("filters", filters);
 
   return (
     <div>
@@ -117,8 +132,8 @@ const Reports = () => {
                 dropDown={[
                   "Salary Advance",
                   "Other Advance",
-                  "In Country Advance",
-                  "Ex Country Advance",
+                  "In Country Tour Advance",
+                  "Ex Country Tour Advance",
                   "All",
                 ]}
                 disoptions="Select Advance Type"
@@ -145,7 +160,7 @@ const Reports = () => {
           </div>
         </div>
       </div>
-      <ReportTable />
+      <ReportTable data={reportData} total={totalAmount} filters={filters}/>
     </div>
   );
 };

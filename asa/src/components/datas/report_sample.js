@@ -8,7 +8,7 @@ export const data = [
         advance_type: "salary Advance"
     },
     {
-        id: 1,
+        id: 2,
         name: "Karma Wangchuk",
         department: "IT Department",
         username: "2023023",
@@ -16,7 +16,7 @@ export const data = [
         advance_type: "salary Advance"
     },
     {
-        id: 1,
+        id: 3,
         name: "Karma Wangchuk",
         department: "IT Department",
         username: "2023023",
@@ -24,7 +24,7 @@ export const data = [
         advance_type: "salary Advance"
     },
     {
-        id: 1,
+        id: 4,
         name: "Karma Wangchuk",
         department: "IT Department",
         username: "2023023",
