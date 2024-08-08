@@ -41,12 +41,12 @@ const SideBar = () => {
       label: "Other Advance",
       value: 4,
     },
-    {
-      path: "/tourAdvance",
-      icon: <FaCar size={24} />,
-      label: "Tour Advance",
-      value: 5,
-    },
+    // {
+    //   path: "/tourAdvance",
+    //   icon: <FaCar size={24} />,
+    //   label: "Tour Advance",
+    //   value: 5,
+    // },
   ]);
 
   useEffect(() => {
