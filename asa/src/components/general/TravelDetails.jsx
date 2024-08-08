@@ -134,13 +134,13 @@ const TravelDetails = ({
     type
   ) => {
     try {
-      if (mode === "Private Vehicle") {
-        return { rate: dsaPercentage * 16 * mileage, currency: "Nu" };
-      }
 
       let response;
       if (tourType === "inCountry") {
         response = await RateServices.getRate(from, to);
+        if (mode === "Private Vehicle") {
+          return { rate: (16 * mileage + (dsaPercentage * days * response.rate) ), currency: "Nu" };
+        }
       } else if (tourType === "outCountry") {
         if (halt_at) {
           response = await RateServices.getStopOverRate(halt_count + 1, halt_at);
