@@ -13,6 +13,7 @@ const TravelDetails = ({
   haltCount,
 }) => {
   const [haltChecked, setHaltChecked] = useState(existingData?.halt_at || initialData?.halt_at ? true : false);
+  const [stopChecked, setStopChecked] = useState(existingData?.stop_at || initialData?.stop_at ? true : false);
   const [returnChecked, setReturnChecked] = useState(false);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
@@ -32,6 +33,7 @@ const TravelDetails = ({
       halt_at: "",
       dsa_percentage: "",
       days: "",
+      stop_at: "",
     }
   );
   const halt_count = haltCount();
@@ -85,15 +87,13 @@ const TravelDetails = ({
       mode,
       mileage,
       halt_at,
+      stop_at,
       dsa_percentage,
     } = data;
     const newErrors = {};
 
     if (!start_date) newErrors.start_date = "Start date is required";
     if (!end_date) newErrors.end_date = "End date is required";
-    if (!from) newErrors.from = "From location is required";
-    if (!to) newErrors.to = "To location is required";
-    if (!mode) newErrors.mode = "Mode of travel is required";
     if (!dsa_percentage)
       newErrors.dsa_percentage = "DSA percentage is required";
 
@@ -101,8 +101,18 @@ const TravelDetails = ({
       newErrors.mileage = "Mileage is required for private vehicle";
     }
 
+    if (!haltChecked && !stopChecked) {
+      if (!from) newErrors.from = "From location is required";
+      if (!to) newErrors.to = "To location is required";
+      if (!mode) newErrors.mode = "Mode of travel is required";
+    }
+
     if (haltChecked && !halt_at) {
       newErrors.halt_at = "Halt location is required when halt is checked";
+    }
+
+    if (stopChecked && !stop_at) {
+      newErrors.stop_at = "Stop Over location is required when stop over is checked";
     }
 
     if (Object.keys(newErrors).length === 0) {
@@ -131,6 +141,7 @@ const TravelDetails = ({
     mode,
     mileage,
     halt_at,
+    stop_at,
     type
   ) => {
     try {
@@ -142,8 +153,9 @@ const TravelDetails = ({
           return { rate: (16 * mileage + (dsaPercentage * days * response.rate) ), currency: "Nu" };
         }
       } else if (tourType === "outCountry") {
-        if (halt_at) {
+        if (stop_at) {
           response = await RateServices.getStopOverRate(halt_count + 1, halt_at);
+
         } else if (from === "India" && to === "India" || from === "Bhutan" && to === "Bhutan") {
           response = await RateServices.getRate(from, to);
         }
@@ -152,6 +164,9 @@ const TravelDetails = ({
         }
         else if (from != "India" && to === "Bhutan" || from != "India" && to === "India") {
           response = await RateServices.getRate("Other", to);
+        }
+        else if (halt_at){
+          response = await RateServices.getThirdCountryRate(halt_at);
         }
          else {
           response = await RateServices.getThirdCountryRate(to);
@@ -175,7 +190,7 @@ const TravelDetails = ({
     console.log('data..', data);
 
     try {
-      const { from, to, dsa_percentage, days, mode, mileage, halt_at } = data;
+      const { from, to, dsa_percentage, days, mode, mileage, halt_at, stop_at } = data;
       const destination =
         type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
 
@@ -187,6 +202,7 @@ const TravelDetails = ({
         mode,
         mileage,
         halt_at,
+        stop_at
       );
 
       setData((prevData) => ({ ...prevData, rate, currency }));
@@ -276,13 +292,73 @@ const TravelDetails = ({
                 )}
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="halt"
+                    checked={haltChecked}
+                    disabled={existingData ? true : false}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setHaltChecked(e.target.checked);
+                      if (e.target.checked){
+                        setReturnChecked(false);
+                        setStopChecked(false);
+                      }
+                    }}
+                  />
+                  <label className="form-check-label">Halt?</label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="return"
+                    checked={returnChecked}
+                    disabled={existingData ? true : false}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setReturnChecked(e.target.checked);
+                      if (e.target.checked){
+                        setHaltChecked(false);
+                        setStopChecked(false);
+                      }
+                    }}
+                  />
+                  <label className="form-check-label">
+                    Return on the same day?
+                  </label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="stop_at"
+                    checked={stopChecked}
+                    disabled={existingData ? true : false}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setStopChecked(e.target.checked);
+                      if (e.target.checked){
+                        setHaltChecked(false);
+                        setReturnChecked(false);
+                      } 
+                    }}
+                  />
+                  <label className="form-check-label">
+                    Stop Over?
+                  </label>
+                </div>
+              </div>
+              <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">From</label>
                 <select
                   className={`form-select ${errors.from ? "is-invalid" : ""}`}
                   name="from"
-                  value={data.from}
+                  value={ data.from }
                   onChange={handleChange}
-                  disabled={existingData ? true : false}
+                  disabled={stopChecked ||haltChecked || existingData ? true : false}
                 >
                   <option value="" disabled>
                     Select From
@@ -304,7 +380,7 @@ const TravelDetails = ({
                   name="to"
                   value={data.to}
                   onChange={handleChange}
-                  disabled={existingData ? true : false}
+                  disabled={stopChecked ||haltChecked || existingData ? true : false}
                 >
                   <option value="" disabled>
                     Select To
@@ -323,7 +399,7 @@ const TravelDetails = ({
                   className={`form-select ${errors.mode ? "is-invalid" : ""}`}
                   name="mode"
                   value={data.mode}
-                  disabled={existingData ? true : false}
+                  disabled={stopChecked || haltChecked || existingData ? true : false}
                   onChange={(e) => {
                     handleChange(e);
                     setMode(e.target.value);
@@ -367,41 +443,7 @@ const TravelDetails = ({
                 onChange={handleChange}
                 isDisable={true}
               />
-              <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-                <label></label>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    name="halt"
-                    checked={haltChecked}
-                    disabled={existingData ? true : false}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setHaltChecked(e.target.checked);
-                      if (e.target.checked) setReturnChecked(false);
-                    }}
-                  />
-                  <label className="form-check-label">Halt?</label>
-                </div>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    name="return"
-                    checked={returnChecked}
-                    disabled={existingData ? true : false}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setReturnChecked(e.target.checked);
-                      if (e.target.checked) setHaltChecked(false);
-                    }}
-                  />
-                  <label className="form-check-label">
-                    Return on the same day?
-                  </label>
-                </div>
-              </div>
+
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">Halt at</label>
                 <select
@@ -428,6 +470,34 @@ const TravelDetails = ({
 
                 {errors.halt_at && (
                   <div className="text-danger">{errors.halt_at}</div>
+                )}
+              </div>
+              <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+                <label className="form-label">Stop at</label>
+                <select
+                  className={`form-select ${
+                    errors.stop_at ? "is-invalid" : ""
+                  }`}
+                  name="stop_at"
+                  disabled={stopChecked ? false : true}
+                  value={data.stop_at}
+                  onChange={(e) => {
+                    handleChange(e);
+                    setMode(e.target.value);
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Stop Over Location
+                  </option>
+                  {dropDown.map((country, index) => (
+                    <option key={index} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.stop_at && (
+                  <div className="text-danger">{errors.stop_at}</div>
                 )}
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
