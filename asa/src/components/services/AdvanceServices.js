@@ -95,7 +95,46 @@ const create = async (params, travel_itinerary = []) => {
   }
 };
 
-const update = async () => {};
+const update = async (params, travel_itinerary = []) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    console.log('advance amount', params.advanceAmount);
+
+    const response = await axios.post(
+      `${API_URL}/api/advances`,
+      {
+        advance: {
+          id: params.advance_id,
+          advance_type: params.advance_type,
+          status: "pending",
+          advance_amount: params.advanceAmount,
+          amount: parseFloat(params.totalAmount),
+          purpose: params.purpose,
+          remark: params.remark || params.other_advance_type,
+          advance_percentage: parseFloat(params.advance_percentage),
+        },
+        salary_advance: {
+          id: params.salary_advance_id,
+          duration: params.duration,
+          deduction: params.deduction,
+          status: "pending",
+          completion_month: params.completion_month,
+        },
+        travel_itinerary: travel_itinerary,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const statusCount = async () => {
   const token = localStorage.getItem("token");

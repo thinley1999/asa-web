@@ -19,6 +19,7 @@ import PageNotFound from "./components/general/PageNotFound";
 import PrivateRoute from "./components/general/PrivateRoute";
 import Reports from "./components/finance/Reports";
 import RequestedDsa from "./components/finance/RequestedDsa";
+import EditRequestedAdvance from "./components/finance/EditRequestedAdvance";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -85,6 +86,11 @@ const routes = createBrowserRouter([
         path: "viewRequestedAdvance/:id",
         element: <PrivateRoute />,
         children: [{ path: "", element: <ViewRequestedAdvance /> }],
+      },
+      {
+        path: "editRequestedAdvance/:id",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <EditRequestedAdvance /> }],
       },
       {
         path: "requestedDsa",
