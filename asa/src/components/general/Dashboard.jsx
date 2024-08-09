@@ -19,9 +19,6 @@ const Dashboard = () => {
     }
   }, [permissions]);
 
-  console.log("dashboard permission...", dashboardPermission);
-  console.log("dashboard permission...", dashboardPermission === null);
-
   return (
     <div>
       {dashboardPermission === null ? (
