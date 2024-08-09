@@ -22,6 +22,7 @@ const get = async (params) => {
             "end_date": params.end_date,
             "advance_type": advance_type,
             "department": department,
+            "employee_id": params.employee_id
         }
       },
       headers: {

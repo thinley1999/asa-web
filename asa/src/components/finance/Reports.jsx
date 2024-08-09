@@ -16,7 +16,7 @@ const Reports = () => {
     end_date: "",
     advance_type: "",
     department: "",
-    employ_no: "",
+    employee_id: "",
   });
 
   const handleFilterChange = (e) => {
@@ -34,14 +34,14 @@ const Reports = () => {
       end_date: "",
       advance_type: "",
       department: "",
-      employ_no: "",
+      employee_id: "",
     })
     setErrors({});
   }
 
   const validateFilters = () => {
     const newErrors = {};
-    const { report_type, start_date, end_date, advance_type, department, employ_no } = filters;
+    const { report_type, start_date, end_date, advance_type, department, employee_id } = filters;
   
     if (!report_type) {
       newErrors.report_type = "Report Type is required";
@@ -60,8 +60,8 @@ const Reports = () => {
       }
     }
   
-    if (report_type === "Individual" && !employ_no) {
-      newErrors.employ_no = "Employee No. is required for Individual report";
+    if (report_type === "Individual" && !employee_id) {
+      newErrors.employee_id = "Employee No. is required for Individual report";
     }
   
     if (report_type === "All") {
@@ -115,12 +115,12 @@ const Reports = () => {
           <CustomInput error={errors.end_date} name="end_date" type="date" label="End Date" value={filters.end_date} onChange={handleFilterChange}/>
           {filters.report_type === "Individual" ? (
             <CustomInput
-              name="employ_no"
+              name="employee_id"
               type="number"
               label="Employee No."
-              value={filters.employ_no}
+              value={filters.employee_id}
               onChange={handleFilterChange}
-              error={errors.employ_no}
+              error={errors.employee_id}
             />
           ) : filters.report_type === "All" ? (
             <>
