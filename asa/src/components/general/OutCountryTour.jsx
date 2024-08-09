@@ -63,7 +63,7 @@ const OutCountryTour = ({
     setFormData((prevFormData) => ({
       ...prevFormData,
       advanceAmount: {
-        Nu: Nu * formData.advance_percentage,
+        Nu: Nu * 0,
         INR: INR * formData.advance_percentage,
         USD: USD * formData.advance_percentage,
         Total: { Nu: Nu, INR: INR, USD: USD },
@@ -427,17 +427,17 @@ const OutCountryTour = ({
                     className="form-check-input"
                     type="checkbox"
                     name="advance_percentage"
-                    value={0.9}
+                    value={1.0}
                     checked={
-                      parseFloat(data?.advance_percentage) === 0.9 ||
-                      parseFloat(formData.advance_percentage) === 0.9
+                      parseFloat(data?.advance_percentage) === 1.0 ||
+                      parseFloat(formData.advance_percentage) === 1.0
                         ? true
                         : false
                     }
                     onChange={handleChange}
                     disabled={data ? true : false}
                   />
-                  <label className="form-check-label">90% Advance</label>
+                  <label className="form-check-label">Request Advance</label>
                 </div>
                 <div className="form-check">
                   <input

@@ -12,8 +12,12 @@ const TravelDetails = ({
   type,
   haltCount,
 }) => {
-  const [haltChecked, setHaltChecked] = useState(existingData?.halt_at || initialData?.halt_at ? true : false);
-  const [stopChecked, setStopChecked] = useState(existingData?.stop_at || initialData?.stop_at ? true : false);
+  const [haltChecked, setHaltChecked] = useState(
+    existingData?.halt_at || initialData?.halt_at ? true : false
+  );
+  const [stopChecked, setStopChecked] = useState(
+    existingData?.stop_at || initialData?.stop_at ? true : false
+  );
   const [returnChecked, setReturnChecked] = useState(false);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
@@ -112,7 +116,8 @@ const TravelDetails = ({
     }
 
     if (stopChecked && !stop_at) {
-      newErrors.stop_at = "Stop Over location is required when stop over is checked";
+      newErrors.stop_at =
+        "Stop Over location is required when stop over is checked";
     }
 
     if (Object.keys(newErrors).length === 0) {
@@ -145,36 +150,55 @@ const TravelDetails = ({
     type
   ) => {
     try {
-
       let response;
       if (tourType === "inCountry") {
         response = await RateServices.getRate(from, to);
         if (mode === "Private Vehicle") {
-          return { rate: (16 * mileage + (dsaPercentage * days * response.rate) ), currency: "Nu" };
+          return {
+            rate: 16 * mileage + dsaPercentage * days * response.rate,
+            currency: "Nu",
+          };
         }
       } else if (tourType === "outCountry") {
         if (stop_at) {
-          response = await RateServices.getStopOverRate(halt_count + 1, halt_at);
-
-        } else if (from === "India" && to === "India" || from === "Bhutan" && to === "Bhutan") {
+          response = await RateServices.getStopOverRate(
+            halt_count + 1,
+            stop_at
+          );
+          const res2 = await RateServices.getThirdCountryRate(stop_at);
+          if (response && res2) {
+            return {
+              rate: dsaPercentage * days * res2.rate + res2.rate,
+              currency: response.currency,
+            };
+          }
+        } else if (
+          (from === "India" && to === "India") ||
+          (from === "Bhutan" && to === "Bhutan")
+        ) {
           response = await RateServices.getRate(from, to);
-        }
-        else if (from === "Bhutan" && to === "India" || from === "India" && to === "Bhutan") {
+        } else if (
+          (from === "Bhutan" && to === "India") ||
+          (from === "India" && to === "Bhutan")
+        ) {
           response = await RateServices.getRate("Other", to);
-        }
-        else if (from != "India" && to === "Bhutan" || from != "India" && to === "India") {
+        } else if (
+          (from != "India" && to === "Bhutan") ||
+          (from != "India" && to === "India")
+        ) {
           response = await RateServices.getRate("Other", to);
-        }
-        else if (halt_at){
+        } else if (halt_at) {
           response = await RateServices.getThirdCountryRate(halt_at);
-        }
-         else {
+        } else {
           response = await RateServices.getThirdCountryRate(to);
         }
       }
 
       if (response) {
-        return { rate: dsaPercentage * days * response.rate, currency: response.currency };
+        return {
+          rate: dsaPercentage * days * response.rate,
+          currency: response.currency,
+        };
       }
     } catch (error) {
       console.error("Error fetching rates:", error);
@@ -187,10 +211,19 @@ const TravelDetails = ({
     setErrors(errors);
 
     if (!isValid) return;
-    console.log('data..', data);
+    console.log("data..", data);
 
     try {
-      const { from, to, dsa_percentage, days, mode, mileage, halt_at, stop_at } = data;
+      const {
+        from,
+        to,
+        dsa_percentage,
+        days,
+        mode,
+        mileage,
+        halt_at,
+        stop_at,
+      } = data;
       const destination =
         type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
 
@@ -207,7 +240,7 @@ const TravelDetails = ({
 
       setData((prevData) => ({ ...prevData, rate, currency }));
       onSave({ ...data, rate, currency });
-      console.log('data....', data);
+      console.log("data....", data);
       onClose();
     } catch (error) {
       console.error("Error while submitting:", error);
@@ -229,7 +262,7 @@ const TravelDetails = ({
     }
   }, [type]);
 
-  console.log('data....', data);
+  console.log("data....", data);
 
   if (!isOpen) return null;
 
@@ -302,7 +335,14 @@ const TravelDetails = ({
                     onChange={(e) => {
                       handleChange(e);
                       setHaltChecked(e.target.checked);
-                      if (e.target.checked){
+                      if (e.target.checked) {
+                        setData((prevData) => ({
+                          ...prevData,
+                          from: "",
+                          to: "",
+                          stop_at: "",
+                          mode: "",
+                        }));
                         setReturnChecked(false);
                         setStopChecked(false);
                       }
@@ -320,7 +360,7 @@ const TravelDetails = ({
                     onChange={(e) => {
                       handleChange(e);
                       setReturnChecked(e.target.checked);
-                      if (e.target.checked){
+                      if (e.target.checked) {
                         setHaltChecked(false);
                         setStopChecked(false);
                       }
@@ -330,35 +370,44 @@ const TravelDetails = ({
                     Return on the same day?
                   </label>
                 </div>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    name="stop_at"
-                    checked={stopChecked}
-                    disabled={existingData ? true : false}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setStopChecked(e.target.checked);
-                      if (e.target.checked){
-                        setHaltChecked(false);
-                        setReturnChecked(false);
-                      } 
-                    }}
-                  />
-                  <label className="form-check-label">
-                    Stop Over?
-                  </label>
-                </div>
+                {type === "outCountry" && (
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="stop_at"
+                      checked={stopChecked}
+                      disabled={existingData ? true : false}
+                      onChange={(e) => {
+                        handleChange(e);
+                        setStopChecked(e.target.checked);
+                        if (e.target.checked) {
+                          setData((prevData) => ({
+                            ...prevData,
+                            from: "",
+                            to: "",
+                            halt_at: "",
+                            mode: "",
+                          }));
+                          setHaltChecked(false);
+                          setReturnChecked(false);
+                        }
+                      }}
+                    />
+                    <label className="form-check-label">Stop Over?</label>
+                  </div>
+                )}
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">From</label>
                 <select
                   className={`form-select ${errors.from ? "is-invalid" : ""}`}
                   name="from"
-                  value={ data.from }
+                  value={data.from}
                   onChange={handleChange}
-                  disabled={stopChecked ||haltChecked || existingData ? true : false}
+                  disabled={
+                    stopChecked || haltChecked || existingData ? true : false
+                  }
                 >
                   <option value="" disabled>
                     Select From
@@ -380,7 +429,9 @@ const TravelDetails = ({
                   name="to"
                   value={data.to}
                   onChange={handleChange}
-                  disabled={stopChecked ||haltChecked || existingData ? true : false}
+                  disabled={
+                    stopChecked || haltChecked || existingData ? true : false
+                  }
                 >
                   <option value="" disabled>
                     Select To
@@ -399,7 +450,9 @@ const TravelDetails = ({
                   className={`form-select ${errors.mode ? "is-invalid" : ""}`}
                   name="mode"
                   value={data.mode}
-                  disabled={stopChecked || haltChecked || existingData ? true : false}
+                  disabled={
+                    stopChecked || haltChecked || existingData ? true : false
+                  }
                   onChange={(e) => {
                     handleChange(e);
                     setMode(e.target.value);
@@ -472,34 +525,37 @@ const TravelDetails = ({
                   <div className="text-danger">{errors.halt_at}</div>
                 )}
               </div>
-              <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-                <label className="form-label">Stop at</label>
-                <select
-                  className={`form-select ${
-                    errors.stop_at ? "is-invalid" : ""
-                  }`}
-                  name="stop_at"
-                  disabled={stopChecked ? false : true}
-                  value={data.stop_at}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setMode(e.target.value);
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Stop Over Location
-                  </option>
-                  {dropDown.map((country, index) => (
-                    <option key={index} value={country}>
-                      {country}
+              {type === "outCountry" && (
+                <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+                  <label className="form-label">Stop at</label>
+                  <select
+                    className={`form-select ${
+                      errors.stop_at ? "is-invalid" : ""
+                    }`}
+                    name="stop_at"
+                    disabled={stopChecked ? false : true}
+                    value={data.stop_at}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setMode(e.target.value);
+                    }}
+                  >
+                    <option value="" disabled>
+                      Select Stop Over Location
                     </option>
-                  ))}
-                </select>
+                    {dropDown.map((country, index) => (
+                      <option key={index} value={country}>
+                        {country}
+                      </option>
+                    ))}
+                  </select>
 
-                {errors.stop_at && (
-                  <div className="text-danger">{errors.stop_at}</div>
-                )}
-              </div>
+                  {errors.stop_at && (
+                    <div className="text-danger">{errors.stop_at}</div>
+                  )}
+                </div>
+              )}
+
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">DSA Percentage</label>
                 <select
