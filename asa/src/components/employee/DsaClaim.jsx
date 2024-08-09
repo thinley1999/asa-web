@@ -60,7 +60,7 @@ const DsaClaim = () => {
     });
 
     setDsaAmount({
-      Nu: (Nu * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+      Nu: (Nu * (1)).toFixed(2),
       INR: (INR * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
       USD: (USD * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
     });
