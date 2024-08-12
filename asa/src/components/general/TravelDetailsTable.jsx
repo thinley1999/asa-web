@@ -4,7 +4,7 @@ import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
 
-const TravelDetailsTable = ({ existingData, data, removeRow, editRow }) => {
+const TravelDetailsTable = ({ existingData, data, removeRow, editRow, edit }) => {
   const customStyles = {
     headRow: {
       style: {
@@ -59,7 +59,7 @@ const TravelDetailsTable = ({ existingData, data, removeRow, editRow }) => {
       cell: (row) => {
         return (
           <div className="tabledetails">
-            {existingData ? (
+            {existingData && !edit ? (
               <button
                 type="button"
                 className="btn btn-warning preview-btn p-0 ms-2 "
@@ -94,7 +94,7 @@ const TravelDetailsTable = ({ existingData, data, removeRow, editRow }) => {
 
   return (
     <div className="row w-100 mb-3">
-      <DataTable columns={columns} data={existingData ? existingData : data} customStyles={customStyles} />
+      <DataTable columns={columns} data={existingData ? (edit ? data : existingData) : data} customStyles={customStyles} />
     </div>
   );
 };

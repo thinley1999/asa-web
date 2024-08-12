@@ -11,6 +11,7 @@ const TravelDetails = ({
   initialData,
   type,
   haltCount,
+  edit
 }) => {
   const [haltChecked, setHaltChecked] = useState(
     existingData?.halt_at || initialData?.halt_at ? true : false
@@ -298,7 +299,7 @@ const TravelDetails = ({
                       : data.start_date
                   }
                   onChange={handleChange}
-                  disabled={existingData ? true : false}
+                  disabled={existingData ? ( edit ? false:true) : false}
                 />
                 {errors.start_date && (
                   <div className="text-danger">{errors.start_date}</div>
@@ -318,7 +319,7 @@ const TravelDetails = ({
                       : data.end_date
                   }
                   onChange={handleChange}
-                  disabled={existingData ? true : false}
+                  disabled={existingData ? ( edit ? false:true) : false}
                 />
                 {errors.end_date && (
                   <div className="text-danger">{errors.end_date}</div>
@@ -331,7 +332,7 @@ const TravelDetails = ({
                     type="checkbox"
                     name="halt"
                     checked={haltChecked}
-                    disabled={existingData ? true : false}
+                    disabled={existingData ? ( edit ? false:true) : false}
                     onChange={(e) => {
                       handleChange(e);
                       setHaltChecked(e.target.checked);
@@ -356,7 +357,7 @@ const TravelDetails = ({
                     type="checkbox"
                     name="return"
                     checked={returnChecked}
-                    disabled={existingData ? true : false}
+                    disabled={existingData ? ( edit ? false:true) : false}
                     onChange={(e) => {
                       handleChange(e);
                       setReturnChecked(e.target.checked);
@@ -377,7 +378,7 @@ const TravelDetails = ({
                       type="checkbox"
                       name="stop_at"
                       checked={stopChecked}
-                      disabled={existingData ? true : false}
+                      disabled={existingData ? ( edit ? false:true) : false}
                       onChange={(e) => {
                         handleChange(e);
                         setStopChecked(e.target.checked);
@@ -406,7 +407,7 @@ const TravelDetails = ({
                   value={data.from}
                   onChange={handleChange}
                   disabled={
-                    stopChecked || haltChecked || existingData ? true : false
+                    stopChecked || haltChecked || existingData ? (edit ? false: true) : true
                   }
                 >
                   <option value="" disabled>
@@ -430,7 +431,7 @@ const TravelDetails = ({
                   value={data.to}
                   onChange={handleChange}
                   disabled={
-                    stopChecked || haltChecked || existingData ? true : false
+                    stopChecked || haltChecked || existingData ? ( edit ? false:true) : false
                   }
                 >
                   <option value="" disabled>
@@ -451,7 +452,7 @@ const TravelDetails = ({
                   name="mode"
                   value={data.mode}
                   disabled={
-                    stopChecked || haltChecked || existingData ? true : false
+                    stopChecked || haltChecked || existingData ? ( edit ? false:true) : false
                   }
                   onChange={(e) => {
                     handleChange(e);
@@ -478,7 +479,7 @@ const TravelDetails = ({
                   name="mileage"
                   type="number"
                   isDisable={
-                    data.mode !== "Private Vehicle" || existingData
+                    data.mode != "Private Vehicle" || existingData
                       ? true
                       : false
                   }
@@ -564,7 +565,7 @@ const TravelDetails = ({
                   }`}
                   name="dsa_percentage"
                   value={data.dsa_percentage}
-                  disabled={existingData ? true : false}
+                  disabled={existingData ? ( edit ? false:true) : false}
                   onChange={(e) => {
                     handleChange(e);
                     setMode(e.target.value);
@@ -590,7 +591,7 @@ const TravelDetails = ({
             >
               Close
             </button>
-            {!existingData ? (
+            {!existingData || edit ? (
               <button
                 type="button"
                 className="btn btn-primary"

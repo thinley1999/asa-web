@@ -50,6 +50,7 @@ const EditRequestedAdvance = () => {
           <InCountryTour
             data={advanceData}
             isDSA= {advanceData.claim_dsa}
+            edit = {true}
           />
         )}
         {advanceData.advance_type === "other_advance" && (
@@ -62,6 +63,7 @@ const EditRequestedAdvance = () => {
           <OutCountryTour
             data={advanceData}
             isDSA= {advanceData.claim_dsa}
+            edit = {true}
           />
         )}
       </div>
