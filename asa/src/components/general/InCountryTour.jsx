@@ -198,7 +198,6 @@ const InCountryTour = ({
             setSuccessMessage(
               "Advance has been successfully updated."
             );
-            resetForm();
         } else {
           setErrorMessage("Your application submission has failed");
         }

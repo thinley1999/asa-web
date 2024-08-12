@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import CustomInput from "./CustomInput";
 import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
+import { distanceAndSkiddingToXY } from "@popperjs/core/lib/modifiers/offset";
 
 const TravelDetails = ({
   existingData,
@@ -407,7 +408,7 @@ const TravelDetails = ({
                   value={data.from}
                   onChange={handleChange}
                   disabled={
-                    stopChecked || haltChecked || existingData ? (edit ? false: true) : true
+                    (haltChecked || stopChecked) || (existingData && !edit) ? true : false
                   }
                 >
                   <option value="" disabled>
@@ -431,7 +432,7 @@ const TravelDetails = ({
                   value={data.to}
                   onChange={handleChange}
                   disabled={
-                    stopChecked || haltChecked || existingData ? ( edit ? false:true) : false
+                    (haltChecked || stopChecked) || (existingData && !edit) ? true : false
                   }
                 >
                   <option value="" disabled>
@@ -452,7 +453,7 @@ const TravelDetails = ({
                   name="mode"
                   value={data.mode}
                   disabled={
-                    stopChecked || haltChecked || existingData ? ( edit ? false:true) : false
+                    (haltChecked || stopChecked) || (existingData && !edit) ? true : false
                   }
                   onChange={(e) => {
                     handleChange(e);
@@ -479,9 +480,7 @@ const TravelDetails = ({
                   name="mileage"
                   type="number"
                   isDisable={
-                    data.mode != "Private Vehicle" || existingData
-                      ? true
-                      : false
+                    (data.mode !== "Private Vehicle" || (existingData && !edit)) ? true : false
                   }
                   value={data.mileage}
                   onChange={handleChange}
