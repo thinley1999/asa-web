@@ -9,14 +9,14 @@ const Reports = () => {
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState();
   const [reportData, setReportData] = useState([]);
-  const [totalAmount, setTotalAmount] = useState({}); 
+  const [totalAmount, setTotalAmount] = useState({});
   const [filters, setFilters] = useState({
     report_type: "",
     start_date: "",
     end_date: "",
     advance_type: "",
     department: "",
-    employ_no: "",
+    employee_id: "",
   });
 
   const handleFilterChange = (e) => {
@@ -27,22 +27,29 @@ const Reports = () => {
     }));
   };
 
-  const handleFilterClear = () => { 
+  const handleFilterClear = () => {
     setFilters({
       report_type: "",
       start_date: "",
       end_date: "",
       advance_type: "",
       department: "",
-      employ_no: "",
-    })
+      employee_id: "",
+    });
     setErrors({});
-  }
+  };
 
   const validateFilters = () => {
     const newErrors = {};
-    const { report_type, start_date, end_date, advance_type, department, employ_no } = filters;
-  
+    const {
+      report_type,
+      start_date,
+      end_date,
+      advance_type,
+      department,
+      employee_id,
+    } = filters;
+
     if (!report_type) {
       newErrors.report_type = "Report Type is required";
     }
@@ -59,11 +66,11 @@ const Reports = () => {
         newErrors.end_date = "End Date is required";
       }
     }
-  
-    if (report_type === "Individual" && !employ_no) {
-      newErrors.employ_no = "Employee No. is required for Individual report";
+
+    if (report_type === "Individual" && !employee_id) {
+      newErrors.employee_id = "Employee No. is required for Individual report";
     }
-  
+
     if (report_type === "All") {
       if (!advance_type) {
         newErrors.advance_type = "Advance Type is required for All reports";
@@ -72,7 +79,7 @@ const Reports = () => {
         newErrors.department = "Department is required for All reports";
       }
     }
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -87,8 +94,7 @@ const Reports = () => {
           setReportData(response.data.advances);
           setTotalAmount(response.data.total);
         }
-      }
-      catch (error) {
+      } catch (error) {
         setErrorMessage("An error occurred");
       }
     } else {
@@ -111,17 +117,47 @@ const Reports = () => {
             dropDown={["Individual", "All"]}
             disoptions="Select Select Report Type"
           />
-          <CustomInput error={errors.start_date} name="start_date" type="date" label="Start Date" value={filters.start_date} onChange={handleFilterChange}/>
-          <CustomInput error={errors.end_date} name="end_date" type="date" label="End Date" value={filters.end_date} onChange={handleFilterChange}/>
+          <CustomInput
+            error={errors.start_date}
+            name="start_date"
+            type="date"
+            label="Start Date"
+            value={filters.start_date}
+            onChange={handleFilterChange}
+          />
+          <CustomInput
+            error={errors.end_date}
+            name="end_date"
+            type="date"
+            label="End Date"
+            value={filters.end_date}
+            onChange={handleFilterChange}
+          />
           {filters.report_type === "Individual" ? (
-            <CustomInput
-              name="employ_no"
-              type="number"
-              label="Employee No."
-              value={filters.employ_no}
-              onChange={handleFilterChange}
-              error={errors.employ_no}
-            />
+            <>
+              <CustomInput
+                name="employee_id"
+                type="number"
+                label="Employee No."
+                value={filters.employee_id}
+                onChange={handleFilterChange}
+                error={errors.employee_id}
+              />
+              <ClaimDropDown
+                label="Advance Type"
+                name="advance_type"
+                value={filters.advance_type}
+                handleChange={handleFilterChange}
+                dropDown={[
+                  "Salary Advance",
+                  "Other Advance",
+                  "In Country Tour Advance",
+                  "Ex Country Tour Advance",
+                ]}
+                disoptions="Select Advance Type"
+                errors={errors.advance_type}
+              />
+            </>
           ) : filters.report_type === "All" ? (
             <>
               <ClaimDropDown
@@ -151,16 +187,24 @@ const Reports = () => {
             </>
           ) : null}
           <div className="col-12 mb-3 d-flex justify-content-end">
-            <button type="button" className="btn btn-secondary me-2" onClick={handleSubmit}>
+            <button
+              type="button"
+              className="btn btn-secondary me-2"
+              onClick={handleSubmit}
+            >
               Apply
             </button>
-            <button type="button" className="btn btn-secondary" onClick={handleFilterClear}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleFilterClear}
+            >
               Clear
             </button>
           </div>
         </div>
       </div>
-      <ReportTable data={reportData} total={totalAmount} filters={filters}/>
+      <ReportTable data={reportData} total={totalAmount} filters={filters} />
     </div>
   );
 };
