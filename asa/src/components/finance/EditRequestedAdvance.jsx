@@ -55,6 +55,7 @@ const EditRequestedAdvance = () => {
         {advanceData.advance_type === "other_advance" && (
           <OtherAdvance
             data={advanceData}
+            editData = {true}
           />
         )}
         {advanceData.advance_type === "ex_country_tour_advance" && (
