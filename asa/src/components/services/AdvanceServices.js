@@ -95,17 +95,17 @@ const create = async (params, travel_itinerary = []) => {
   }
 };
 
-const update = async (params, travel_itinerary = []) => {
+const update = async (id, params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
     console.log('advance amount', params.advanceAmount);
 
-    const response = await axios.post(
-      `${API_URL}/api/advances`,
+    const response = await axios.put(
+      `${API_URL}/api/advances/${id}`,
       {
         advance: {
-          id: params.advance_id,
+          id: id,
           advance_type: params.advance_type,
           status: "pending",
           advance_amount: params.advanceAmount,
@@ -115,7 +115,6 @@ const update = async (params, travel_itinerary = []) => {
           advance_percentage: parseFloat(params.advance_percentage),
         },
         salary_advance: {
-          id: params.salary_advance_id,
           duration: params.duration,
           deduction: params.deduction,
           status: "pending",

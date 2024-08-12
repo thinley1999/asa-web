@@ -158,9 +158,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await AdvanceServices.update();
+        const response = await AdvanceServices.update(data.id, formData);
      
-
         if (response) {
           setSuccessMessage("Advance Updated successfully");
           resetForm();

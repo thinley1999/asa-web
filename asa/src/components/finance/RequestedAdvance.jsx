@@ -81,10 +81,12 @@ const RequestedAdvance = () => {
             <FaEye size={20}/>{" "}
             <a href={`/viewRequestedAdvance/${row.id}`}>View</a>
           </span> {"  "}
-          <span className="datasubheading">
-            <MdEdit size={20}/>
-            <a href={`/editRequestedAdvance/${row.id}`}>Edit</a>
-          </span>
+          {row.status === "pending" && (
+             <span className="datasubheading">
+             <MdEdit size={20}/>
+             <a href={`/editRequestedAdvance/${row.id}`}>Edit</a>
+           </span>
+          )}
         </div>
       ),
     },
