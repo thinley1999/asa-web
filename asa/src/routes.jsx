@@ -19,9 +19,10 @@ import PageNotFound from "./components/general/PageNotFound";
 import PrivateRoute from "./components/general/PrivateRoute";
 import Reports from "./components/finance/Reports";
 import RequestedDsa from "./components/finance/RequestedDsa";
+import FeedBack from "./components/finance/FeedBack";
 
 const routes = createBrowserRouter([
-  { path: "/", element: <Login /> },
+  { path: "/", element: <FeedBack /> },
   {
     path: "/",
     element: <Base />,
