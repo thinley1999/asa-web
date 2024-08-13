@@ -6,6 +6,7 @@ import { FaSearch } from "react-icons/fa";
 import { BsFillFilterSquareFill } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import { advance_type } from "../datas/advance_type";
 
 const RequestedAdvance = () => {
   const customStyles = {
@@ -50,7 +51,7 @@ const RequestedAdvance = () => {
       name: "Advance Type",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">{row.advance_type}</p>
+          <p className="dataheading p-0 m-0">{advance_type[row.advance_type]}</p>
         </div>
       ),
     },

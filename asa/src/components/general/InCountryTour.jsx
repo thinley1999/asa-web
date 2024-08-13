@@ -463,15 +463,15 @@ const InCountryTour = ({
                     type="checkbox"
                     name="advance_percentage"
                     checked={
-                      parseFloat(formData.advance_percentage) === 0.9
+                      parseFloat(formData.advance_percentage) === 1.0
                         ? true
                         : false
                     }
                     onChange={handleChange}
-                    value={0.9}
+                    value={1.0}
                     disabled={data ? (edit ? false : true) : false}
                   />
-                  <label className="form-check-label">90% Advance</label>
+                  <label className="form-check-label">Request Advance</label>
                 </div>
                 <div className="form-check">
                   <input

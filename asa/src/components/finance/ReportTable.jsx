@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { format } from "date-fns";
 import SalaryAdvanceForm from "../forms/SalaryAdvanceForm";
+import { advance_type } from "../datas/advance_type";
 
 const ReportTable = ({ data, total, filters }) => {
   const exportToPDF = () => {
@@ -99,16 +100,27 @@ const ReportTable = ({ data, total, filters }) => {
                 <td>{item?.user?.name}</td>
                 <td>{item?.user?.username}</td>
                 <td>{item?.user?.department}</td>
-                <td>{item?.advance_type}</td>
+                <td>{advance_type[item?.advance_type]}</td>
                 <td>{item?.amount}</td>
-                <td style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
-                  <button type="button" className="btn btn-warning viewbtn" style={{borderRadius:"5px"}}>
+                <td
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="btn btn-warning viewbtn"
+                    style={{ borderRadius: "5px" }}
+                  >
                     <a
                       href={`/individualReport/${item?.id}/`}
                       target="_blank"
                       style={{ color: "black" }}
                     >
-                      <FaEye size={14}/>
+                      <FaEye size={14} />
                     </a>
                   </button>
                 </td>

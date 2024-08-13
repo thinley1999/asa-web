@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { advance_type } from "../datas/advance_type";
 
 const MyApplications = ({
   heading,
@@ -60,10 +61,10 @@ const MyApplications = ({
               <p className="textsubheading">
                 {application.claim_dsa
                   ? application.advance_type === "ex_country_tour_advance"
-                  ? `Nu.${application.dsa_amount?.Nu ?? 0}, INR.${
-                      application.dsa_amount?.INR ?? 0
-                    }, USD.${application.dsa_amount?.USD ?? 0}`
-                  : `Nu.${application.dsa_amount?.Nu ?? 0}`
+                    ? `Nu.${application.dsa_amount?.Nu ?? 0}, INR.${
+                        application.dsa_amount?.INR ?? 0
+                      }, USD.${application.dsa_amount?.USD ?? 0}`
+                    : `Nu.${application.dsa_amount?.Nu ?? 0}`
                   : application.advance_type === "ex_country_tour_advance"
                   ? `Nu.${application.advance_amount?.Nu ?? 0}, INR.${
                       application.advance_amount?.INR ?? 0
@@ -75,7 +76,9 @@ const MyApplications = ({
               <p className="textheading">
                 {application.claim_dsa ? "DSA Type" : "Advance Type"}
               </p>
-              <p className="textsubheading">{application.advance_type}</p>
+              <p className="textsubheading">
+                {advance_type[application.advance_type]}
+              </p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
               <p className="textheading">Application Date</p>
@@ -96,9 +99,10 @@ const MyApplications = ({
               >
                 View Details
               </a>
-              {application.status === "dispatched" &&
-                (application.advance_type === "ex_country_tour_advance" ||
-                  application.advance_type === "in_country_tour_advance") && (
+              {application.status === "dispatched" && application.claim_dsa != true &&
+                (application.advance_percentage == 1.0
+                  ? application.advance_type == "ex_country_tour_advance"
+                  : application.advance_percentage == 0.0) && (
                   <a
                     className="btn btn-outline-success mt-1 btn-fixed-width"
                     onClick={() => handleDSAClaim(application.id)}
