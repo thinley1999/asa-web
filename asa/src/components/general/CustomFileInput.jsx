@@ -2,6 +2,7 @@ import React from "react";
 import { FaCloudDownloadAlt, FaTimes } from "react-icons/fa";
 import "../../assets/css/main.css";
 import FileList from "./FileList";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const CustomFileInput = ({
   label,
@@ -41,7 +42,7 @@ const CustomFileInput = ({
         {files.map((file, index) => (
           <div key={index} className="file-name">
             {file.name}
-            <FaTimes
+            <RiDeleteBin6Line
               size={14}
               className="remove-icon"
               name={name}

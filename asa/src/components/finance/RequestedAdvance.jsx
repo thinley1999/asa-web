@@ -4,6 +4,8 @@ import "../../assets/css/main.css";
 import AdvanceServices from "../services/AdvanceServices";
 import { FaSearch } from "react-icons/fa";
 import { BsFillFilterSquareFill } from "react-icons/bs";
+import { FaEye } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 
 const RequestedAdvance = () => {
   const customStyles = {
@@ -76,8 +78,15 @@ const RequestedAdvance = () => {
       selector: (row) => (
         <div>
           <span className="datasubheading">
-            <a href={`/viewRequestedAdvance/${row.id}`}>View More</a>
-          </span>
+            <FaEye size={20}/>{" "}
+            <a href={`/viewRequestedAdvance/${row.id}`}>View</a>
+          </span> {"  "}
+          {row.status === "pending" && (
+             <span className="datasubheading">
+             <MdEdit size={20}/>
+             <a href={`/editRequestedAdvance/${row.id}`}>Edit</a>
+           </span>
+          )}
         </div>
       ),
     },

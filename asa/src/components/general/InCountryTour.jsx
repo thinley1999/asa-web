@@ -11,7 +11,13 @@ import { FaPlus } from "react-icons/fa";
 import TravelDetails from "./TravelDetails";
 import TravelDetailsTable from "./TravelDetailsTable";
 
-const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
+const InCountryTour = ({
+  data,
+  showButtons,
+  isDSA,
+  handleDialogOpen,
+  edit,
+}) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -35,6 +41,14 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
   };
   const [formData, setFormData] = useState(initialFormData);
   const [rows, setRows] = useState([]);
+
+  const total = isDSA
+    ? data.dsa_amount?.Nu
+    : data
+    ? edit
+      ? formData.advanceAmount?.Nu
+      : data.advance_amount?.Nu
+    : formData.advanceAmount?.Nu;
 
   const totalAmount = () => {
     let total = 0;
@@ -102,7 +116,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
   const validateForm = () => {
     let errors = {};
 
-    if (!formData.files.length) {
+    if (!formData.files.length && !formData.files) {
       errors.file_error = "Please upload relevant documents.";
     }
 
@@ -164,7 +178,33 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
       } catch (error) {
         setErrorMessage(
           error.response?.data?.message ||
-          "An error occurred during submission. Please try again."
+            "An error occurred during submission. Please try again."
+        );
+      }
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const isFormValid = validateForm();
+    const isTravelItineraryValid = validateTravelItinerary();
+
+    if (isFormValid && isTravelItineraryValid) {
+      try {
+        const advanceResponse = await AdvanceServices.update(data.id, formData, rows);
+        if (advanceResponse ) {
+            setSuccessMessage(
+              "Advance has been successfully updated."
+            );
+        } else {
+          setErrorMessage("Your application submission has failed");
+        }
+      } catch (error) {
+        setErrorMessage(
+          error.response?.data?.message ||
+            "An error occurred during submission. Please try again."
         );
       }
     }
@@ -242,6 +282,17 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
   useEffect(() => {
     fetchUserDetails();
   }, []);
+
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      remark: data?.remark || prevFormData.remark,
+      advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
+      advance_percentage:
+        data?.advance_percentage || prevFormData.advance_percentage,
+    }));
+    setRows(data?.travel_itinerary || []);
+  }, [data]);
 
   useEffect(() => {
     totalAmount();
@@ -360,6 +411,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
               initialData={editData}
               type="inCountry"
               haltCount={haltCount}
+              edit={edit}
             />
           )}
           <TravelDetailsTable
@@ -367,6 +419,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
             data={rows}
             removeRow={removeRow}
             editRow={editRow}
+            edit={edit}
           />
           {formErrors?.itinerary_error && (
             <div className="invalid-feedback" style={{ display: "block" }}>
@@ -377,7 +430,7 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
             <button
               type="button"
               className="btn btn-primary"
-              disabled={!data ? false : true}
+              disabled={!data ? false : edit ? false : true}
               onClick={() => setShowDialog(true)}
             >
               <FaPlus size={18} />
@@ -390,7 +443,9 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
               isDSA
                 ? data.dsa_amount?.Nu
                 : data
-                ? data.advance_amount?.Nu
+                ? edit
+                  ? formData.advanceAmount?.Nu
+                  : data.advance_amount?.Nu
                 : formData.advanceAmount?.Nu
             }
             name="advanceAmount"
@@ -408,14 +463,13 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
                     type="checkbox"
                     name="advance_percentage"
                     checked={
-                      parseFloat(data?.advance_percentage) === 0.9 ||
                       parseFloat(formData.advance_percentage) === 0.9
                         ? true
                         : false
                     }
                     onChange={handleChange}
                     value={0.9}
-                    disabled={data ? true : false}
+                    disabled={data ? (edit ? false : true) : false}
                   />
                   <label className="form-check-label">90% Advance</label>
                 </div>
@@ -425,14 +479,13 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
                     type="checkbox"
                     name="advance_percentage"
                     checked={
-                      parseFloat(data?.advance_percentage) === 0 ||
                       parseFloat(formData.advance_percentage) === 0
                         ? true
                         : false
                     }
                     onChange={handleChange}
                     value={0}
-                    disabled={data ? true : false}
+                    disabled={data ? (edit ? false : true) : false}
                   />
                   <label className="form-check-label">
                     Claim DSA after tour
@@ -445,8 +498,8 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
                   className="form-control"
                   name="remark"
                   rows="4"
-                  disabled={data ? true : false}
-                  value={data ? data.remark : formData.remark}
+                  disabled={data ? (edit ? false : true) : false}
+                  value={formData.remark}
                   onChange={handleChange}
                 ></textarea>
               </div>
@@ -459,6 +512,11 @@ const InCountryTour = ({ data, showButtons, isDSA, handleDialogOpen }) => {
         {!data && (
           <button type="submit" className="btn btn-primary px-5">
             Submit
+          </button>
+        )}
+        {edit && (
+          <button onClick={handleUpdate} className="btn btn-primary px-5">
+            Update
           </button>
         )}
       </div>

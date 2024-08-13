@@ -9,7 +9,7 @@ import FileServices from "../services/FileServices";
 import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
 
-const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
+const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -20,7 +20,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
     middleName: " - ",
     lastName: "- ",
     date: new Date().toISOString().slice(0, 10),
-    department: "IT Department",
+    department: " ",
     designation: " ",
     employeeID: " ",
     totalAmount: 0,
@@ -137,7 +137,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
       errors.purpose = "Purpose is required.";
     }
 
-    if (!formData.files.length) {
+    if (!formData.files.length && !editData) {
       errors.file_error = "Please upload relevant documents.";
     }
     setFormErrors(errors);
@@ -170,6 +170,25 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
     }
   };
 
+  const updateAdvance = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      try {
+        const response = await AdvanceServices.update(data.id, formData);
+     
+        if (response) {
+          setSuccessMessage("Advance Updated successfully");
+          resetForm();
+        } else {
+          setErrorMessage("Internal Server Error");
+        }
+      } catch (error) {
+        setErrorMessage(error.response?.data?.message || "An error occurred");
+      }
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const resetForm = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -187,6 +206,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
         purpose: data.purpose || " - ",
         other_advance_type: data.remark || " - ",
         totalAmount: data.amount || " - ",
+        files: [],
       }));
     }
   }, [data]);
@@ -203,7 +223,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
     setErrorMessage("");
   };
 
-  console.log("formData ....", formData);
+  console.log("formData ....", formData.files);
   console.log("subii ....", showButtons);
 
   return (
@@ -284,7 +304,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
               type="number"
               value={formData.totalAmount}
               name="totalAmount"
-              isDisable={data ? true : false}
+              isDisable={data ? (editData ? false : true) : false}
               onChange={handleChange}
               error={formErrors.advanceAmount}
             />
@@ -294,7 +314,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
                 className="form-select"
                 name="other_advance_type"
                 onChange={handleChange}
-                disabled={data ? true : false}
+                disabled={data ? (editData ? false : true) : false}
                 value={formData.other_advance_type}
               >
                 <option>Select Advance Type</option>
@@ -323,7 +343,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
                 className="form-control"
                 name="purpose"
                 rows="4"
-                disabled={data ? true : false}
+                disabled={data ? (editData ? false : true) : false}
                 value={formData.purpose}
                 onChange={handleChange}
               ></textarea>
@@ -363,6 +383,20 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen }) => {
               onClick={() => handleDialogOpen("rejected")}
             >
               Reject
+            </button>
+          </div>
+        </div>
+      )}
+      {editData && (
+        <div className="d-flex justify-content-center bg-white mb-3">
+          <div className="px-4 pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-success px-5"
+              onClick={updateAdvance}
+            >
+              Update
             </button>
           </div>
         </div>

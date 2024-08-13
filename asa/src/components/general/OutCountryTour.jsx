@@ -17,6 +17,7 @@ const OutCountryTour = ({
   isDSA,
   showButtons,
   handleDialogOpen,
+  edit
 }) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
@@ -105,6 +106,32 @@ const OutCountryTour = ({
     }));
   };
 
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const isFormValid = validateForm();
+    const isTravelItineraryValid = validateTravelItinerary();
+
+    if (isFormValid && isTravelItineraryValid) {
+      try {
+        const advanceResponse = await AdvanceServices.update(data.id, formData, rows);
+        if (advanceResponse ) {
+            setSuccessMessage(
+              "Advance has been successfully updated."
+            );
+        } else {
+          setErrorMessage("Your application submission has failed");
+        }
+      } catch (error) {
+        setErrorMessage(
+          error.response?.data?.message ||
+            "An error occurred during submission. Please try again."
+        );
+      }
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const fetchUserDetails = async () => {
     try {
       const response = await UserServices.showDetail(
@@ -122,7 +149,7 @@ const OutCountryTour = ({
   const validateForm = () => {
     let errors = {};
 
-    if (!formData.files.length) {
+    if (!formData.files.length && !edit) {
       errors.file_error = "Please upload relevant documents.";
     }
 
@@ -237,6 +264,7 @@ const OutCountryTour = ({
     } else {
       if (editData) {
         setRows(rows.map((row) => (row.id === newData.id ? newData : row)));
+        setEditData(null);
       } else {
         setRows([...rows, { id: rows.length + 1, ...newData }]);
       }
@@ -262,6 +290,17 @@ const OutCountryTour = ({
   useEffect(() => {
     totalAmount();
   }, [rows, formData.advance_percentage]);
+
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      remark: data?.remark || prevFormData.remark,
+      advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
+      advance_percentage:
+        data?.advance_percentage || prevFormData.advance_percentage,
+    }));
+    setRows(data?.travel_itinerary || []);
+  }, [data]);
 
   const handleCloseSuccessMessage = () => {
     setSuccessMessage("");
@@ -375,6 +414,7 @@ const OutCountryTour = ({
               initialData={editData}
               type="outCountry"
               haltCount={haltCount}
+              edit={edit}
             />
           )}
           <TravelDetailsTable
@@ -382,6 +422,7 @@ const OutCountryTour = ({
             data={rows}
             removeRow={removeRow}
             editRow={editRow}
+            edit={edit}
           />
           {formErrors?.itinerary_error && (
             <div className="invalid-feedback" style={{ display: "block" }}>
@@ -393,7 +434,7 @@ const OutCountryTour = ({
               type="button"
               className="btn btn-primary"
               onClick={() => setShowDialog(true)}
-              disabled={!data ? false : true}
+              disabled={data ? (edit ? false : true) : false}
             >
               <FaPlus size={18} />
             </button>
@@ -407,7 +448,11 @@ const OutCountryTour = ({
                     data.dsa_amount?.INR ?? 0
                   }, USD.${data.dsa_amount?.USD ?? 0}`
                 : data
-                ? `Nu.${data.advance_amount?.Nu ?? 0}, INR.${
+                ? edit
+                  ? `Nu.${formData.advanceAmount?.Nu ?? 0}, INR.${
+                    formData.advanceAmount?.INR ?? 0
+                  }, USD.${formData.advanceAmount?.USD ?? 0}`
+                  : `Nu.${data.advance_amount?.Nu ?? 0}, INR.${
                     data.advance_amount?.INR ?? 0
                   }, USD.${data.advance_amount?.USD ?? 0}`
                 : `Nu.${formData.advanceAmount?.Nu ?? 0}, INR.${
@@ -429,13 +474,12 @@ const OutCountryTour = ({
                     name="advance_percentage"
                     value={1.0}
                     checked={
-                      parseFloat(data?.advance_percentage) === 1.0 ||
                       parseFloat(formData.advance_percentage) === 1.0
                         ? true
                         : false
                     }
                     onChange={handleChange}
-                    disabled={data ? true : false}
+                    disabled={data ? (edit ? false : true) : false}
                   />
                   <label className="form-check-label">Request Advance</label>
                 </div>
@@ -445,14 +489,13 @@ const OutCountryTour = ({
                     type="checkbox"
                     name="advance_percentage"
                     checked={
-                      parseFloat(data?.advance_percentage) === 0 ||
                       parseFloat(formData.advance_percentage) === 0
                         ? true
                         : false
                     }
                     onChange={handleChange}
                     value={0}
-                    disabled={data ? true : false}
+                    disabled={data ? (edit ? false : true) : false}
                   />
                   <label className="form-check-label">
                     Claim DSA after tour
@@ -465,7 +508,7 @@ const OutCountryTour = ({
                   className="form-control"
                   name="remark"
                   rows="4"
-                  disabled={data ? true : false}
+                  disabled={data ? (edit ? false : true) : false}
                   value={data ? data.remark : formData.remark}
                   onChange={handleChange}
                 ></textarea>
@@ -479,6 +522,11 @@ const OutCountryTour = ({
         {!data && (
           <button type="submit" className="btn btn-primary px-5">
             Submit
+          </button>
+        )}
+        {edit && (
+          <button onClick={handleUpdate} className="btn btn-primary px-5">
+            Update
           </button>
         )}
       </div>

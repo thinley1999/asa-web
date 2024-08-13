@@ -7,7 +7,7 @@ import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
 import { formatDate } from "../utils/DateUtils";
 
-const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
+const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const [user, setUser] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -154,6 +154,25 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const updateAdvance = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      try {
+        const response = await AdvanceServices.update(data.id, formData);
+     
+        if (response) {
+          setSuccessMessage("Advance Updated successfully");
+          resetForm();
+        } else {
+          setErrorMessage("Internal Server Error");
+        }
+      } catch (error) {
+        setErrorMessage(error.response?.data?.message || "An error occurred");
+      }
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const resetForm = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -252,7 +271,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
               type="number"
               value={formData.totalAmount}
               name="totalAmount"
-              isDisable={data ? true : false}
+              isDisable={data ? (editData ? false : true) : false}
               onChange={handleChange}
               error={formErrors.advanceAmount}
             />
@@ -269,7 +288,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
               type="number"
               value={formData.duration}
               name="duration"
-              isDisable={data ? true : false}
+              isDisable={data ? (editData ? false : true) : false}
               onChange={handleChange}
               error={formErrors.duration}
             />
@@ -292,7 +311,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
                 rows="4"
                 value={formData.purpose}
                 onChange={handleChange}
-                disabled={data ? true : false}
+                disabled={data ? (editData ? false : true) : false}
               ></textarea>
               {formErrors.purpose && (
                 <div className="invalid-feedback" style={{ display: "block" }}>
@@ -330,6 +349,20 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen }) => {
               onClick={() => handleDialogOpen("rejected")}
             >
               Reject
+            </button>
+          </div>
+        </div>
+      )}
+      {editData && (
+        <div className="d-flex justify-content-center bg-white mb-3">
+          <div className="px-4 pb-3 text-center">
+            <button
+              name="approve"
+              type="button"
+              className="btn btn-success px-5"
+              onClick={updateAdvance}
+            >
+              Update
             </button>
           </div>
         </div>
