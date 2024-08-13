@@ -104,7 +104,7 @@ const ReportTable = ({ data, total, filters }) => {
                 <td>
                   <button type="button" className="btn btn-warning viewbtn">
                     <a
-                      href={`/tourAdvanceForm/`}
+                      href={`/dsaClaimForm/`}
                       target="_blank"
                       style={{ color: "black" }}
                     >
