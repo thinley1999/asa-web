@@ -223,6 +223,7 @@ const OutCountryTour = ({
       files: initialFormData.files,
     }));
     setRows([]);
+    setFormErrors([]);
   };
 
   const updateFormDataWithUserName = (user) => {
