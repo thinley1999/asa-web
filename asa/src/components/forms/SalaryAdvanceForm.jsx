@@ -93,7 +93,7 @@ const SalaryAdvanceForm = ({ data }) => {
           <p className="myformpTag me-3">Ref No:<b>{replaceDash(reportData?.dispatched_ref?.advance_ref)}</b></p>
           </p>
           <p className="formpTag">
-            Date: <u style={{textUnderlineOffset:"2px"}}>{ isoToDate(reportData?.detail?.created_at)}</u>
+            Date: <u style={{textUnderlineOffset:"2px"}}>{ isoToDate(reportData?.created_at)}</u>
           </p>
         </div>
         <div>
