@@ -19,6 +19,7 @@ import PageNotFound from "./components/general/PageNotFound";
 import PrivateRoute from "./components/general/PrivateRoute";
 import Reports from "./components/finance/Reports";
 import RequestedDsa from "./components/finance/RequestedDsa";
+import SalaryAdvanceForm from "./components/forms/SalaryAdvanceForm";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -103,6 +104,8 @@ const routes = createBrowserRouter([
       },
     ],
   },
+  { path: "salaryAdvanceForm", element: <SalaryAdvanceForm /> },
+
   { path: "*", element: <PageNotFound /> },
 ]);
 

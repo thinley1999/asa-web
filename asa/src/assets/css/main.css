@@ -3,6 +3,10 @@ body {
   background: #f5f6fa;
 }
 
+body.white-background {
+  background: white;
+}
+
 /* login page */
 .bg-image-vertical {
   position: relative;
@@ -752,4 +756,38 @@ a {
 
 .hover-row:hover {
   background-color: #f1f1f1; /* Light gray background on hover */
+}
+
+.viewbtn {
+  padding: 1px 10px 1px 10px;
+  border-radius: 1px;
+}
+
+/* Salary Advance Form */
+.report-body {
+  width: 21cm;
+  max-width: 100%;
+  margin: 1rem auto;
+  box-sizing: border-box;
+  font-family: "Times New Roman";
+}
+
+.headerimage {
+  width: 100%;
+}
+
+.report-body .formpTag {
+  margin: 5px 0;
+  color: black;
+  font-size: 20px;
+}
+
+.report-body .myformpTag {
+  color: black;
+  font-size: 20px;
+}
+
+.report-body ol li {
+  color: black;
+  font-size: 20px;
 }
