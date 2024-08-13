@@ -4,6 +4,7 @@ import "../../assets/css/main.css";
 import AdvanceServices from "../services/AdvanceServices";
 import { FaSearch } from "react-icons/fa";
 import { BsFillFilterSquareFill } from "react-icons/bs";
+import { advance_type } from "../datas/advance_type";
 
 const RequestedDsa = () => {
   const customStyles = {
@@ -48,7 +49,7 @@ const RequestedDsa = () => {
       name: "DSA Type",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">{row.advance_type}</p>
+          <p className="dataheading p-0 m-0">{advance_type[row.advance_type]}</p>
         </div>
       ),
     },
