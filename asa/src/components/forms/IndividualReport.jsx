@@ -10,7 +10,7 @@ const IndividualReport = () => {
   const fetchReport = async () => {
     try {
       const response = await ReportServices.show(id);
-      setReport(response.data);
+      setReport(response?.data);
       console.log("response", response);
     } catch (error) {
       console.error("Error fetching report:", error);
@@ -23,9 +23,9 @@ const IndividualReport = () => {
 
   return (
     <div>
-      {report.advance_type === "salary_advance" && (
+      {/* {report.advance_type === "salary_advance" && ( */}
         <SalaryAdvanceForm data={report} />
-      )}
+     {/* )} */}
     </div>
   );
 };
