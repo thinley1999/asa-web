@@ -23,6 +23,7 @@ import SalaryAdvanceForm from "./components/forms/SalaryAdvanceForm";
 import EditRequestedAdvance from "./components/finance/EditRequestedAdvance";
 import TourAdvanceForm from "./components/forms/TourAdvanceForm";
 import DsaClaimForm from "./components/forms/DsaClaimForm";
+import IndividualReport from "./components/forms/IndividualReport";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -113,8 +114,11 @@ const routes = createBrowserRouter([
     ],
   },
   { path: "salaryAdvanceForm", element: <SalaryAdvanceForm /> },
+
   { path: "tourAdvanceForm", element: <TourAdvanceForm /> },
   { path: "dsaClaimForm", element: <DsaClaimForm /> },
+
+  { path: "individualReport/:id", element: <IndividualReport /> },
 
   { path: "*", element: <PageNotFound /> },
 ]);

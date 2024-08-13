@@ -1,30 +1,44 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import headerimage from "../../assets/img/head-img.png";
 
-const SalaryAdvanceForm = () => {
+const SalaryAdvanceForm = ({ data }) => {
   const formRef = useRef(null);
-
+  const [reportData, setReportData] = useState("");
   useEffect(() => {
-    document.body.classList.add("white-background");
+    if (data) {
+      setReportData(data?.report);
+    }
+  }, [data]);
+  console.log(reportData)
 
-    return () => {
-      document.body.classList.remove("white-background");
-    };
-  }, []);
+  const isoToDate = (date) => {
+    const dateObject = new Date(date);
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const year = dateObject.getFullYear();
+  
+    return `${day}/${month}/${year}`;
+  };
+
+  const replaceDash = (ref) => {
+    let refString = String(ref);
+    let newRef = refString.replace(/_/g, "/");
+      return `RMA\/${newRef}`;
+  };
 
   const exportPDF = () => {
     if (formRef.current) {
-      const scale = 3; // Increase the scale to capture higher resolution image
+      const scale = 3;
       html2canvas(formRef.current, {
         scale: scale,
         useCORS: true,
       }).then((canvas) => {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF();
-        const imgWidth = 210; // Width of A4 in mm
-        const pageHeight = 295; // Height of A4 in mm
+        const imgWidth = 210;
+        const pageHeight = 295;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         let heightLeft = imgHeight;
 
@@ -33,7 +47,6 @@ const SalaryAdvanceForm = () => {
         pdf.addImage(imgData, "PNG", 10, 10, imgWidth - 20, imgHeight - 20); // 10mm margins on top and sides
         heightLeft -= pageHeight;
 
-        // Add new page if necessary
         while (heightLeft >= 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
@@ -52,42 +65,56 @@ const SalaryAdvanceForm = () => {
     }
   };
 
+  useEffect(() => {
+    document.body.classList.add("white-background");
+
+    return () => {
+      document.body.classList.remove("white-background");
+    };
+  }, []);
+
   return (
     <div>
       <div ref={formRef} className="report-body">
-        <img src={headerimage} className="headerimage" />
-        <div className="d-flex">
-          <p className="myformpTag me-3">Ref No: RMA/2024/1</p>
-          <h5 className="text-center">
+        <div style={{display:"flex", flexDirection:"row", alignItems:"center", justifyContent:"center"}}>
+        <img src={headerimage} className="headerimage" alt="Header" style={{width:"80%", opacity:"40%"}} />
+        </div>
+        <h6 className="text-center">
             <b>
-              <u>APPLICATION FOR ADVANCE AGAINST SALARY</u>
+              <u style={{textUnderlineOffset:"2px"}}>APPLICATION FOR ADVANCE AGAINST SALARY</u>
             </b>
-          </h5>
+          </h6>
+        <div className="d-flex">
+        
         </div>
 
         <div className="d-flex justify-content-between">
           <p className="formpTag">
-            EID: <u>2023003</u>
+          <p className="myformpTag me-3">Ref No:<b>{replaceDash(reportData?.dispatched_ref?.advance_ref)}</b></p>
           </p>
           <p className="formpTag">
-            Date: <u>12/07/2024</u>
+            Date: <u style={{textUnderlineOffset:"2px"}}>{ isoToDate(reportData?.created_at)}</u>
           </p>
         </div>
         <div>
+          
           <p className="formpTag">
-            Name: <u>Thinley Yoezer</u>
+          EID: <u style={{textUnderlineOffset:"2px"}}>{reportData?.user?.eid}</u>
           </p>
           <p className="formpTag">
-            Designation: <u>Asst. ICT Officer</u>
+            Name: <u style={{textUnderlineOffset:"2px"}}>{reportData?.user?.name}</u>
           </p>
           <p className="formpTag">
-            Department: <u>Technology & Innovation</u>
+            Designation: <u style={{textUnderlineOffset:"2px"}}>{reportData?.user?.designation}</u>
           </p>
           <p className="formpTag">
-            Amount of Advance Required: <u>12000</u>
+            Department: <u style={{textUnderlineOffset:"2px"}}>{reportData?.user?.department}</u>
           </p>
           <p className="formpTag">
-            Purpose for which Advance is required: <u>Personal</u>
+            Amount of Advance Required: <u style={{textUnderlineOffset:"2px"}}>{reportData?.amount}</u>
+          </p>
+          <p className="formpTag">
+            Purpose for which Advance is required: <u style={{textUnderlineOffset:"2px"}}>{reportData?.purpose}</u>
           </p>
         </div>
         <div className="mt-5">
@@ -96,42 +123,43 @@ const SalaryAdvanceForm = () => {
           </h5>
         </div>
 
-        <h5 className="text-center mt-4">
+        <h6 className="text-center mt-4">
           <b>
-            <u>TO BE COMPLETED BY FINANCE SECTION, DAF</u>
+            <u style={{textUnderlineOffset:"2px"}}>TO BE COMPLETED BY FINANCE SECTION, DAF</u>
           </b>
-        </h5>
+        </h6>
         <div>
-          {" "}
           <p className="formpTag">1. Balance of previous advance if any:</p>
           <ol type="a">
             <li>
-              Salary advance: <ul></ul>
+              Salary advance: <u style={{textUnderlineOffset:"2px"}}>{reportData?.previous_advance?.salary_advance || "N/A"}</u>
             </li>
             <li>
-              Other advance: <ul></ul>
+              Other advance: <u style={{textUnderlineOffset:"2px"}}>{reportData?.previous_advance?.other_advance || "N/A"}</u>
             </li>
             <li>
-              Tour Advance: : <ul></ul>
+              Tour Advance: <u style={{textUnderlineOffset:"2px"}}>{reportData?.previous_advance?.tour_advance || "N/A"}</u>
             </li>
           </ol>
+
           <p className="formpTag">
-            2. <b>NET PAY: </b> <u></u>
+            2. <b>NET PAY: </b> <u style={{textUnderlineOffset:"2px"}}>{reportData?.net_pay}</u>
           </p>
           <p className="formpTag">
-            3. Amount recommended: <u></u>
+            3. Amount recommended: <u style={{textUnderlineOffset:"2px"}}>{reportData?.net_pay}</u>
           </p>
           <p className="formpTag">
-            4. Deduction per month: <u></u>
+            4. Deduction per month: <u style={{textUnderlineOffset:"2px"}}>{reportData?.detail?.deduction}</u>
           </p>
           <p className="formpTag">
             {" "}
-            (to be repaid in _______ installments): <u></u>
+            {`to be repaid in ${reportData?.detail?.duration} installments`}: <u style={{textUnderlineOffset:"2px"}}>{reportData?.detail?.completion_month}</u>
           </p>
         </div>
         <div className="d-flex justify-content-end">
           <div className="form-check me-3">
             <input
+              checked={reportData?.status==="dispatched"?"checked":""}
               className="form-check-input customcheckbox"
               type="checkbox"
               value=""
@@ -142,6 +170,7 @@ const SalaryAdvanceForm = () => {
           </div>
           <div className="form-check">
             <input
+                checked={reportData?.status==="rejected"?"checked":""}
               className="form-check-input customcheckbox"
               type="checkbox"
               value=""

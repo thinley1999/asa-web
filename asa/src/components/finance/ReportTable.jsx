@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaRegFilePdf } from "react-icons/fa6";
+import { FaRegFilePdf, FaEye } from "react-icons/fa6";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { format } from "date-fns";
@@ -101,14 +101,25 @@ const ReportTable = ({ data, total, filters }) => {
                 <td>{item?.user?.department}</td>
                 <td>{item?.advance_type}</td>
                 <td>{item?.amount}</td>
-                <td>
-                  <button type="button" className="btn btn-warning viewbtn">
+                <td
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="btn btn-warning viewbtn"
+                    style={{ borderRadius: "5px" }}
+                  >
                     <a
-                      href={`/dsaClaimForm/`}
+                      href={`/individualReport/${item?.id}/`}
                       target="_blank"
                       style={{ color: "black" }}
                     >
-                      View
+                      <FaEye size={14} />
                     </a>
                   </button>
                 </td>
