@@ -36,6 +36,22 @@ const get = async (params) => {
   }
 };
 
+const show = async (id) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`${API_URL}/api/reports/${id}`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export default {
   get,
+  show,
 };
