@@ -1,11 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import headerimage from "../../assets/img/head-img.png";
+import { isoToDate } from "../utils/IsoDate";
+import { replaceDash } from "../utils/Ref";
 
-const TourAdvanceForm = () => {
+const TourAdvanceForm = (data) => {
   const formRef = useRef(null);
+  const [reportData, setReportData] = useState(null);
 
   useEffect(() => {
     document.body.classList.add("white-background");
@@ -15,6 +18,12 @@ const TourAdvanceForm = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (data) {
+      setReportData(data?.data?.report)
+    }
+  }, [data])
+  console.log(reportData, "data")
   const exportPDF = () => {
     if (formRef.current) {
       const scale = 3; // Increase the scale to capture higher resolution image
@@ -56,40 +65,42 @@ const TourAdvanceForm = () => {
   return (
     <div>
       <div ref={formRef} className="report-body">
-        <img src={headerimage} className="headerimage" />
-        <div className="d-flex">
-          <p className="myformpTag me-3">Ref No: RMA/2024/1</p>
-          <h5 className="text-center">
+      <div style={{display:"flex", flexDirection:"row", alignItems:"center", justifyContent:"center"}}>
+        <img src={headerimage} className="headerimage" alt="Header" style={{opacity:"40%"}} />
+        </div>
+        <h6 className="text-center">
             <b>
-              <u>TRAVEL ADVANCE REQUEST FORM</u>
+              <u style={{textUnderlineOffset:"2px"}}>TRAVEL ADVANCE REQUEST FORM</u>
             </b>
-          </h5>
+          </h6>
+        <div className="d-flex">
+          <p className="myformpTag me-3">Ref No:<b> {replaceDash(reportData?.dispatched_ref?.advance_ref)}</b></p>
         </div>
 
         <div className="row">
           <p className="formpTag col-6">
-            Name: <u>Thinley Yoezer</u>
+            Name: <u>{reportData?.user?.name}</u>
           </p>
           <p className="formpTag col-6">
-            Employee ID: <u>2023003</u>
+            Employee ID: <u>{reportData?.user?.eid}</u>
           </p>
           <p className="formpTag col-6">
-            Designation: <u>Asst. ICT Officer</u>
+            Designation: <u>{reportData?.user?.designation}</u>
           </p>
           <p className="formpTag col-6">
-            Department: <u>Technology and Innovation</u>
+            Department:<u style={{ textUnderlineOffset: "2px" }}>{reportData?.user?.department}</u>
           </p>
           <p className="formpTag col-6">
-            Grade: <u>PS4</u>
+            Grade: <u>{reportData?.user?.grade}</u>
           </p>
           <p className="formpTag col-6">
-            Date: <u>13/04/2024</u>
+            Date: <u>{isoToDate(reportData?.created_at)}</u>
           </p>
           <p className="formpTag col-6">Travel Advance Amount:</p>
-          <p className="formpTag col-6">Nu.2000, USD. 1400</p>
+          <p className="formpTag col-6">Nu.{reportData?.advance_amount?.Nu}, USD.{reportData?.advance_amount?.USD || 0}</p>
           <div className="col-12">
-            <p className="formpTag">Reason for Travel Advance:</p>
-            <p className="formpTag">Traveling for trainning at philipinese</p>
+            <p className="formpTag">Reason for Travel Advance:<u>{reportData?.purpose}</u></p>
+            {/* <p className="formpTag">{reportData?.purpose}</p> */}
           </div>
         </div>
 
@@ -138,28 +149,19 @@ const TourAdvanceForm = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td colSpan={2}>13/07/2024</td>
-                <td>Paro</td>
-                <td>Bangkok</td>
-                <td colSpan={2}>Areoplane</td>
-                <td colSpan={2} rowSpan={3} style={{ verticalAlign: "middle" }}>
-                  Travelling
-                </td>
-              </tr>
-              <tr>
-                <td colSpan={2}>13/07/2024</td>
-                <td>Paro</td>
-                <td>Bangkok</td>
-                <td colSpan={2}>Areoplane</td>
-              </tr>
-              <tr>
-                <td colSpan={2}>13/07/2024</td>
-                <td>Paro</td>
-                <td>Bangkok</td>
-                <td colSpan={2}>Areoplane</td>
-              </tr>
+              {reportData?.user?.travel_itineraries.map((itenary, index) => (
+                <tr key={index}>
+                  <td colSpan={2}>{isoToDate(itenary?.start_date ) || "N/A"}</td>
+                  <td>{itenary?.from || "N/A" }</td>
+                  <td>{itenary?.to || "N/A" }</td>
+                  <td colSpan={2}>{itenary?.mode || "N/A"}</td>
+                  {/* <td colSpan={2} rowSpan={3} style={{ verticalAlign: "middle" }}>
+                    Travelling
+                  </td> */}
+                </tr>
+              ))}
             </tbody>
+
           </table>
         </div>
 
@@ -169,18 +171,33 @@ const TourAdvanceForm = () => {
             if I do not submit a Travel claim{" "}
           </p>
           <div className="d-flex justify-content-between mt-5">
-            <p className="formpTag">Signature Director</p>
-            <p className="formpTag">Employee Signature</p>
+            <div className="mt-5">
+        <p className="formpTag">
+        {reportData?.user?.verified_by}
+          </p>
+          <h5>
+          <p className="formpTag">Signature Director</p>
+          </h5>
+        </div>
+            <div className="mt-5">
+        <p className="formpTag">
+        {reportData?.user?.name}
+          </p>
+          <p className="formpTag">
+            Signature of employee
+          </p>
+        </div>
           </div>
+     
         </div>
         <div>
           <p className="formpTag">
             Payment authorization by Department of Administration and Finance.
           </p>
           <p className="formpTag">
-            Please pay Nu…………………….as per office order No. ………………………
+            Please pay Nu………{reportData?.amount}…………….as per office order No. ....{reportData?.dispatched_ref?.advance_ref}……
           </p>
-          <p className="formpTag mt-5 text-end"> Signature of Director, DAF</p>
+          <p className="formpTag mt-5 text-end">   <p>{reportData?.confirmed_by?.name || "N/A"}</p> Signature of Director, DAF</p>
         </div>
       </div>
       <div className="text-center">

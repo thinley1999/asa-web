@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import ReportServices from "../services/ReportServices";
 import { useParams } from "react-router-dom";
 import SalaryAdvanceForm from "./SalaryAdvanceForm";
+import TourAdvanceForm from "./TourAdvanceForm";
 
 const IndividualReport = () => {
-  const [report, setReport] = useState({});
+  const [report, setReport] = useState(null);
   const { id } = useParams();
 
   const fetchReport = async () => {
@@ -19,13 +20,16 @@ const IndividualReport = () => {
 
   useEffect(() => {
     fetchReport();
-  }, [id]); 
+  }, [id]);
 
   return (
     <div>
-      {/* {report.advance_type === "salary_advance" && ( */}
-        <SalaryAdvanceForm data={report} />
-     {/* )} */}
+      {report?.report?.advance_type === "salary_advance" || report?.report?.advance_type === "other_advance" ? (
+        <SalaryAdvanceForm data={report} type={report?.report?.advance_type}/>
+      ):""}
+      {(report?.report?.advance_type === "in_country_tour_advance" || report?.report?.advance_type === "ex_country_tour_advance") && (
+        <TourAdvanceForm data={report} />
+      )}
     </div>
   );
 };

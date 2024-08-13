@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import headerimage from "../../assets/img/head-img.png";
+import { isoToDate } from "../utils/IsoDate";
+import { replaceDash } from "../utils/Ref";
 
-const SalaryAdvanceForm = ({ data }) => {
+const SalaryAdvanceForm = ({ data,type }) => {
   const formRef = useRef(null);
   const [reportData, setReportData] = useState("");
   useEffect(() => {
@@ -11,22 +13,6 @@ const SalaryAdvanceForm = ({ data }) => {
       setReportData(data?.report);
     }
   }, [data]);
-  console.log(reportData)
-
-  const isoToDate = (date) => {
-    const dateObject = new Date(date);
-    const day = String(dateObject.getDate()).padStart(2, '0');
-    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-    const year = dateObject.getFullYear();
-  
-    return `${day}/${month}/${year}`;
-  };
-
-  const replaceDash = (ref) => {
-    let refString = String(ref);
-    let newRef = refString.replace(/_/g, "/");
-      return `RMA\/${newRef}`;
-  };
 
   const exportPDF = () => {
     if (formRef.current) {
@@ -77,11 +63,11 @@ const SalaryAdvanceForm = ({ data }) => {
     <div>
       <div ref={formRef} className="report-body">
         <div style={{display:"flex", flexDirection:"row", alignItems:"center", justifyContent:"center"}}>
-        <img src={headerimage} className="headerimage" alt="Header" style={{width:"80%", opacity:"40%"}} />
+        <img src={headerimage} className="headerimage" alt="Header" style={{opacity:"40%"}} />
         </div>
         <h6 className="text-center">
             <b>
-              <u style={{textUnderlineOffset:"2px"}}>APPLICATION FOR ADVANCE AGAINST SALARY</u>
+              <u style={{textUnderlineOffset:"2px"}}>{type==="salary_advance" ? "APPLICATION FOR ADVANCE AGAINST SALARY" :"APPLICATION FOR OTHER ADVANCE"}</u>
             </b>
           </h6>
         <div className="d-flex">
@@ -118,6 +104,9 @@ const SalaryAdvanceForm = ({ data }) => {
           </p>
         </div>
         <div className="mt-5">
+        <p className="formpTag">
+        {reportData?.user?.name}
+          </p>
           <h5>
             <b>Signature of employee</b>
           </h5>
@@ -131,26 +120,28 @@ const SalaryAdvanceForm = ({ data }) => {
         <div>
           <p className="formpTag">1. Balance of previous advance if any:</p>
           <ol type="a">
-            <li>
+            {type==="salary_advance" ?  <li>
               Salary advance: <u style={{textUnderlineOffset:"2px"}}>{reportData?.previous_advance?.salary_advance || "N/A"}</u>
-            </li>
+            </li> : ""}
+              
             <li>
               Other advance: <u style={{textUnderlineOffset:"2px"}}>{reportData?.previous_advance?.other_advance || "N/A"}</u>
             </li>
-            <li>
-              Tour Advance: <u style={{textUnderlineOffset:"2px"}}>{reportData?.previous_advance?.tour_advance || "N/A"}</u>
-            </li>
-          </ol>
 
-          <p className="formpTag">
+            {type==="salary_advance" ?  <li>Tour Advance: <u style={{textUnderlineOffset:"2px"}}>{reportData?.previous_advance?.tour_advance || "N/A"}</u></li>:""}
+          </ol>
+          {type==="salary_advance" ?   <p className="formpTag">
             2. <b>NET PAY: </b> <u style={{textUnderlineOffset:"2px"}}>{reportData?.net_pay}</u>
-          </p>
+          </p> :""}
+        
           <p className="formpTag">
-            3. Amount recommended: <u style={{textUnderlineOffset:"2px"}}>{reportData?.net_pay}</u>
+           {type==="salary_advance" ? "3. Amount recommended:":"2.Amount recommended:" } <u style={{textUnderlineOffset:"2px"}}>{reportData?.net_pay}</u>
           </p>
+
+          {type==="salary_advance" ?  
           <p className="formpTag">
             4. Deduction per month: <u style={{textUnderlineOffset:"2px"}}>{reportData?.detail?.deduction}</u>
-          </p>
+          </p> :""}
           <p className="formpTag">
             {" "}
             {`to be repaid in ${reportData?.detail?.duration} installments`}: <u style={{textUnderlineOffset:"2px"}}>{reportData?.detail?.completion_month}</u>
@@ -182,9 +173,11 @@ const SalaryAdvanceForm = ({ data }) => {
         </div>
         <div className="d-flex justify-content-between mt-5">
           <p className="formpTag">
+            <p>{reportData?.verified_by?.name}</p>
             <b>(Finance Section)</b>
           </p>
           <p className="formpTag">
+          <p>{reportData?.confirmed_by?.name}</p>
             <b>(Director, DAF)</b>
           </p>
         </div>
