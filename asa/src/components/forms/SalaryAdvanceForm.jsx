@@ -6,25 +6,17 @@ import headerimage from "../../assets/img/head-img.png";
 const SalaryAdvanceForm = () => {
   const formRef = useRef(null);
 
-  useEffect(() => {
-    document.body.classList.add("white-background");
-
-    return () => {
-      document.body.classList.remove("white-background");
-    };
-  }, []);
-
   const exportPDF = () => {
     if (formRef.current) {
-      const scale = 3; // Increase the scale to capture higher resolution image
+      const scale = 3;
       html2canvas(formRef.current, {
         scale: scale,
         useCORS: true,
       }).then((canvas) => {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF();
-        const imgWidth = 210; // Width of A4 in mm
-        const pageHeight = 295; // Height of A4 in mm
+        const imgWidth = 210; 
+        const pageHeight = 295; 
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         let heightLeft = imgHeight;
 
@@ -33,7 +25,6 @@ const SalaryAdvanceForm = () => {
         pdf.addImage(imgData, "PNG", 10, 10, imgWidth - 20, imgHeight - 20); // 10mm margins on top and sides
         heightLeft -= pageHeight;
 
-        // Add new page if necessary
         while (heightLeft >= 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
@@ -51,6 +42,16 @@ const SalaryAdvanceForm = () => {
       });
     }
   };
+
+  useEffect(() => {
+    document.body.classList.add("white-background");
+
+    return () => {
+      document.body.classList.remove("white-background");
+    };
+  }, []);
+
+
 
   return (
     <div>
