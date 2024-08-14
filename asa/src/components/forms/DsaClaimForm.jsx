@@ -1,11 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import headerimage from "../../assets/img/head-img.png";
+import { isoToDate } from "../utils/IsoDate";
 
-const DsaClaimForm = () => {
+const DsaClaimForm = (data) => {
   const formRef = useRef(null);
+  const [reportData, setReportData] = useState(null);
 
   useEffect(() => {
     document.body.classList.add("white-background");
@@ -14,6 +16,13 @@ const DsaClaimForm = () => {
       document.body.classList.remove("white-background");
     };
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      setReportData(data?.data?.report);
+    }
+  }, [data]);
+  console.log("mydata", reportData);
 
   const exportPDF = () => {
     if (formRef.current) {
@@ -53,147 +62,187 @@ const DsaClaimForm = () => {
     }
   };
 
+  const totalNu =
+    (reportData?.advance_amount?.Nu || 0) + (reportData?.dsa_amount?.Nu || 0);
+
+  const totalINR =
+    (reportData?.advance_amount?.INR || 0) + (reportData?.dsa_amount?.INR || 0);
+
+  const totalUSD =
+    (reportData?.advance_amount?.USD || 0) + (reportData?.dsa_amount?.USD || 0);
+
   return (
     <div>
-      <div ref={formRef} className="report-body">
-        <img src={headerimage} className="headerimage" />
-        <div className="d-flex">
-          <p className="myformpTag me-5">Ref No: RMA/2024/1</p>
-          <h5 className="text-center ms-5">
-            <b>
-              <u>TRAVEL ALLOWANCE CLAIM FORM</u>
-            </b>
-          </h5>
-        </div>
-
-        <div className="row">
-          <p className="formpTag col-6">
-            Name: <u>Thinley Yoezer</u>
-          </p>
-          <p className="formpTag col-6">
-            Date: <u>13/04/2024</u>
-          </p>
-          <p className="formpTag col-6">
-            Employee ID: <u>2023003</u>
-          </p>
-          <p className="formpTag col-6">
-            Grade: <u>PS4</u>
-          </p>
-        </div>
-
-        <div className="table-responsive my-3">
-          <table
-            className="table table-bordered"
+      {reportData && (
+        <div ref={formRef} className="report-body">
+          <div
             style={{
-              borderWidth: "2px",
-              borderColor: "black",
-              borderStyle: "solid",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <thead>
-              <tr className="small fw-light hover-row">
-                <th
-                  rowSpan={2}
-                  colSpan={2}
-                  className="text-center"
-                  style={{ verticalAlign: "middle" }}
-                >
-                  Date
-                </th>
-                <th colSpan={4} className="text-center">
-                  Time and Place
-                </th>
-                <th
-                  rowSpan={2}
-                  colSpan={2}
-                  className="text-center"
-                  style={{ verticalAlign: "middle" }}
-                >
-                  DSA
-                </th>
-                <th
-                  rowSpan={2}
-                  colSpan={2}
-                  className="text-center"
-                  style={{ verticalAlign: "middle" }}
-                >
-                  Actual Expense
-                </th>
-                <th
-                  rowSpan={2}
-                  colSpan={2}
-                  className="text-center"
-                  style={{ verticalAlign: "middle" }}
-                >
-                  Remarks
-                </th>
-              </tr>
-              <tr className="small fw-light hover-row">
-                <th>From</th>
-                <th>Time</th>
-                <th>To</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan={2}>13/07/2024</td>
-                <td>Paro</td>
-                <td>12/07/2024</td>
-                <td>Bangkok</td>
-                <td>12/07/2024</td>
-                <td colSpan={2}>Nu.1200</td>
-                <td colSpan={2}>Nu.1200</td>
-                <td colSpan={2}>Travelling</td>
-              </tr>
-              <tr>
-                <td colSpan={2}>13/07/2024</td>
-                <td>Paro</td>
-                <td>12/07/2024</td>
-                <td>Bangkok</td>
-                <td>12/07/2024</td>
-                <td colSpan={2}>Nu.1200</td>
-                <td colSpan={2}>Nu.1200</td>
-                <td colSpan={2}>Travelling</td>
-              </tr>
-              <tr>
-                <td colSpan={2}>13/07/2024</td>
-                <td>Paro</td>
-                <td>12/07/2024</td>
-                <td>Bangkok</td>
-                <td>12/07/2024</td>
-                <td colSpan={2}>Nu.1200</td>
-                <td colSpan={2}>Nu.1200</td>
-                <td colSpan={2}>Travelling</td>
-              </tr>
-              <tr>
-                <td colSpan={6} className="text-end">
-                  <b>TOTAL (Nu.)</b>
-                </td>
-                <td colSpan={2}>2500</td>
-                <td colSpan={2}>2500</td>
-                <td colSpan={2}></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div>
-          <p className="formpTag">Total Claim:</p>
-          <p className="formpTag">Advance:</p>
-          <div className="d-flex justify-content-between">
-            <p className="formpTag">Claim/ Refund:</p>
-            <p className="formpTag">(Signature of employee)</p>
+            {" "}
+            <img
+              src={headerimage}
+              className="headerimage"
+              alt="Header"
+              style={{ opacity: "40%" }}
+            />
           </div>
-          <p className="formpTag text-center my-3">(Director, DAF)</p>
-          <p className="formpTag text-center">
-            <i>
-              Certified that the travel was authorized by me for official
-              purposes and the claims are genuine
-            </i>
-          </p>
+
+          <div className="d-flex">
+            <p className="myformpTag me-3">
+              Ref No: <b> {reportData?.dispatched_ref?.dsa_claim_ref}</b>
+            </p>
+            <h5 className="text-center">
+              <b>
+                <u>TRAVEL ALLOWANCE CLAIM FORM</u>
+              </b>
+            </h5>
+          </div>
+
+          <div className="row">
+            <p className="formpTag col-6">
+              Name: <u>{reportData?.user?.name}</u>
+            </p>
+            <p className="formpTag col-6">
+              Date: <u>{isoToDate(reportData?.created_at)}</u>
+            </p>
+            <p className="formpTag col-6">
+              Employee ID: <u>{reportData?.user?.eid}</u>
+            </p>
+            <p className="formpTag col-6">
+              Grade: <u>{reportData?.user?.grade}</u>
+            </p>
+          </div>
+
+          <div className="table-responsive my-3">
+            <table
+              className="table table-bordered"
+              style={{
+                borderWidth: "2px",
+                borderColor: "black",
+                borderStyle: "solid",
+              }}
+            >
+              <thead>
+                <tr className="small fw-light hover-row">
+                  <th
+                    rowSpan={2}
+                    colSpan={2}
+                    className="text-center"
+                    style={{ verticalAlign: "middle" }}
+                  >
+                    Date
+                  </th>
+                  <th colSpan={4} className="text-center">
+                    Time and Place
+                  </th>
+                  <th
+                    rowSpan={2}
+                    colSpan={2}
+                    className="text-center"
+                    style={{ verticalAlign: "middle" }}
+                  >
+                    DSA
+                  </th>
+                  <th
+                    rowSpan={2}
+                    colSpan={2}
+                    className="text-center"
+                    style={{ verticalAlign: "middle" }}
+                  >
+                    Actual Expense
+                  </th>
+                  <th
+                    rowSpan={2}
+                    colSpan={2}
+                    className="text-center"
+                    style={{ verticalAlign: "middle" }}
+                  >
+                    Remarks
+                  </th>
+                </tr>
+                <tr className="small fw-light hover-row">
+                  <th>From</th>
+                  <th>Time</th>
+                  <th>To</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* <tr>
+                <td colSpan={2}>13/07/2024</td>
+                <td>Paro</td>
+                <td>12/07/2024</td>
+                <td>Bangkok</td>
+                <td>12/07/2024</td>
+                <td colSpan={2}>Nu.1200</td>
+                <td colSpan={2}>Nu.1200</td>
+                <td colSpan={2}>Travelling</td>
+              </tr> */}
+
+                {reportData?.user?.travel_itineraries.map((itenary, index) => (
+                  <tr key={index}>
+                    <td colSpan={2}>
+                      {isoToDate(itenary?.start_date) || "N/A"}
+                    </td>
+                    <td>{itenary?.from || "N/A"}</td>
+                    <td>{isoToDate(itenary?.start_date) || "N/A"}</td>
+                    <td>{itenary?.to || "N/A"}</td>
+                    <td>{isoToDate(itenary?.end_date) || "N/A"}</td>
+                    <td colSpan={2}>
+                      {itenary?.currency} {itenary?.rate}
+                    </td>
+                    <td colSpan={2}></td>
+                    <td colSpan={2}></td>
+                  </tr>
+                ))}
+
+                <tr>
+                  <td colSpan={6} className="text-end">
+                    <b>TOTAL (Nu.)</b>
+                  </td>
+                  <td colSpan={2}>
+                    Nu {totalNu}, INR {totalINR}, USD {totalUSD}
+                  </td>
+                  <td colSpan={2}></td>
+                  <td colSpan={2}></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <p className="formpTag">
+              Total Claim: Nu {totalNu}, INR {totalINR}, USD {totalUSD}
+            </p>
+            <p className="formpTag">
+              Advance: Nu {reportData.advance_amount?.Nu ?? 0}, INR{" "}
+              {reportData.advance_amount?.INR ?? 0}, USD{" "}
+              {reportData.advance_amount?.USD ?? 0}
+            </p>
+            <div className="d-flex justify-content-between">
+              <p className="formpTag">
+                Claim/ Refund: Nu {reportData.dsa_amount?.Nu ?? 0}, INR{" "}
+                {reportData.dsa_amount?.INR ?? 0}, USD{" "}
+                {reportData.dsa_amount?.USD ?? 0}
+              </p>
+              <p className="formpTag">(Signature of employee)</p>
+            </div>
+            <p className="formpTag text-center my-3">(Director, DAF)</p>
+            <p className="formpTag text-center">
+              <i>
+                Certified that the travel was authorized by me for official
+                purposes and the claims are genuine
+              </i>
+            </p>
+          </div>
         </div>
-      </div>
+      )}
+
       <div className="text-center">
         <button className="btn btn-primary mb-4" onClick={exportPDF}>
           Export as PDF

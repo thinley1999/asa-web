@@ -3,7 +3,6 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import headerimage from "../../assets/img/head-img.png";
 import { isoToDate } from "../utils/IsoDate";
-import { replaceDash } from "../utils/Ref";
 
 const SalaryAdvanceForm = ({ data, type }) => {
   const formRef = useRef(null);
@@ -92,7 +91,7 @@ const SalaryAdvanceForm = ({ data, type }) => {
           <p className="formpTag">
             <p className="myformpTag me-3">
               Ref No:
-              <b>{replaceDash(reportData?.dispatched_ref?.advance_ref)}</b>
+              <b>{reportData?.dispatched_ref?.advance_ref}</b>
             </p>
           </p>
           <p className="formpTag">

@@ -4,7 +4,6 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import headerimage from "../../assets/img/head-img.png";
 import { isoToDate } from "../utils/IsoDate";
-import { replaceDash } from "../utils/Ref";
 
 const TourAdvanceForm = (data) => {
   const formRef = useRef(null);
@@ -90,7 +89,7 @@ const TourAdvanceForm = (data) => {
         <div className="d-flex">
           <p className="myformpTag me-3">
             Ref No:
-            <b> {replaceDash(reportData?.dispatched_ref?.advance_ref)}</b>
+            <b> {reportData?.dispatched_ref?.advance_ref}</b>
           </p>
         </div>
 

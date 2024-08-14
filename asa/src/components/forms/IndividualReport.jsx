@@ -3,6 +3,7 @@ import ReportServices from "../services/ReportServices";
 import { useParams } from "react-router-dom";
 import SalaryAdvanceForm from "./SalaryAdvanceForm";
 import TourAdvanceForm from "./TourAdvanceForm";
+import DsaClaimForm from "./DsaClaimForm";
 
 const IndividualReport = () => {
   const [report, setReport] = useState(null);
@@ -30,10 +31,13 @@ const IndividualReport = () => {
       ) : (
         ""
       )}
-      {(report?.report?.advance_type === "in_country_tour_advance" ||
+      {/* {(report?.report?.advance_type === "in_country_tour_advance" ||
         report?.report?.advance_type === "ex_country_tour_advance") && (
         <TourAdvanceForm data={report} />
-      )}
+      )} */}
+
+      {report?.report?.advance_type === "ex_country_tour_advance" &&
+        report?.report?.claim_dsa === true && <DsaClaimForm data={report} />}
     </div>
   );
 };
