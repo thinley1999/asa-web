@@ -24,10 +24,14 @@ const IndividualReport = () => {
 
   return (
     <div>
-      {report?.report?.advance_type === "salary_advance" || report?.report?.advance_type === "other_advance" ? (
-        <SalaryAdvanceForm data={report} type={report?.report?.advance_type}/>
-      ):""}
-      {(report?.report?.advance_type === "in_country_tour_advance" || report?.report?.advance_type === "ex_country_tour_advance") && (
+      {report?.report?.advance_type === "salary_advance" ||
+      report?.report?.advance_type === "other_advance" ? (
+        <SalaryAdvanceForm data={report} type={report?.report?.advance_type} />
+      ) : (
+        ""
+      )}
+      {(report?.report?.advance_type === "in_country_tour_advance" ||
+        report?.report?.advance_type === "ex_country_tour_advance") && (
         <TourAdvanceForm data={report} />
       )}
     </div>

@@ -5,6 +5,7 @@ import "jspdf-autotable";
 import { format } from "date-fns";
 import SalaryAdvanceForm from "../forms/SalaryAdvanceForm";
 import { advance_type } from "../datas/advance_type";
+import { isoToDate } from "../utils/IsoDate";
 
 const ReportTable = ({ data, total, filters }) => {
   const exportToPDF = () => {
@@ -73,30 +74,32 @@ const ReportTable = ({ data, total, filters }) => {
         <table className="table table-bordered">
           <thead>
             <tr className="text-center small fw-medium hover-row">
-              <th colSpan="6">{filters?.report_type} Advance Report</th>
+              <th colSpan="7">{filters?.report_type} Advance Report</th>
             </tr>
             <tr className="text-center small fw-medium hover-row">
-              <th colSpan="6">
+              <th colSpan="7">
                 Financial Year:{" "}
                 {format(new Date(filters?.start_date), "dd MMMM yyyy")} -{" "}
                 {format(new Date(filters?.end_date), "dd MMMM yyyy")}
               </th>
             </tr>
             <tr className="text-center small fw-medium hover-row">
-              <th colSpan="6">Advance Details</th>
+              <th colSpan="7">Advance Details</th>
             </tr>
             <tr className="small fw-light hover-row">
+              <th>Date</th>
               <th>Name</th>
               <th>Employee ID</th>
               <th>Department</th>
               <th>Advance Type</th>
               <th>Amount</th>
-              <th>Action</th>
+              <th>Report</th>
             </tr>
           </thead>
           <tbody>
             {data.map((item) => (
               <tr key={item?.id} className="hover-row">
+                <td>{isoToDate(item?.created_at)}</td>
                 <td>{item?.user?.name}</td>
                 <td>{item?.user?.username}</td>
                 <td>{item?.user?.department}</td>

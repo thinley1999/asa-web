@@ -3,6 +3,7 @@ import DataTable from "react-data-table-component";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
+import { convertToDateTime } from "../utils/dateTime";
 
 const TravelDetailsTable = ({ existingData, data, removeRow, editRow, edit }) => {
   const customStyles = {
@@ -31,12 +32,12 @@ const TravelDetailsTable = ({ existingData, data, removeRow, editRow, edit }) =>
     {
       name: "Start Date",
       sortable: true,
-      selector: (row) => row.start_date,
+      selector: (row) => convertToDateTime(row.start_date),
     },
     {
       name: "End Date",
       sortable: true,
-      selector: (row) => row.end_date,
+      selector: (row) => convertToDateTime(row.end_date),
     },
     {
       name: "From",

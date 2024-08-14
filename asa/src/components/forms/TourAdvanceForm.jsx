@@ -20,10 +20,10 @@ const TourAdvanceForm = (data) => {
 
   useEffect(() => {
     if (data) {
-      setReportData(data?.data?.report)
+      setReportData(data?.data?.report);
     }
-  }, [data])
-  console.log(reportData, "data")
+  }, [data]);
+  console.log(reportData, "data");
   const exportPDF = () => {
     if (formRef.current) {
       const scale = 3; // Increase the scale to capture higher resolution image
@@ -65,16 +65,33 @@ const TourAdvanceForm = (data) => {
   return (
     <div>
       <div ref={formRef} className="report-body">
-      <div style={{display:"flex", flexDirection:"row", alignItems:"center", justifyContent:"center"}}>
-        <img src={headerimage} className="headerimage" alt="Header" style={{opacity:"40%"}} />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            src={headerimage}
+            className="headerimage"
+            alt="Header"
+            style={{ opacity: "40%" }}
+          />
         </div>
         <h6 className="text-center">
-            <b>
-              <u style={{textUnderlineOffset:"2px"}}>TRAVEL ADVANCE REQUEST FORM</u>
-            </b>
-          </h6>
+          <b>
+            <u style={{ textUnderlineOffset: "2px" }}>
+              TRAVEL ADVANCE REQUEST FORM
+            </u>
+          </b>
+        </h6>
         <div className="d-flex">
-          <p className="myformpTag me-3">Ref No:<b> {replaceDash(reportData?.dispatched_ref?.advance_ref)}</b></p>
+          <p className="myformpTag me-3">
+            Ref No:
+            <b> {replaceDash(reportData?.dispatched_ref?.advance_ref)}</b>
+          </p>
         </div>
 
         <div className="row">
@@ -88,7 +105,10 @@ const TourAdvanceForm = (data) => {
             Designation: <u>{reportData?.user?.designation}</u>
           </p>
           <p className="formpTag col-6">
-            Department:<u style={{ textUnderlineOffset: "2px" }}>{reportData?.user?.department}</u>
+            Department:
+            <u style={{ textUnderlineOffset: "2px" }}>
+              {reportData?.user?.department}
+            </u>
           </p>
           <p className="formpTag col-6">
             Grade: <u>{reportData?.user?.grade}</u>
@@ -97,9 +117,14 @@ const TourAdvanceForm = (data) => {
             Date: <u>{isoToDate(reportData?.created_at)}</u>
           </p>
           <p className="formpTag col-6">Travel Advance Amount:</p>
-          <p className="formpTag col-6">Nu.{reportData?.advance_amount?.Nu}, USD.{reportData?.advance_amount?.USD || 0}</p>
+          <p className="formpTag col-6">
+            Nu.{reportData?.advance_amount?.Nu}, USD.
+            {reportData?.advance_amount?.USD || 0}
+          </p>
           <div className="col-12">
-            <p className="formpTag">Reason for Travel Advance:<u>{reportData?.purpose}</u></p>
+            <p className="formpTag">
+              Reason for Travel Advance:<u>{reportData?.purpose}</u>
+            </p>
             {/* <p className="formpTag">{reportData?.purpose}</p> */}
           </div>
         </div>
@@ -151,9 +176,9 @@ const TourAdvanceForm = (data) => {
             <tbody>
               {reportData?.user?.travel_itineraries.map((itenary, index) => (
                 <tr key={index}>
-                  <td colSpan={2}>{isoToDate(itenary?.start_date ) || "N/A"}</td>
-                  <td>{itenary?.from || "N/A" }</td>
-                  <td>{itenary?.to || "N/A" }</td>
+                  <td colSpan={2}>{isoToDate(itenary?.start_date) || "N/A"}</td>
+                  <td>{itenary?.from || "N/A"}</td>
+                  <td>{itenary?.to || "N/A"}</td>
                   <td colSpan={2}>{itenary?.mode || "N/A"}</td>
                   {/* <td colSpan={2} rowSpan={3} style={{ verticalAlign: "middle" }}>
                     Travelling
@@ -161,7 +186,6 @@ const TourAdvanceForm = (data) => {
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
 
@@ -172,32 +196,30 @@ const TourAdvanceForm = (data) => {
           </p>
           <div className="d-flex justify-content-between mt-5">
             <div className="mt-5">
-        <p className="formpTag">
-        {reportData?.user?.verified_by}
-          </p>
-          <h5>
-          <p className="formpTag">Signature Director</p>
-          </h5>
-        </div>
+              <p className="formpTag">{reportData?.user?.verified_by}</p>
+              <h5>
+                <p className="formpTag">Signature Director</p>
+              </h5>
+            </div>
             <div className="mt-5">
-        <p className="formpTag">
-        {reportData?.user?.name}
-          </p>
-          <p className="formpTag">
-            Signature of employee
-          </p>
-        </div>
+              <p className="formpTag">{reportData?.user?.name}</p>
+              <p className="formpTag">Signature of employee</p>
+            </div>
           </div>
-     
         </div>
         <div>
           <p className="formpTag">
             Payment authorization by Department of Administration and Finance.
           </p>
           <p className="formpTag">
-            Please pay Nu………{reportData?.amount}…………….as per office order No. ....{reportData?.dispatched_ref?.advance_ref}……
+            Please pay Nu………{reportData?.amount}…………….as per office order No.
+            ....{reportData?.dispatched_ref?.advance_ref}……
           </p>
-          <p className="formpTag mt-5 text-end">   <p>{reportData?.confirmed_by?.name || "N/A"}</p> Signature of Director, DAF</p>
+          <p className="formpTag mt-5 text-end">
+            {" "}
+            <p>{reportData?.confirmed_by?.name || "N/A"}</p> Signature of
+            Director, DAF
+          </p>
         </div>
       </div>
       <div className="text-center">
