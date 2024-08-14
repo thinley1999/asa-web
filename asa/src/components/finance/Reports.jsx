@@ -37,6 +37,8 @@ const Reports = () => {
       employee_id: "",
     });
     setErrors({});
+    setReportData([]);
+    setTotalAmount({});
   };
 
   const validateFilters = () => {
@@ -102,7 +104,8 @@ const Reports = () => {
     }
   };
 
-  console.log("filters", filters);
+  console.log("response message", reportData);
+  // console.log("reportdata length", reportData.length);
 
   return (
     <div>

@@ -1,63 +1,54 @@
 import React, { useState, useEffect } from "react";
 import { FaRegFilePdf, FaEye } from "react-icons/fa6";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import html2canvas from "html2canvas";
 import { format } from "date-fns";
-import SalaryAdvanceForm from "../forms/SalaryAdvanceForm";
+import filenotfound from "../../assets/img/file not found.jpg";
 import { advance_type } from "../datas/advance_type";
 import { isoToDate } from "../utils/IsoDate";
 
 const ReportTable = ({ data, total, filters }) => {
   const exportToPDF = () => {
-    // Create a new jsPDF instance
-    const doc = new jsPDF();
+    const input = document.querySelector(".table-responsive");
 
-    // Define the table columns and data
-    const columns = [
-      "Name",
-      "Employee ID",
-      "Department",
-      "Advance Type",
-      "Amount",
-    ];
-    const rows = data.map((item) => [
-      item.name,
-      item.username,
-      item.department,
-      item.advance_type,
-      item.amount,
-    ]);
+    html2canvas(input, { scale: 3 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
 
-    // Calculate the total amount
-    const totalAmount = data.reduce(
-      (sum, item) => sum + parseFloat(item.amount),
-      0
-    );
+      pdf.addImage(imgData, "PNG", 10, 10, imgWidth - 20, imgHeight - 20);
+      heightLeft -= pageHeight;
 
-    // Add title and financial year text
-    doc.setFontSize(12); // Set font size for the title
-    doc.text("Individual Advance Report", 15, 12);
-    doc.setFontSize(12); // Set font size for the financial year text
-    doc.text("Financial Year: 1st July 2024 - 31st July 2024", 15, 20);
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(
+          imgData,
+          "PNG",
+          10,
+          position,
+          imgWidth - 20,
+          imgHeight - 20
+        );
+        heightLeft -= pageHeight;
+      }
 
-    // Add the table with jsPDF autoTable
-    doc.autoTable({
-      head: [columns],
-      body: [...rows, ["Total Amount", "", "", "", totalAmount.toFixed(2)]],
-      margin: { top: 30 },
-      startY: 25,
-      didDrawPage: function (data) {},
+      pdf.save(`${filters?.report_type}_Advance_Report.pdf`);
     });
-
-    // Save the PDF
-    doc.save("report.pdf");
   };
 
   if (data.length === 0) {
     return (
       <div className="bg-white px-4 py-4 my-3">
-        <div className="d-flex justify-content-center mb-3">
-          <p className="text-center">No Reports available to display.</p>
+        <div className="d-flex justify-content-center align-items-center flex-column">
+          <img src={filenotfound} width={250} />
+          <h5>
+            <b>No Data Found !</b>
+          </h5>
         </div>
       </div>
     );
@@ -104,7 +95,18 @@ const ReportTable = ({ data, total, filters }) => {
                 <td>{item?.user?.username}</td>
                 <td>{item?.user?.department}</td>
                 <td>{advance_type[item?.advance_type]}</td>
-                <td>{item?.amount}</td>
+                <td>
+                  {item?.advance_type === "in_country_tour_advance" ||
+                  item?.advance_type === "ex_country_tour_advance" ? (
+                    <>
+                      Nu {item.advance_amount?.Nu ?? 0} INR{" "}
+                      {item.advance_amount?.INR ?? 0} USD{" "}
+                      {item.advance_amount?.USD ?? 0}
+                    </>
+                  ) : (
+                    `Nu ${item?.amount}`
+                  )}
+                </td>
                 <td
                   style={{
                     display: "flex",

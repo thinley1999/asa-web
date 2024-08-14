@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { advance_type } from "../datas/advance_type";
+import filenotfound from "../../assets/img/file not found.jpg";
 
 const MyApplications = ({
   heading,
@@ -22,6 +23,21 @@ const MyApplications = ({
   const handleDSAClaim = (id) => {
     navigate(`/dsaClaim/${id}`);
   };
+
+  console.log("length check", applications?.advances?.length);
+
+  if (applications?.advances?.length === 0) {
+    return (
+      <div className="bg-white px-4 py-4 my-3">
+        <div className="d-flex justify-content-center align-items-center flex-column">
+          <img src={filenotfound} width={250} />
+          <h5>
+            <b>No Data Found !</b>
+          </h5>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -99,7 +115,8 @@ const MyApplications = ({
               >
                 View Details
               </a>
-              {application.status === "dispatched" && application.claim_dsa != true &&
+              {application.status === "dispatched" &&
+                application.claim_dsa != true &&
                 (application.advance_percentage == 1.0
                   ? application.advance_type == "ex_country_tour_advance"
                   : application.advance_percentage == 0.0) && (

@@ -127,21 +127,26 @@ const EmployeeApplications = () => {
 
       {/* Tabs content */}
       <div className="tab-content col-12">
-        <MyApplications
-          heading={"Current Applications"}
-          applications={currentapplication}
-          activeTab={activeTab}
-          profileImage={profileImage}
-          title={"currentapplication"}
-        />
-        <MyApplications
-          heading={"Previous Applications"}
-          applications={previousapplication}
-          activeTab={activeTab}
-          profileImage={profileImage}
-          title={"previousapplication"}
-        />
+        {activeTab === "currentapplication" && (
+          <MyApplications
+            heading={"Current Applications"}
+            applications={currentapplication}
+            activeTab={activeTab}
+            profileImage={profileImage}
+            title={"currentapplication"}
+          />
+        )}
+        {activeTab === "previousapplication" && (
+          <MyApplications
+            heading={"Previous Applications"}
+            applications={previousapplication}
+            activeTab={activeTab}
+            profileImage={profileImage}
+            title={"previousapplication"}
+          />
+        )}
       </div>
+
       {/* Tabs content */}
     </div>
   );

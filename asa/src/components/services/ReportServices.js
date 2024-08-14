@@ -11,19 +11,22 @@ const all_advance = [
 const get = async (params) => {
   const token = localStorage.getItem("token");
   const report_type = params.report_type === "All" ? "all" : "individual";
-  const advance_type = params.advance_type === "All"? "all" : params.advance_type.toLowerCase().replace(/ /g, "_");
-  const department = params.department === "All"? "all" : params.department;
+  const advance_type =
+    params.advance_type === "All"
+      ? "all"
+      : params.advance_type.toLowerCase().replace(/ /g, "_");
+  const department = params.department === "All" ? "all" : params.department;
   try {
     const response = await axios.get(`${API_URL}/api/reports`, {
       params: {
-        "report_filters": {
-            "report_type": report_type,
-            "start_date": params.start_date,
-            "end_date": params.end_date,
-            "advance_type": advance_type,
-            "department": department,
-            "employee_id": params.employee_id
-        }
+        report_filters: {
+          report_type: report_type,
+          start_date: params.start_date,
+          end_date: params.end_date,
+          advance_type: advance_type,
+          department: department,
+          employee_id: params.employee_id,
+        },
       },
       headers: {
         Authorization: `${token}`,
@@ -49,7 +52,7 @@ const show = async (id) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 export default {
   get,
