@@ -38,6 +38,7 @@ const InCountryTour = ({
     advance_type: "in_country_tour_advance",
     files: [],
     advance_percentage: "",
+    office_order: "",
   };
   const [formData, setFormData] = useState(initialFormData);
   const [rows, setRows] = useState([]);
@@ -118,6 +119,10 @@ const InCountryTour = ({
 
     if (!formData.files.length) {
       errors.file_error = "Please upload relevant documents.";
+    }
+
+    if (!formData.office_order) {
+      errors.office_order_error = "Please enter office order number.";
     }
 
     setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
@@ -286,6 +291,7 @@ const InCountryTour = ({
   useEffect(() => {
     setFormData((prevFormData) => ({
       ...prevFormData,
+      office_order: data?.office_order || prevFormData.office_order,
       remark: data?.remark || prevFormData.remark,
       advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
       advance_percentage:
@@ -399,6 +405,15 @@ const InCountryTour = ({
 
       <div className="bg-white px-4">
         <div className="row w-100 ">
+        <CustomInput
+            label="Office Order No" 
+            type="text"
+            value={formData.office_order}
+            name="office_order"
+            isDisable={data ? ( edit ? false:true) : false}
+            onChange={handleChange}
+            error={formErrors?.office_order_error}
+          />
           <div className="col-12 mb-3">
             <label className="form-label">Travel Itinerary</label>
           </div>
