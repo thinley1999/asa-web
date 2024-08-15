@@ -85,13 +85,13 @@ const RequestedDsa = () => {
   ];
 
   const displayAdvanceTypes = {
-    ex_country_tour_advance: "Ex Country Tour Advance",
-    in_country_tour_advance: "In Country Tour Advance",
+    ex_country_dsa_claim: "Ex Country Tour Advance",
+    in_country_dsa_claim: "In Country Tour Advance",
   };
 
   const initialAdvanceState = {
-    ex_country_tour_advance: true,
-    in_country_tour_advance: true,
+    ex_country_dsa_claim: true,
+    in_country_dsa_claim: true,
   };
 
   const initialStatusState = {

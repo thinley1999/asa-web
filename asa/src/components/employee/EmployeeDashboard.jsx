@@ -16,6 +16,9 @@ const EmployeeApplications = () => {
     "in_country_tour_advance",
     "other_advance",
     "salary_advance",
+    "in_country_dsa_claim",
+    "ex_country_dsa_claim",
+
   ];
   const preParams = {
     status: ["confirmed", "dispatched", "closed"],

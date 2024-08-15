@@ -37,9 +37,9 @@ const AdvanceDetail = () => {
   return (
     <div>
       {advanceData.advance_type === "salary_advance" && <SalaryAdvance data={advanceData} />}
-      {advanceData.advance_type === "in_country_tour_advance" && <InCountryTour data={advanceData}  isDSA={advanceData.claim_dsa}/>}
+      {(advanceData.advance_type === "in_country_tour_advance" || advanceData.advance_type === "in_country_dsa_claim") && <InCountryTour data={advanceData} isDSA={advanceData.claim_dsa} />}
       {advanceData.advance_type === "other_advance" && <OtherAdvance data={advanceData} />}
-      {advanceData.advance_type === "ex_country_tour_advance" && <OutCountryTour data={advanceData}  isDSA={advanceData.claim_dsa}/>}
+      {(advanceData.advance_type === "ex_country_tour_advance" || advanceData.advance_type === "ex_country_dsa_claim") && <OutCountryTour data={advanceData} isDSA={advanceData.claim_dsa} />}
     </div>
   );
 };

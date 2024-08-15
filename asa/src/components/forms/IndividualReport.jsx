@@ -31,13 +31,14 @@ const IndividualReport = () => {
       ) : (
         ""
       )}
-      {/* {(report?.report?.advance_type === "in_country_tour_advance" ||
+      {(report?.report?.advance_type === "in_country_tour_advance" ||
         report?.report?.advance_type === "ex_country_tour_advance") && (
         <TourAdvanceForm data={report} />
-      )} */}
-
-      {report?.report?.advance_type === "ex_country_tour_advance" &&
-        report?.report?.claim_dsa === true && <DsaClaimForm data={report} />}
+      )}
+      
+      {(report?.report?.advance_type === "in_country_dsa_claim" || 
+        report?.report?.advance_type === "ex_country_dsa_claim"
+      ) && <DsaClaimForm data={report} />}
     </div>
   );
 };
