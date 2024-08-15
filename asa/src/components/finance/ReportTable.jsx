@@ -156,8 +156,8 @@ const ReportTable = ({ data, total, filters }) => {
             <tr className="small fw-medium hover-row">
               <th>Total Amount</th>
               <th className="text-end" colSpan="5">
-                {total?.Nu > 0 && `Nu ${total.Nu}`}
-                {total?.INR > 0 && `INR ${total.INR} INR `}
+                {total?.Nu > 0 && `Nu ${total.Nu} `}
+                {total?.INR > 0 && `INR ${total.INR} `}
                 {total?.USD > 0 && `USD ${total.USD} `}
                 {!total?.Nu && !total?.INR && !total?.USD && "0"}
               </th>
