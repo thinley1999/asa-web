@@ -141,7 +141,7 @@ const ViewRequestedAdvance = () => {
             handleDialogOpen={handleDialogOpen}
           />
         )}
-        {advanceData.advance_type === "in_country_tour_advance" && (
+        {(advanceData.advance_type === "in_country_tour_advance" || advanceData.advance_type === "in_country_dsa_claim" ) && (
           <InCountryTour
             data={advanceData}
             isDSA= {advanceData.claim_dsa}
@@ -156,7 +156,7 @@ const ViewRequestedAdvance = () => {
             handleDialogOpen={handleDialogOpen}
           />
         )}
-        {advanceData.advance_type === "ex_country_tour_advance" && (
+        {(advanceData.advance_type === "ex_country_tour_advance" || advanceData.advance_type === "ex_country_dsa_claim") && (
           <OutCountryTour
             data={advanceData}
             isDSA= {advanceData.claim_dsa}
