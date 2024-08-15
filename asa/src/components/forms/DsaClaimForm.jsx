@@ -92,16 +92,17 @@ const DsaClaimForm = (data) => {
             />
           </div>
 
-          <div className="d-flex">
-            <p className="myformpTag me-3">
-              Ref No: <b> {reportData?.dispatched_ref?.dsa_claim_ref}</b>
-            </p>
-            <h5 className="text-center">
-              <b>
-                <u>TRAVEL ALLOWANCE CLAIM FORM</u>
-              </b>
-            </h5>
-          </div>
+          <h6 className="text-center">
+            <b>
+              <u style={{ textUnderlineOffset: "2px" }}>
+                TRAVEL ALLOWANCE CLAIM FORM
+              </u>
+            </b>
+          </h6>
+
+          <p className="formpTag">
+            Ref No: <b> {reportData?.dispatched_ref?.dsa_claim_ref}</b>
+          </p>
 
           <div className="row">
             <p className="formpTag col-6">
@@ -230,10 +231,34 @@ const DsaClaimForm = (data) => {
                 {reportData.dsa_amount?.INR ?? 0}, USD{" "}
                 {reportData.dsa_amount?.USD ?? 0}
               </p>
-              <p className="formpTag">(Signature of employee)</p>
             </div>
-            <p className="formpTag text-center my-3">(Director, DAF)</p>
-            <p className="formpTag text-center">
+            <div className="d-flex justify-content-between">
+              <div className="mt-4">
+                <p className="formpTag">{reportData?.user?.name}</p>
+                <p className="formpTag">
+                  <b>Signature of employee</b>
+                </p>
+              </div>
+              <div className="mt-4">
+                <p className="formpTag">{reportData?.verified_by?.name}</p>
+                <h5>
+                  <p className="formpTag">
+                    <b>(Finance Section)</b>
+                  </p>
+                </h5>
+              </div>
+              <div className="mt-4">
+                {" "}
+                <p className="formpTag">
+                  {reportData?.confirmed_by?.name || "N/A"}
+                </p>
+                <p className="formpTag">
+                  <b>(Director, DAF)</b>
+                </p>
+              </div>
+            </div>
+
+            <p className="formpTag text-center mt-3">
               <i>
                 Certified that the travel was authorized by me for official
                 purposes and the claims are genuine

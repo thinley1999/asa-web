@@ -89,10 +89,8 @@ const SalaryAdvanceForm = ({ data, type }) => {
 
         <div className="d-flex justify-content-between">
           <p className="formpTag">
-            <p className="myformpTag me-3">
-              Ref No:
-              <b>{reportData?.dispatched_ref?.advance_ref}</b>
-            </p>
+            Ref No:
+            <b>{reportData?.dispatched_ref?.advance_ref}</b>
           </p>
           <p className="formpTag">
             Date:{" "}

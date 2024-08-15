@@ -86,12 +86,10 @@ const TourAdvanceForm = (data) => {
             </u>
           </b>
         </h6>
-        <div className="d-flex">
-          <p className="myformpTag me-3">
-            Ref No:
-            <b> {reportData?.dispatched_ref?.advance_ref}</b>
-          </p>
-        </div>
+        <p className="formpTag">
+          Ref No:
+          <b> {reportData?.dispatched_ref?.advance_ref}</b>
+        </p>
 
         <div className="row">
           <p className="formpTag col-6">
@@ -195,14 +193,18 @@ const TourAdvanceForm = (data) => {
           </p>
           <div className="d-flex justify-content-between mt-5">
             <div className="mt-5">
-              <p className="formpTag">{reportData?.user?.verified_by}</p>
+              <p className="formpTag">{reportData?.verified_by?.name}</p>
               <h5>
-                <p className="formpTag">Signature Director</p>
+                <p className="formpTag">
+                  <b>(Finance Section)</b>
+                </p>
               </h5>
             </div>
             <div className="mt-5">
               <p className="formpTag">{reportData?.user?.name}</p>
-              <p className="formpTag">Signature of employee</p>
+              <p className="formpTag">
+                <b>Signature of employee</b>
+              </p>
             </div>
           </div>
         </div>
@@ -216,8 +218,8 @@ const TourAdvanceForm = (data) => {
           </p>
           <p className="formpTag mt-5 text-end">
             {" "}
-            <p>{reportData?.confirmed_by?.name || "N/A"}</p> Signature of
-            Director, DAF
+            <p>{reportData?.confirmed_by?.name || "N/A"}</p>{" "}
+            <b>(Director, DAF)</b>
           </p>
         </div>
       </div>
