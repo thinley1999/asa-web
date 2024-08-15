@@ -63,13 +63,16 @@ const DsaClaimForm = (data) => {
   };
 
   const totalNu =
-    (reportData?.advance_amount?.Nu || 0) + (reportData?.dsa_amount?.Nu || 0);
+    (parseInt(reportData?.advance_amount?.Nu, 10) || 0) +
+    (parseInt(reportData?.dsa_amount?.Nu, 10) || 0);
 
   const totalINR =
-    (reportData?.advance_amount?.INR || 0) + (reportData?.dsa_amount?.INR || 0);
+    (parseInt(reportData?.advance_amount?.INR, 10) || 0) +
+    (parseInt(reportData?.dsa_amount?.INR, 10) || 0);
 
   const totalUSD =
-    (reportData?.advance_amount?.USD || 0) + (reportData?.dsa_amount?.USD || 0);
+    (parseInt(reportData?.advance_amount?.USD, 10) || 0) +
+    (parseInt(reportData?.dsa_amount?.USD, 10) || 0);
 
   return (
     <div>
@@ -198,13 +201,16 @@ const DsaClaimForm = (data) => {
                       {itenary?.currency} {itenary?.rate}
                     </td>
                     <td colSpan={2}></td>
-                    <td colSpan={2}></td>
+                    <td colSpan={2}>
+                      {itenary?.stop_at ? `Stop at ${itenary?.stop_at}` : ""}
+                      {itenary?.halt_at ? `Halt at ${itenary?.halt_at}` : ""}
+                    </td>
                   </tr>
                 ))}
 
                 <tr>
                   <td colSpan={6} className="text-end">
-                    <b>TOTAL (Nu.)</b>
+                    <b>TOTAL</b>
                   </td>
                   <td colSpan={2}>
                     Nu {totalNu}, INR {totalINR}, USD {totalUSD}
