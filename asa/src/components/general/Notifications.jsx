@@ -22,9 +22,13 @@ const Notifications = ({
           console.log("Disconnected from NotificationsChannel");
         },
         received(data) {
-          if (
-            !notifications.some((notification) => notification.id === data.id)
-          ) {
+          // Check if the notification is already in the notifications array
+          const isDuplicate = notifications.some(
+            (notification) => notification.id === data.id
+          );
+  
+          // Only add the notification if it's not a duplicate
+          if (!isDuplicate) {
             setNotifications((prevNotifications) => [
               data,
               ...prevNotifications,
@@ -34,11 +38,11 @@ const Notifications = ({
         },
       }
     );
-
+  
     return () => {
       subscription.unsubscribe();
     };
-  }, [token]);
+  }, [token, notifications]); 
 
   const formatDate = (date) => {
     const now = moment();
