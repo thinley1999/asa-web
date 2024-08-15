@@ -174,6 +174,7 @@ const Reports = () => {
                   "Other Advance",
                   "In Country Tour Advance",
                   "Ex Country Tour Advance",
+                  "Dsa Claim",
                   "All",
                 ]}
                 disoptions="Select Advance Type"
