@@ -282,6 +282,7 @@ const OutCountryTour = ({
   const removeRow = (id) => {
     const newRows = rows.filter((row) => row.id !== id);
     setRows(newRows);
+    setEditData(null);
   };
 
   const editRow = (rowData) => {

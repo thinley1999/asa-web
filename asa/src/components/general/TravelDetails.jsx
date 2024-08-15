@@ -170,7 +170,7 @@ const TravelDetails = ({
           const res2 = await RateServices.getThirdCountryRate(stop_at);
           if (response && res2) {
             return {
-              rate: dsaPercentage * days * res2.rate + res2.rate,
+              rate: dsaPercentage * days * res2.rate + response.rate,
               currency: response.currency,
             };
           }
@@ -190,7 +190,11 @@ const TravelDetails = ({
         ) {
           response = await RateServices.getRate("Other", to);
         } else if (halt_at) {
-          response = await RateServices.getThirdCountryRate(halt_at);
+          if (halt_at == "India" || halt_at == "Bhutan") {
+            response = await RateServices.getRate("Other", halt_at);
+          }else{
+            response = await RateServices.getThirdCountryRate(halt_at);
+          }
         } else {
           response = await RateServices.getThirdCountryRate(to);
         }
@@ -243,6 +247,7 @@ const TravelDetails = ({
       setData((prevData) => ({ ...prevData, rate, currency }));
       onSave({ ...data, rate, currency });
       console.log("data....", data);
+      setData([]);
       onClose();
     } catch (error) {
       console.error("Error while submitting:", error);
