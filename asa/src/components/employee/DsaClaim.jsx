@@ -59,10 +59,13 @@ const DsaClaim = () => {
       }
     });
 
+    const advancePercentage = parseFloat(advance?.advance_percentage) || 0;
+    const isExCountryAdvance = advance?.advance_type === "ex_country_tour_advance";
+
     setDsaAmount({
-      Nu: (Nu * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
-      INR: (INR * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
-      USD: (USD * (1 - parseFloat(advance?.advance_percentage))).toFixed(2),
+      Nu: isExCountryAdvance ? Nu.toFixed(2) : (Nu * (1 - advancePercentage)).toFixed(2),
+      INR: (INR * (1 - advancePercentage)).toFixed(2),
+      USD: (USD * (1 - advancePercentage)).toFixed(2),
     });
   };
 
