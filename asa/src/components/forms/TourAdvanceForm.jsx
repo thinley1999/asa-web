@@ -214,7 +214,7 @@ const TourAdvanceForm = (data) => {
           </p>
           <p className="formpTag">
             Please pay Nu………{reportData?.amount}…………….as per office order No.
-            ....{reportData?.dispatched_ref?.advance_ref}……
+            ....{reportData?.office_order}……
           </p>
           <p className="formpTag mt-5 text-end">
             {" "}
