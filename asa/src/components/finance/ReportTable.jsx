@@ -99,12 +99,32 @@ const ReportTable = ({ data, total, filters }) => {
                   {item?.advance_type === "in_country_tour_advance" ||
                   item?.advance_type === "ex_country_tour_advance" ? (
                     <>
-                      Nu {item.advance_amount?.Nu ?? 0} INR{" "}
-                      {item.advance_amount?.INR ?? 0} USD{" "}
-                      {item.advance_amount?.USD ?? 0}
+                      {item.advance_amount?.Nu > 0 &&
+                        `Nu ${item.advance_amount.Nu} `}
+                      {item.advance_amount?.INR > 0 &&
+                        `INR ${item.advance_amount.INR} `}
+                      {item.advance_amount?.USD > 0 &&
+                        `USD ${item.advance_amount.USD} `}
+                      {!item.advance_amount?.Nu &&
+                        !item.advance_amount?.INR &&
+                        !item.advance_amount?.USD &&
+                        "0"}
+                    </>
+                  ) : item?.advance_type === "in_country_dsa_claim" ||
+                    item?.advance_type === "ex_country_dsa_claim" ? (
+                    <>
+                      {item.dsa_amount?.Nu > 0 && `Nu ${item.dsa_amount.Nu} `}
+                      {item.dsa_amount?.INR > 0 &&
+                        `INR ${item.dsa_amount.INR} `}
+                      {item.dsa_amount?.USD > 0 &&
+                        `USD ${item.dsa_amount.USD} `}
+                      {!item.dsa_amount?.Nu &&
+                        !item.dsa_amount?.INR &&
+                        !item.dsa_amount?.USD &&
+                        "0"}
                     </>
                   ) : (
-                    `Nu ${item?.amount}`
+                    `Nu ${item?.amount ?? 0}`
                   )}
                 </td>
                 <td
@@ -136,7 +156,10 @@ const ReportTable = ({ data, total, filters }) => {
             <tr className="small fw-medium hover-row">
               <th>Total Amount</th>
               <th className="text-end" colSpan="5">
-                {total?.Nu} Nu {total?.INR} INR {total?.USD} USD
+                {total?.Nu > 0 && `Nu ${total.Nu}`}
+                {total?.INR > 0 && `INR ${total.INR} INR `}
+                {total?.USD > 0 && `USD ${total.USD} `}
+                {!total?.Nu && !total?.INR && !total?.USD && "0"}
               </th>
             </tr>
           </tfoot>
