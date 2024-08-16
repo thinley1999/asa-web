@@ -17,7 +17,7 @@ const OutCountryTour = ({
   isDSA,
   showButtons,
   handleDialogOpen,
-  edit
+  edit,
 }) => {
   const [user, setUser] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
@@ -41,7 +41,7 @@ const OutCountryTour = ({
     advance_type: "ex_country_tour_advance",
     files: [],
     advance_percentage: "",
-    office_order: ""
+    office_order: "",
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -114,11 +114,13 @@ const OutCountryTour = ({
 
     if (isFormValid && isTravelItineraryValid) {
       try {
-        const advanceResponse = await AdvanceServices.update(data.id, formData, rows);
-        if (advanceResponse ) {
-            setSuccessMessage(
-              "Advance has been successfully updated."
-            );
+        const advanceResponse = await AdvanceServices.update(
+          data.id,
+          formData,
+          rows
+        );
+        if (advanceResponse) {
+          setSuccessMessage("Advance has been successfully updated.");
         } else {
           setErrorMessage("Your application submission has failed");
         }
@@ -211,7 +213,7 @@ const OutCountryTour = ({
       } catch (error) {
         setErrorMessage(
           error.response?.data?.message ||
-          "An error occurred during submission. Please try again."
+            "An error occurred during submission. Please try again."
         );
       }
     }
@@ -396,6 +398,15 @@ const OutCountryTour = ({
             isDisable={true}
             onChange={handleChange}
           />
+          <CustomInput
+            label="Office Order No"
+            type="text"
+            value={formData.office_order}
+            name="office_order"
+            isDisable={data ? (edit ? false : true) : false}
+            onChange={handleChange}
+            error={formErrors?.office_order_error}
+          />
           <CustomFileInput
             label="Relevant Documents"
             name="relevantDocument1"
@@ -410,15 +421,6 @@ const OutCountryTour = ({
 
       <div className="bg-white px-4">
         <div className="row w-100 ">
-        <CustomInput
-            label="Office Order No" 
-            type="text"
-            value={formData.office_order}
-            name="office_order"
-            isDisable={data ? ( edit ? false:true) : false}
-            onChange={handleChange}
-            error={formErrors?.office_order_error}
-          />
           <div className="col-12 mb-3">
             <label className="form-label">Travel Itinerary</label>
           </div>
@@ -467,11 +469,11 @@ const OutCountryTour = ({
                 : data
                 ? edit
                   ? `Nu.${formData.advanceAmount?.Nu ?? 0}, INR.${
-                    formData.advanceAmount?.INR ?? 0
-                  }, USD.${formData.advanceAmount?.USD ?? 0}`
+                      formData.advanceAmount?.INR ?? 0
+                    }, USD.${formData.advanceAmount?.USD ?? 0}`
                   : `Nu.${data.advance_amount?.Nu ?? 0}, INR.${
-                    data.advance_amount?.INR ?? 0
-                  }, USD.${data.advance_amount?.USD ?? 0}`
+                      data.advance_amount?.INR ?? 0
+                    }, USD.${data.advance_amount?.USD ?? 0}`
                 : `Nu.${formData.advanceAmount?.Nu ?? 0}, INR.${
                     formData.advanceAmount?.INR ?? 0
                   }, USD.${formData.advanceAmount?.USD ?? 0}`

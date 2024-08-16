@@ -198,11 +198,13 @@ const InCountryTour = ({
 
     if (isFormValid && isTravelItineraryValid) {
       try {
-        const advanceResponse = await AdvanceServices.update(data.id, formData, rows);
-        if (advanceResponse ) {
-            setSuccessMessage(
-              "Advance has been successfully updated."
-            );
+        const advanceResponse = await AdvanceServices.update(
+          data.id,
+          formData,
+          rows
+        );
+        if (advanceResponse) {
+          setSuccessMessage("Advance has been successfully updated.");
         } else {
           setErrorMessage("Your application submission has failed");
         }
@@ -391,6 +393,15 @@ const InCountryTour = ({
             isDisable={true}
             onChange={handleChange}
           />
+          <CustomInput
+            label="Office Order No"
+            type="text"
+            value={formData.office_order}
+            name="office_order"
+            isDisable={data ? (edit ? false : true) : false}
+            onChange={handleChange}
+            error={formErrors?.office_order_error}
+          />
           <CustomFileInput
             label="Relevant Documents"
             name="relevantDocument"
@@ -405,15 +416,6 @@ const InCountryTour = ({
 
       <div className="bg-white px-4">
         <div className="row w-100 ">
-        <CustomInput
-            label="Office Order No" 
-            type="text"
-            value={formData.office_order}
-            name="office_order"
-            isDisable={data ? ( edit ? false:true) : false}
-            onChange={handleChange}
-            error={formErrors?.office_order_error}
-          />
           <div className="col-12 mb-3">
             <label className="form-label">Travel Itinerary</label>
           </div>
