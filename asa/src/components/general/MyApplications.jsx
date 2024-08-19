@@ -75,18 +75,18 @@ const MyApplications = ({
                 </span>
               </p>
               <p className="textsubheading">
-                {application.claim_dsa
-                  ? application.advance_type === "ex_country_tour_advance"
-                    ? `Nu.${application.dsa_amount?.Nu ?? 0}, INR.${
-                        application.dsa_amount?.INR ?? 0
-                      }, USD.${application.dsa_amount?.USD ?? 0}`
-                    : `Nu.${application.dsa_amount?.Nu ?? 0}`
-                  : application.advance_type === "ex_country_tour_advance"
-                  ? `Nu.${application.advance_amount?.Nu ?? 0}, INR.${
-                      application.advance_amount?.INR ?? 0
-                    }, USD.${application.advance_amount?.USD ?? 0}`
-                  : `Nu.${application.amount ?? 0}`}
-              </p>
+  {
+    application.advance_type === "ex_country_tour_advance" 
+      ? `Nu.${application.advance_amount?.Nu ?? 0}, INR.${application.advance_amount?.INR ?? 0}, USD.${application.advance_amount?.USD ?? 0}`
+      : application.advance_type === "in_country_tour_advance" 
+        ? `Nu.${application.advance_amount?.Nu ?? 0}`
+        : application.advance_type === "ex_country_dsa_claim" 
+          ? `Nu.${application.dsa_amount?.Nu ?? 0}, INR.${application.dsa_amount?.INR ?? 0}, USD.${application.dsa_amount?.USD ?? 0}`
+          : application.advance_type === "in_country_dsa_claim" 
+            ? `Nu.${application.dsa_amount?.Nu ?? 0}`
+            : `Nu.${application.amount ?? 0}`
+  }
+</p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
               <p className="textheading">
@@ -135,3 +135,5 @@ const MyApplications = ({
 };
 
 export default MyApplications;
+
+ 
