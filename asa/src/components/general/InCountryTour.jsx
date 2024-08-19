@@ -458,12 +458,12 @@ const InCountryTour = ({
             type="text"
             value={
               isDSA
-                ? data.dsa_amount?.Nu
+                ? data.dsa_amount?.Nu === 0 ? "0.0" : data.dsa_amount?.Nu
                 : data
                 ? edit
-                  ? formData.advanceAmount?.Nu
-                  : data.advance_amount?.Nu
-                : formData.advanceAmount?.Nu
+                  ? formData.advanceAmount?.Nu === 0 ? "0.0" : formData.advanceAmount?.Nu
+                  : data.advance_amount?.Nu === 0 ? "0.0" : data.advance_amount?.Nu
+                : formData.advanceAmount?.Nu === 0 ? "0.0" : formData.advanceAmount?.Nu || 0
             }
             name="advanceAmount"
             isDisable={true}
