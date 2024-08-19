@@ -239,6 +239,12 @@ const DsaClaimForm = (data) => {
               </p>
             </div>
             <div className="d-flex justify-content-between">
+              <p className="formpTag">
+                Advance Ref No: <b> { reportData?.dispatched_ref?.advance_ref}</b>
+              </p>
+            </div>
+            <br />
+            <div className="d-flex justify-content-between">
               <div className="mt-4">
                 <p className="formpTag">{reportData?.user?.name}</p>
                 <p className="formpTag">
