@@ -223,6 +223,7 @@ const InCountryTour = ({
     setFormData((prevFormData) => ({
       ...prevFormData,
       advanceAmount: initialFormData.advanceAmount,
+      advance_percentage: initialFormData.advance_percentage,
       remark: initialFormData.remark,
       files: initialFormData.files,
     }));
