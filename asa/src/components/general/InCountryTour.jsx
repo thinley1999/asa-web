@@ -117,7 +117,7 @@ const InCountryTour = ({
   const validateForm = () => {
     let errors = {};
 
-    if (!formData.files.length) {
+    if (!formData.files.length && !edit) {
       errors.file_error = "Please upload relevant documents.";
     }
 
