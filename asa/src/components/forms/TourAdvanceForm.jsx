@@ -115,8 +115,15 @@ const TourAdvanceForm = (data) => {
           </p>
           <p className="formpTag col-6">Travel Advance Amount:</p>
           <p className="formpTag col-6">
-            Nu.{reportData?.advance_amount?.Nu}, USD.
-            {reportData?.advance_amount?.USD || 0}
+            {reportData?.advance_amount?.Nu
+              ? `Nu. ${reportData.advance_amount.Nu}, `
+              : "0.0"}
+            {reportData?.advance_amount?.USD
+              ? `USD. ${reportData.advance_amount.USD}, `
+              : ""}
+            {reportData?.advance_amount?.INR
+              ? `INR. ${reportData.advance_amount.INR}`
+              : ""}
           </p>
           <div className="col-12">
             <p className="formpTag">
@@ -213,8 +220,17 @@ const TourAdvanceForm = (data) => {
             Payment authorization by Department of Administration and Finance.
           </p>
           <p className="formpTag">
-            Please pay Nu………{reportData?.amount}…………….as per office order No.
-            ....{reportData?.office_order}……
+            Please pay ………
+            {reportData?.advance_amount?.Nu
+              ? `Nu. ${reportData.advance_amount.Nu}, `
+              : "0.0"}
+            {reportData?.advance_amount?.USD
+              ? `USD. ${reportData.advance_amount.USD}, `
+              : ""}
+            {reportData?.advance_amount?.INR
+              ? `INR. ${reportData.advance_amount.INR}, `
+              : ""}
+            …………….as per office order No. ....{reportData?.office_order}……
           </p>
           <p className="formpTag mt-5 text-end">
             {" "}

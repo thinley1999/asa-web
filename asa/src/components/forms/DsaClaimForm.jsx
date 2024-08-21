@@ -213,7 +213,7 @@ const DsaClaimForm = (data) => {
                     <b>TOTAL</b>
                   </td>
                   <td colSpan={2}>
-                    Nu {totalNu}, INR {totalINR}, USD {totalUSD}
+                    {totalNu ? `Nu ${totalNu}` : 'Nu 0.0'} {totalINR ? `,INR ${totalINR}` : ''} {totalUSD ? `,USD ${totalUSD}` : ''}
                   </td>
                   <td colSpan={2}></td>
                   <td colSpan={2}></td>
@@ -224,18 +224,20 @@ const DsaClaimForm = (data) => {
 
           <div>
             <p className="formpTag">
-              Total Claim: Nu {totalNu}, INR {totalINR}, USD {totalUSD}
+              Total Claim: {totalNu ? `Nu ${totalNu}` : 'Nu 0.0'} {totalINR ? `,INR ${totalINR}` : ''} {totalUSD ? `,USD ${totalUSD}` : ''}
             </p>
             <p className="formpTag">
-              Advance: Nu {reportData.advance_amount?.Nu ?? 0}, INR{" "}
-              {reportData.advance_amount?.INR ?? 0}, USD{" "}
-              {reportData.advance_amount?.USD ?? 0}
+              Advance: 
+              {reportData.advance_amount?.Nu ? `Nu ${reportData.advance_amount.Nu}` : 'Nu 0.0'}
+              {reportData.advance_amount?.INR ? `,INR ${reportData.advance_amount.INR}` : ' '}
+              {reportData.advance_amount?.USD ? `,USD ${reportData.advance_amount.USD}` : ' '}
             </p>
             <div className="d-flex justify-content-between">
               <p className="formpTag">
-                Claim/ Refund: Nu {reportData.dsa_amount?.Nu ?? 0}, INR{" "}
-                {reportData.dsa_amount?.INR ?? 0}, USD{" "}
-                {reportData.dsa_amount?.USD ?? 0}
+                Claim/ Refund: 
+                {reportData.dsa_amount?.Nu && reportData.dsa_amount.Nu != 0 ? `Nu ${reportData.dsa_amount.Nu}` : 'Nu 0.0'}
+                {reportData.dsa_amount?.INR && reportData.dsa_amount.INR != 0 ? `,INR ${reportData.dsa_amount.INR}` : ' '}
+                {reportData.dsa_amount?.USD && reportData.dsa_amount.USD != 0 ? `,USD ${reportData.dsa_amount.USD}` : ' '}
               </p>
             </div>
             <div className="d-flex justify-content-between">
