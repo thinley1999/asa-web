@@ -30,7 +30,7 @@ const InCountryTour = ({
     middleName: " - ",
     lastName: " - ",
     date: new Date().toISOString().slice(0, 10),
-    department: "IT Department",
+    department: " ",
     designation: " ",
     advanceAmount: {},
     totalAmount: 0,
@@ -89,11 +89,25 @@ const InCountryTour = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-
+    const keys = name.split('.');
+  
+    setFormData((prevFormData) => {
+      if (keys.length === 1) {
+        return {
+          ...prevFormData,
+          [name]: value,
+        };
+      } else {
+        return {
+          ...prevFormData,
+          [keys[0]]: {
+            ...prevFormData[keys[0]],
+            [keys[1]]: value,
+          },
+        };
+      }
+    });
+  
     setFormErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
@@ -123,6 +137,15 @@ const InCountryTour = ({
 
     if (!formData.office_order) {
       errors.office_order_error = "Please enter office order number.";
+    }
+
+    if (!formData.advanceAmount?.Nu) {
+      errors.advance_amount_error = "Please enter advance amount.";
+    }
+
+    if (formData.advanceAmount?.Nu > formData.totalAmount) {
+      errors.advance_amount_error =
+        "Advance amount cannot be greater than total amount.";
     }
 
     setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
@@ -455,61 +478,33 @@ const InCountryTour = ({
             </button>
           </div>
           <CustomInput
-            label="Total Amount (Nu)"
+            label="Advance Amount (Nu)"
             type="text"
             value={
               isDSA
-                ? data.dsa_amount?.Nu === 0 ? "0.0" : data.dsa_amount?.Nu
+                ? data.dsa_amount?.Nu
                 : data
                 ? edit
-                  ? formData.advanceAmount?.Nu === 0 ? "0.0" : formData.advanceAmount?.Nu
-                  : data.advance_amount?.Nu === 0 ? "0.0" : data.advance_amount?.Nu
-                : formData.advanceAmount?.Nu === 0 ? "0.0" : formData.advanceAmount?.Nu || 0
+                  ? formData.advanceAmount?.Nu
+                  : data.advance_amount?.Nu
+                : formData.advanceAmount?.Nu
             }
-            name="advanceAmount"
+            name="advanceAmount.Nu"
+            isDisable={data ? (edit ? false : true) : false}
+            onChange={handleChange}
+            error={formErrors?.advance_amount_error}
+          />
+          <CustomInput
+            label="Total Amount (Nu)"
+            type="text"
+            value={formData.totalAmount}
+            name="totalAmount"
             isDisable={true}
             onChange={handleChange}
           />
 
           {!isDSA && (
             <>
-              <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-                <label className="form-label">Claim Advance</label>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    name="advance_percentage"
-                    checked={
-                      parseFloat(formData.advance_percentage) === 1.0
-                        ? true
-                        : false
-                    }
-                    onChange={handleChange}
-                    value={1.0}
-                    disabled={data ? (edit ? false : true) : false}
-                  />
-                  <label className="form-check-label">Request Advance</label>
-                </div>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    name="advance_percentage"
-                    checked={
-                      parseFloat(formData.advance_percentage) === 0
-                        ? true
-                        : false
-                    }
-                    onChange={handleChange}
-                    value={0}
-                    disabled={data ? (edit ? false : true) : false}
-                  />
-                  <label className="form-check-label">
-                    Claim DSA after tour
-                  </label>
-                </div>
-              </div>
               <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
                 <label className="form-label">Remarks</label>
                 <textarea

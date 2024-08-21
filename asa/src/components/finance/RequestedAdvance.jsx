@@ -51,7 +51,9 @@ const RequestedAdvance = () => {
       name: "Advance Type",
       selector: (row) => (
         <div className="tabledetails">
-          <p className="dataheading p-0 m-0">{advance_type[row.advance_type]}</p>
+          <p className="dataheading p-0 m-0">
+            {advance_type[row.advance_type]}
+          </p>
         </div>
       ),
     },
@@ -64,7 +66,9 @@ const RequestedAdvance = () => {
               ? `${row.advance_amount?.Nu ?? 0}, ${
                   row.advance_amount?.INR ?? 0
                 }, ${row.advance_amount?.USD ?? 0}`
-              : row.amount}
+              : row.advance_type === "in_country_tour_advance"
+              ? `${row.advance_amount?.Nu ?? 0}`
+              : `${row.amount}`}
           </p>
           <p className="datasubheading p-0 m-0 text-end">
             {row.advance_type === "ex_country_tour_advance"
@@ -79,14 +83,15 @@ const RequestedAdvance = () => {
       selector: (row) => (
         <div>
           <span className="datasubheading">
-            <FaEye size={20}/>{" "}
+            <FaEye size={20} />{" "}
             <a href={`/viewRequestedAdvance/${row.id}`}>View</a>
-          </span> {"  "}
+          </span>{" "}
+          {"  "}
           {row.status === "pending" && (
-             <span className="datasubheading">
-             <MdEdit size={20}/>
-             <a href={`/editRequestedAdvance/${row.id}`}>Edit</a>
-           </span>
+            <span className="datasubheading">
+              <MdEdit size={20} />
+              <a href={`/editRequestedAdvance/${row.id}`}>Edit</a>
+            </span>
           )}
         </div>
       ),
