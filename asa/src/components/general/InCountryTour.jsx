@@ -245,7 +245,7 @@ const InCountryTour = ({
   const haltCount = () => {
     let count = 0;
     for (let i = 0; i < rows.length; i++) {
-      if (rows[i].halt_at) {
+      if (rows[i].stop_at) {
         count++;
       }
     }
@@ -260,11 +260,11 @@ const InCountryTour = ({
     const dataToCheck = editData || newData;
     const currentHaltCount = haltCount();
 
-    if (dataToCheck.halt_at && currentHaltCount >= 2) {
+    if (dataToCheck.stop_at && currentHaltCount >= 2) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
         itinerary_error:
-          "Travel itinerary dates are not valid. User can only add 2 halts.",
+          "Travel itinerary dates are not valid. User can only add 2 stop over.",
       }));
     } else {
       if (editData) {
