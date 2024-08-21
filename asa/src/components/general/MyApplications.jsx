@@ -75,18 +75,20 @@ const MyApplications = ({
                 </span>
               </p>
               <p className="textsubheading">
-  {
-    application.advance_type === "ex_country_tour_advance" 
-      ? `Nu.${application.advance_amount?.Nu ?? 0}, INR.${application.advance_amount?.INR ?? 0}, USD.${application.advance_amount?.USD ?? 0}`
-      : application.advance_type === "in_country_tour_advance" 
-        ? `Nu.${application.advance_amount?.Nu ?? 0}`
-        : application.advance_type === "ex_country_dsa_claim" 
-          ? `Nu.${application.dsa_amount?.Nu ?? 0}, INR.${application.dsa_amount?.INR ?? 0}, USD.${application.dsa_amount?.USD ?? 0}`
-          : application.advance_type === "in_country_dsa_claim" 
-            ? `Nu.${application.dsa_amount?.Nu ?? 0}`
-            : `Nu.${application.amount ?? 0}`
-  }
-</p>
+                {application.advance_type === "ex_country_tour_advance"
+                  ? `Nu.${application.advance_amount?.Nu ?? 0}, INR.${
+                      application.advance_amount?.INR ?? 0
+                    }, USD.${application.advance_amount?.USD ?? 0}`
+                  : application.advance_type === "in_country_tour_advance"
+                  ? `Nu.${application.advance_amount?.Nu ?? 0}`
+                  : application.advance_type === "ex_country_dsa_claim"
+                  ? `Nu.${application.dsa_amount?.Nu ?? 0}, INR.${
+                      application.dsa_amount?.INR ?? 0
+                    }, USD.${application.dsa_amount?.USD ?? 0}`
+                  : application.advance_type === "in_country_dsa_claim"
+                  ? `Nu.${application.dsa_amount?.Nu ?? 0}`
+                  : `Nu.${application.amount ?? 0}`}
+              </p>
             </div>
             <div className="details py-1 col-lg-2 col-xl-2 col-md-4 col-6">
               <p className="textheading">
@@ -116,10 +118,12 @@ const MyApplications = ({
                 View Details
               </a>
               {application.status === "dispatched" &&
-                application.claim_dsa != true &&
-                (application.advance_percentage == 1.0
-                  ? application.advance_type == "ex_country_tour_advance"
-                  : application.advance_percentage == 0.0) && (
+                application.claim_dsa !== true &&
+                ((application.advance_type === "ex_country_tour_advance" &&
+                  application.advance_percentage === 1.0) ||
+                  (application.advance_type === "in_country_tour_advance" &&
+                    application.amount >
+                    parseInt(application.advance_amount?.Nu ?? 0))) && (
                   <a
                     className="btn btn-outline-success mt-1 btn-fixed-width"
                     onClick={() => handleDSAClaim(application.id)}
@@ -135,5 +139,3 @@ const MyApplications = ({
 };
 
 export default MyApplications;
-
- 

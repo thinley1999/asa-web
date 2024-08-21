@@ -61,7 +61,6 @@ const InCountryTour = ({
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      advanceAmount: { Nu: total * formData.advance_percentage },
       totalAmount: total,
     }));
   };
@@ -478,7 +477,7 @@ const InCountryTour = ({
             </button>
           </div>
           <CustomInput
-            label="Advance Amount (Nu)"
+            label={isDSA ? "DSA Amount (Nu)" : "Advance Amount (Nu)"}
             type="text"
             value={
               isDSA

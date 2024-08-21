@@ -63,7 +63,7 @@ const DsaClaim = () => {
     const isExCountryAdvance = advance?.advance_type === "ex_country_tour_advance";
 
     setDsaAmount({
-      Nu: isExCountryAdvance ? Nu.toFixed(2) : (Nu * (1 - advancePercentage)).toFixed(2),
+      Nu: isExCountryAdvance ? Nu.toFixed(2) : (Nu - (advance?.advance_amount?.Nu)).toFixed(2),
       INR: (INR * (1 - advancePercentage)).toFixed(2),
       USD: (USD * (1 - advancePercentage)).toFixed(2),
     });
