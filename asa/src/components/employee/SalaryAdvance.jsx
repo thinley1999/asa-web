@@ -24,6 +24,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     duration: 0,
     deduction: 0.0,
     purpose: " ",
+    username: " ",
     advance_type: "salary_advance",
     completion_month: "june 2023",
   };
@@ -72,6 +73,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       designation: user.position_title || prevFormData.designation,
       thresholdAmount: user.net_pay * 2 || prevFormData.thresholdAmount,
       department: user.department_name || prevFormData.department,
+      username: user.username || prevFormData.username,
     }));
   };
 
@@ -239,6 +241,14 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               type="text"
               value={formData.lastName}
               name="lastName"
+              isDisable={true}
+              onChange={handleChange}
+            />
+            <CustomInput
+              label="Employee ID"
+              type="text"
+              value={formData.username}
+              name="username"
               isDisable={true}
               onChange={handleChange}
             />
