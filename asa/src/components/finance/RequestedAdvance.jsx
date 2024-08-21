@@ -118,6 +118,7 @@ const RequestedAdvance = () => {
     confirmed: true,
     dispatched: true,
     rejected: true,
+    closed: true,
   };
 
   const [statusState, setStatusState] = useState(initialStatusState);
