@@ -72,12 +72,7 @@ const TourAdvanceForm = (data) => {
             justifyContent: "center",
           }}
         >
-          <img
-            src={headerimage}
-            className="headerimage"
-            alt="Header"
-            style={{ opacity: "40%" }}
-          />
+          <img src={headerimage} className="headerimage" alt="Header" />
         </div>
         <h6 className="text-center">
           <b>

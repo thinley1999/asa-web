@@ -87,12 +87,7 @@ const DsaClaimForm = (data) => {
             }}
           >
             {" "}
-            <img
-              src={headerimage}
-              className="headerimage"
-              alt="Header"
-              style={{ opacity: "40%" }}
-            />
+            <img src={headerimage} className="headerimage" alt="Header" />
           </div>
 
           <h6 className="text-center">
@@ -213,7 +208,9 @@ const DsaClaimForm = (data) => {
                     <b>TOTAL</b>
                   </td>
                   <td colSpan={2}>
-                    {totalNu ? `Nu ${totalNu}` : 'Nu 0.0'} {totalINR ? `,INR ${totalINR}` : ''} {totalUSD ? `,USD ${totalUSD}` : ''}
+                    {totalNu ? `Nu ${totalNu}` : "Nu 0.0"}{" "}
+                    {totalINR ? `,INR ${totalINR}` : ""}{" "}
+                    {totalUSD ? `,USD ${totalUSD}` : ""}
                   </td>
                   <td colSpan={2}></td>
                   <td colSpan={2}></td>
@@ -224,25 +221,40 @@ const DsaClaimForm = (data) => {
 
           <div>
             <p className="formpTag">
-              Total Claim: {totalNu ? `Nu ${totalNu}` : 'Nu 0.0'} {totalINR ? `,INR ${totalINR}` : ''} {totalUSD ? `,USD ${totalUSD}` : ''}
+              Total Claim: {totalNu ? `Nu ${totalNu}` : "Nu 0.0"}{" "}
+              {totalINR ? `,INR ${totalINR}` : ""}{" "}
+              {totalUSD ? `,USD ${totalUSD}` : ""}
             </p>
             <p className="formpTag">
-              Advance: 
-              {reportData.advance_amount?.Nu ? `Nu ${reportData.advance_amount.Nu}` : 'Nu 0.0'}
-              {reportData.advance_amount?.INR ? `,INR ${reportData.advance_amount.INR}` : ' '}
-              {reportData.advance_amount?.USD ? `,USD ${reportData.advance_amount.USD}` : ' '}
+              Advance:
+              {reportData.advance_amount?.Nu
+                ? `Nu ${reportData.advance_amount.Nu}`
+                : "Nu 0.0"}
+              {reportData.advance_amount?.INR
+                ? `,INR ${reportData.advance_amount.INR}`
+                : " "}
+              {reportData.advance_amount?.USD
+                ? `,USD ${reportData.advance_amount.USD}`
+                : " "}
             </p>
             <div className="d-flex justify-content-between">
               <p className="formpTag">
-                Claim/ Refund: 
-                {reportData.dsa_amount?.Nu && reportData.dsa_amount.Nu != 0 ? `Nu ${reportData.dsa_amount.Nu}` : 'Nu 0.0'}
-                {reportData.dsa_amount?.INR && reportData.dsa_amount.INR != 0 ? `,INR ${reportData.dsa_amount.INR}` : ' '}
-                {reportData.dsa_amount?.USD && reportData.dsa_amount.USD != 0 ? `,USD ${reportData.dsa_amount.USD}` : ' '}
+                Claim/ Refund:
+                {reportData.dsa_amount?.Nu && reportData.dsa_amount.Nu != 0
+                  ? `Nu ${reportData.dsa_amount.Nu}`
+                  : "Nu 0.0"}
+                {reportData.dsa_amount?.INR && reportData.dsa_amount.INR != 0
+                  ? `,INR ${reportData.dsa_amount.INR}`
+                  : " "}
+                {reportData.dsa_amount?.USD && reportData.dsa_amount.USD != 0
+                  ? `,USD ${reportData.dsa_amount.USD}`
+                  : " "}
               </p>
             </div>
             <div className="d-flex justify-content-between">
               <p className="formpTag">
-                Advance Ref No: <b> { reportData?.dispatched_ref?.advance_ref}</b>
+                Advance Ref No:{" "}
+                <b> {reportData?.dispatched_ref?.advance_ref}</b>
               </p>
             </div>
             <br />
