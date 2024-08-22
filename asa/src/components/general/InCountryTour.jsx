@@ -88,8 +88,8 @@ const InCountryTour = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const keys = name.split('.');
-  
+    const keys = name.split(".");
+
     setFormData((prevFormData) => {
       if (keys.length === 1) {
         return {
@@ -106,11 +106,20 @@ const InCountryTour = ({
         };
       }
     });
-  
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
+
+    setFormErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+
+      if (name === "office_order") {
+        delete newErrors.office_order_error;
+      }
+
+      if (name === "advanceAmount.Nu") {
+        delete newErrors.advance_amount_error;
+      }
+
+      return newErrors;
+    });
   };
 
   const fetchUserDetails = async () => {

@@ -12,7 +12,7 @@ const TravelDetails = ({
   initialData,
   type,
   haltCount,
-  edit
+  edit,
 }) => {
   const [haltChecked, setHaltChecked] = useState(
     existingData?.halt_at || initialData?.halt_at ? true : false
@@ -46,12 +46,16 @@ const TravelDetails = ({
 
   const formatDateForInput = (date) => {
     if (!date) return "";
+
     const d = new Date(date);
-    const year = d.getFullYear();
-    const month = ("0" + (d.getMonth() + 1)).slice(-2);
-    const day = ("0" + d.getDate()).slice(-2);
-    const hours = ("0" + d.getHours()).slice(-2);
-    const minutes = ("0" + d.getMinutes()).slice(-2);
+
+    // Use UTC methods to get the date and time components
+    const year = d.getUTCFullYear();
+    const month = ("0" + (d.getUTCMonth() + 1)).slice(-2);
+    const day = ("0" + d.getUTCDate()).slice(-2);
+    const hours = ("0" + d.getUTCHours()).slice(-2);
+    const minutes = ("0" + d.getUTCMinutes()).slice(-2);
+
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
@@ -192,7 +196,7 @@ const TravelDetails = ({
         } else if (halt_at) {
           if (halt_at == "India" || halt_at == "Bhutan") {
             response = await RateServices.getRate("Other", halt_at);
-          }else{
+          } else {
             response = await RateServices.getThirdCountryRate(halt_at);
           }
         } else {
@@ -305,7 +309,7 @@ const TravelDetails = ({
                       : data.start_date
                   }
                   onChange={handleChange}
-                  disabled={existingData ? ( edit ? false:true) : false}
+                  disabled={existingData ? (edit ? false : true) : false}
                 />
                 {errors.start_date && (
                   <div className="text-danger">{errors.start_date}</div>
@@ -325,7 +329,7 @@ const TravelDetails = ({
                       : data.end_date
                   }
                   onChange={handleChange}
-                  disabled={existingData ? ( edit ? false:true) : false}
+                  disabled={existingData ? (edit ? false : true) : false}
                 />
                 {errors.end_date && (
                   <div className="text-danger">{errors.end_date}</div>
@@ -338,7 +342,7 @@ const TravelDetails = ({
                     type="checkbox"
                     name="halt"
                     checked={haltChecked}
-                    disabled={existingData ? ( edit ? false:true) : false}
+                    disabled={existingData ? (edit ? false : true) : false}
                     onChange={(e) => {
                       handleChange(e);
                       setHaltChecked(e.target.checked);
@@ -363,7 +367,7 @@ const TravelDetails = ({
                     type="checkbox"
                     name="return"
                     checked={returnChecked}
-                    disabled={existingData ? ( edit ? false:true) : false}
+                    disabled={existingData ? (edit ? false : true) : false}
                     onChange={(e) => {
                       handleChange(e);
                       setReturnChecked(e.target.checked);
@@ -384,7 +388,7 @@ const TravelDetails = ({
                       type="checkbox"
                       name="stop_at"
                       checked={stopChecked}
-                      disabled={existingData ? ( edit ? false:true) : false}
+                      disabled={existingData ? (edit ? false : true) : false}
                       onChange={(e) => {
                         handleChange(e);
                         setStopChecked(e.target.checked);
@@ -413,7 +417,9 @@ const TravelDetails = ({
                   value={data.from}
                   onChange={handleChange}
                   disabled={
-                    (haltChecked || stopChecked) || (existingData && !edit) ? true : false
+                    haltChecked || stopChecked || (existingData && !edit)
+                      ? true
+                      : false
                   }
                 >
                   <option value="" disabled>
@@ -437,7 +443,9 @@ const TravelDetails = ({
                   value={data.to}
                   onChange={handleChange}
                   disabled={
-                    (haltChecked || stopChecked) || (existingData && !edit) ? true : false
+                    haltChecked || stopChecked || (existingData && !edit)
+                      ? true
+                      : false
                   }
                 >
                   <option value="" disabled>
@@ -458,7 +466,9 @@ const TravelDetails = ({
                   name="mode"
                   value={data.mode}
                   disabled={
-                    (haltChecked || stopChecked) || (existingData && !edit) ? true : false
+                    haltChecked || stopChecked || (existingData && !edit)
+                      ? true
+                      : false
                   }
                   onChange={(e) => {
                     handleChange(e);
@@ -485,7 +495,9 @@ const TravelDetails = ({
                   name="mileage"
                   type="number"
                   isDisable={
-                    (data.mode !== "Private Vehicle" || (existingData && !edit)) ? true : false
+                    data.mode !== "Private Vehicle" || (existingData && !edit)
+                      ? true
+                      : false
                   }
                   value={data.mileage}
                   onChange={handleChange}
@@ -569,7 +581,7 @@ const TravelDetails = ({
                   }`}
                   name="dsa_percentage"
                   value={data.dsa_percentage}
-                  disabled={existingData ? ( edit ? false:true) : false}
+                  disabled={existingData ? (edit ? false : true) : false}
                   onChange={(e) => {
                     handleChange(e);
                     setMode(e.target.value);

@@ -5,7 +5,13 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
 import { convertToDateTime } from "../utils/dateTime";
 
-const TravelDetailsTable = ({ existingData, data, removeRow, editRow, edit }) => {
+const TravelDetailsTable = ({
+  existingData,
+  data,
+  removeRow,
+  editRow,
+  edit,
+}) => {
   const customStyles = {
     headRow: {
       style: {
@@ -47,10 +53,10 @@ const TravelDetailsTable = ({ existingData, data, removeRow, editRow, edit }) =>
       name: "To",
       selector: (row) => row.to,
     },
-    {
-      name: "Mode",
-      selector: (row) => row.mode,
-    },
+    // {
+    //   name: "Mode",
+    //   selector: (row) => row.mode,
+    // },
     {
       name: "Total Amount",
       selector: (row) => row.rate,
@@ -66,7 +72,7 @@ const TravelDetailsTable = ({ existingData, data, removeRow, editRow, edit }) =>
                 className="btn btn-warning preview-btn p-0 ms-2 "
                 onClick={() => editRow(row)}
               >
-                <FaEye size={16} /> { }
+                <FaEye size={16} /> {}
                 <span style={{ fontSize: "13px" }}>Preview</span>
               </button>
             ) : (
@@ -95,7 +101,11 @@ const TravelDetailsTable = ({ existingData, data, removeRow, editRow, edit }) =>
 
   return (
     <div className="row w-100 mb-3">
-      <DataTable columns={columns} data={existingData ? (edit ? data : existingData) : data} customStyles={customStyles} />
+      <DataTable
+        columns={columns}
+        data={existingData ? (edit ? data : existingData) : data}
+        customStyles={customStyles}
+      />
     </div>
   );
 };
