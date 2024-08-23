@@ -461,6 +461,7 @@ const InCountryTour = ({
               type="inCountry"
               haltCount={haltCount}
               edit={edit}
+              username={user.username}
             />
           )}
           <TravelDetailsTable

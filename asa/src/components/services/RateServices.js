@@ -3,13 +3,14 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_APP_BACKEND_URL;
 const token = localStorage.getItem("token");
 
-const getRate = async (from, to) => {
+const getRate = async (from, to, username) => {
     try {
       const response = await axios.get(`${API_URL}/api/rates`, {
         params: {
             rate: {
                 from: from,
-                to: to
+                to: to,
+                username: username
             }
         },
         headers: {

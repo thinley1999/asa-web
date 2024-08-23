@@ -13,6 +13,7 @@ const TravelDetails = ({
   type,
   haltCount,
   edit,
+  username,
 }) => {
   const [haltChecked, setHaltChecked] = useState(
     existingData?.halt_at || initialData?.halt_at ? true : false
@@ -172,7 +173,7 @@ const TravelDetails = ({
     try {
       let response;
       if (tourType === "inCountry") {
-        response = await RateServices.getRate(from, to);
+        response = await RateServices.getRate(from, to, edit ? username : "");
         if (mode === "Private Vehicle") {
           return {
             rate: 16 * mileage + dsaPercentage * days * response.rate,
@@ -196,17 +197,17 @@ const TravelDetails = ({
           (from === "India" && to === "India") ||
           (from === "Bhutan" && to === "Bhutan")
         ) {
-          response = await RateServices.getRate(from, to);
+          response = await RateServices.getRate(from, to, edit ? username : "");
         } else if (
           (from === "Bhutan" && to === "India") ||
           (from === "India" && to === "Bhutan")
         ) {
-          response = await RateServices.getRate("Other", to);
+          response = await RateServices.getRate("Other", to, edit ? username : "");
         } else if (
           (from != "India" && to === "Bhutan") ||
           (from != "India" && to === "India")
         ) {
-          response = await RateServices.getRate("Other", to);
+          response = await RateServices.getRate("Other", to, edit ? username : "");
         } else if (halt_at) {
           if (halt_at == "India" || halt_at == "Bhutan") {
             response = await RateServices.getRate("Other", halt_at);
