@@ -8,6 +8,8 @@ import { FaFileInvoiceDollar } from "react-icons/fa6";
 import { PiPiggyBankFill } from "react-icons/pi";
 import AdvanceServices from "../services/AdvanceServices";
 import LoginoutMessage from "../general/LoginoutMessage";
+import { FaCartShopping } from "react-icons/fa6";
+import { FaFolderClosed } from "react-icons/fa6";
 
 const FinanceDashboard = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -255,6 +257,72 @@ const FinanceDashboard = () => {
           <div className="card pt-3 pe-2 mb-2 pb-4">
             <div className="d-flex justify-content-between">
               <div className="ms-3">
+                <h6 className="mb-0 c-details">Confirmed Application</h6>
+              </div>
+              <div className="dashboardicon4">
+                <PiPiggyBankFill size={18} />
+              </div>
+            </div>
+            <div className="text-center">
+              <h1 className="cardheading">
+                {statusCount &&
+                statusCount.status_count &&
+                statusCount.status_count.confirmed
+                  ? statusCount.status_count.confirmed
+                  : 0}
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+          <div className="card pt-3 pe-2 mb-2 pb-4">
+            <div className="d-flex justify-content-between">
+              <div className="ms-3">
+                <h6 className="mb-0 c-details">Dispatched Application</h6>
+              </div>
+              <div className="dashboardicon5">
+                <FaCartShopping size={18} />
+              </div>
+            </div>
+            <div className="text-center">
+              <h1 className="cardheading">
+                {statusCount &&
+                statusCount.status_count &&
+                statusCount.status_count.dispatched
+                  ? statusCount.status_count.dispatched
+                  : 0}
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+          <div className="card pt-3 pe-2 mb-2 pb-4">
+            <div className="d-flex justify-content-between">
+              <div className="ms-3">
+                <h6 className="mb-0 c-details">Closed Application</h6>
+              </div>
+              <div className="dashboardicon6">
+                <FaFolderClosed size={18} />
+              </div>
+            </div>
+            <div className="text-center">
+              <h1 className="cardheading">
+                {statusCount &&
+                statusCount.status_count &&
+                statusCount.status_count.closed
+                  ? statusCount.status_count.closed
+                  : 0}
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+          <div className="card pt-3 pe-2 mb-2 pb-4">
+            <div className="d-flex justify-content-between">
+              <div className="ms-3">
                 <h6 className="mb-0 c-details">Rejected Application</h6>
               </div>
               <div className="dashboardicon3">
@@ -267,28 +335,6 @@ const FinanceDashboard = () => {
                 statusCount.status_count &&
                 statusCount.status_count.rejected
                   ? statusCount.status_count.rejected
-                  : 0}
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-          <div className="card pt-3 pe-2 mb-2 pb-4">
-            <div className="d-flex justify-content-between">
-              <div className="ms-3">
-                <h6 className="mb-0 c-details">Approved Application</h6>
-              </div>
-              <div className="dashboardicon4">
-                <PiPiggyBankFill size={18} />
-              </div>
-            </div>
-            <div className="text-center">
-              <h1 className="cardheading">
-                {statusCount &&
-                statusCount.status_count &&
-                statusCount.status_count.confirmed
-                  ? statusCount.status_count.confirmed
                   : 0}
               </h1>
             </div>
