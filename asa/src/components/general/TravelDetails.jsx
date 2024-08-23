@@ -20,7 +20,7 @@ const TravelDetails = ({
   const [stopChecked, setStopChecked] = useState(
     existingData?.stop_at || initialData?.stop_at ? true : false
   );
-  const [returnChecked, setReturnChecked] = useState(false);
+  const [returnChecked, setReturnChecked] = useState(initialData?.return);
   const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([]);
@@ -40,6 +40,7 @@ const TravelDetails = ({
       dsa_percentage: "",
       days: "",
       stop_at: "",
+      return: false,
     }
   );
   const halt_count = haltCount();
@@ -366,6 +367,7 @@ const TravelDetails = ({
                           to: "",
                           stop_at: "",
                           mode: "",
+                          return: false,
                         }));
                         setReturnChecked(false);
                         setStopChecked(false);
@@ -379,15 +381,17 @@ const TravelDetails = ({
                     className="form-check-input"
                     type="checkbox"
                     name="return"
-                    checked={returnChecked}
+                    checked={ data.return }
                     disabled={existingData ? (edit ? false : true) : false}
                     onChange={(e) => {
-                      handleChange(e);
-                      setReturnChecked(e.target.checked);
-                      if (e.target.checked) {
-                        setHaltChecked(false);
-                        setStopChecked(false);
-                      }
+                      setData((prevData) => ({
+                        ...prevData,
+                        halt_at: "",
+                        stop_at: "",
+                        return: !prevData.return,
+                      }));
+                      setHaltChecked(false);
+                      setStopChecked(false);
                     }}
                   />
                   <label className="form-check-label">
@@ -412,6 +416,7 @@ const TravelDetails = ({
                             to: "",
                             halt_at: "",
                             mode: "",
+                            return: false,
                           }));
                           setHaltChecked(false);
                           setReturnChecked(false);
@@ -534,7 +539,9 @@ const TravelDetails = ({
                     errors.halt_at ? "is-invalid" : ""
                   }`}
                   name="halt_at"
-                  disabled={haltChecked ? false : true}
+                  disabled={ haltChecked  && !data.return 
+                    ? false
+                    : true}
                   value={data.halt_at}
                   onChange={(e) => {
                     handleChange(e);
@@ -563,7 +570,9 @@ const TravelDetails = ({
                       errors.stop_at ? "is-invalid" : ""
                     }`}
                     name="stop_at"
-                    disabled={stopChecked ? false : true}
+                    disabled={ stopChecked  && !data.return
+                      ? false
+                      : true}
                     value={data.stop_at}
                     onChange={(e) => {
                       handleChange(e);
