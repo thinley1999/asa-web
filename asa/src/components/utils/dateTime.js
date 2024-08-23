@@ -1,5 +1,18 @@
 export const convertToDateTime = (dateTimeString) => {
-  const date = new Date(dateTimeString);
+  // Parse the date-time string
+  let date;
+  if (dateTimeString.endsWith("Z")) {
+    // If the date-time string ends with "Z", it's in UTC time
+    date = new Date(dateTimeString);
+  } else {
+    // If there's no "Z", treat the time as local time
+    date = new Date(dateTimeString + "Z");
+  }
+
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
 
   // Extract date components
   const day = ("0" + date.getUTCDate()).slice(-2);
