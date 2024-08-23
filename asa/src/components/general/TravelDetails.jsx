@@ -539,7 +539,7 @@ const TravelDetails = ({
                     errors.halt_at ? "is-invalid" : ""
                   }`}
                   name="halt_at"
-                  disabled={ haltChecked  && !data.return && edit
+                  disabled={ haltChecked  && !data.return 
                     ? false
                     : true}
                   value={data.halt_at}
@@ -570,7 +570,7 @@ const TravelDetails = ({
                       errors.stop_at ? "is-invalid" : ""
                     }`}
                     name="stop_at"
-                    disabled={ stopChecked  && !data.return && edit
+                    disabled={ stopChecked  && !data.return
                       ? false
                       : true}
                     value={data.stop_at}
