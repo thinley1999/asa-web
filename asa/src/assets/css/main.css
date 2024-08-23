@@ -507,6 +507,30 @@ a:hoover {
   font-size: 15px;
 }
 
+.dashboardicon5 {
+  width: 40px;
+  height: 40px;
+  color: #adb5bd;
+  background-color: #dee2e6;
+  border-radius: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.dashboardicon6 {
+  width: 40px;
+  height: 40px;
+  color: #dc3545;
+  background-color: #fdf5f6;
+  border-radius: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
 .bargraph {
   height: 10rem;
 }
