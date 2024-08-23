@@ -48,7 +48,20 @@ const TravelDetails = ({
   const formatDateForInput = (date) => {
     if (!date) return "";
 
-    const d = new Date(date);
+    // Parse the date-time string
+    let d;
+    if (typeof date === "string" && date.endsWith("Z")) {
+      // If the date-time string ends with "Z", it's in UTC time
+      d = new Date(date);
+    } else {
+      // If there's no "Z", treat the time as local time
+      d = new Date(date + "Z");
+    }
+
+    // Check if the date is valid
+    if (isNaN(d.getTime())) {
+      return "";
+    }
 
     // Use UTC methods to get the date and time components
     const year = d.getUTCFullYear();
