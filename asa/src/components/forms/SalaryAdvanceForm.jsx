@@ -246,7 +246,7 @@ const SalaryAdvanceForm = ({ data, type }) => {
           </p>
           <p className="formpTag">
             <p>{reportData?.confirmed_by?.name}</p>
-            <b>(Director, DAF)</b>
+            <b>(reportData?.confirmed_by?.role_name)</b>
           </p>
         </div>
       </div>

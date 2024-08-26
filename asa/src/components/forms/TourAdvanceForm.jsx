@@ -230,7 +230,7 @@ const TourAdvanceForm = (data) => {
           <p className="formpTag mt-5 text-end">
             {" "}
             <p>{reportData?.confirmed_by?.name || "N/A"}</p>{" "}
-            <b>(Director, DAF)</b>
+            <b>( {reportData?.confirmed_by?.role_name} )</b>
           </p>
         </div>
       </div>

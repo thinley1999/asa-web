@@ -279,7 +279,7 @@ const DsaClaimForm = (data) => {
                   {reportData?.confirmed_by?.name || "N/A"}
                 </p>
                 <p className="formpTag">
-                  <b>(Director, DAF)</b>
+                  <b>({reportData?.confirmed_by?.role_name})</b>
                 </p>
               </div>
             </div>
