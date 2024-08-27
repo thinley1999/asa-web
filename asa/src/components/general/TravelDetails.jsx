@@ -202,12 +202,20 @@ const TravelDetails = ({
           (from === "Bhutan" && to === "India") ||
           (from === "India" && to === "Bhutan")
         ) {
-          response = await RateServices.getRate("Other", to, edit ? username : "");
+          response = await RateServices.getRate(
+            "Other",
+            to,
+            edit ? username : ""
+          );
         } else if (
           (from != "India" && to === "Bhutan") ||
           (from != "India" && to === "India")
         ) {
-          response = await RateServices.getRate("Other", to, edit ? username : "");
+          response = await RateServices.getRate(
+            "Other",
+            to,
+            edit ? username : ""
+          );
         } else if (halt_at) {
           if (halt_at == "India" || halt_at == "Bhutan") {
             response = await RateServices.getRate("Other", halt_at);
@@ -382,7 +390,7 @@ const TravelDetails = ({
                     className="form-check-input"
                     type="checkbox"
                     name="return"
-                    checked={ data.return }
+                    checked={data.return}
                     disabled={existingData ? (edit ? false : true) : false}
                     onChange={(e) => {
                       setData((prevData) => ({
@@ -540,9 +548,7 @@ const TravelDetails = ({
                     errors.halt_at ? "is-invalid" : ""
                   }`}
                   name="halt_at"
-                  disabled={ haltChecked  && !data.return 
-                    ? false
-                    : true}
+                  disabled={haltChecked && !data.return ? false : true}
                   value={data.halt_at}
                   onChange={(e) => {
                     handleChange(e);
@@ -571,9 +577,7 @@ const TravelDetails = ({
                       errors.stop_at ? "is-invalid" : ""
                     }`}
                     name="stop_at"
-                    disabled={ stopChecked  && !data.return
-                      ? false
-                      : true}
+                    disabled={stopChecked && !data.return ? false : true}
                     value={data.stop_at}
                     onChange={(e) => {
                       handleChange(e);
