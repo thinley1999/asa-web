@@ -17,7 +17,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     middleName: " - ",
     lastName: "- ",
     date: new Date().toISOString().slice(0, 10),
-    department: "IT Department",
+    department: "",
     designation: " ",
     totalAmount: 0,
     thresholdAmount: " ",

@@ -485,7 +485,7 @@ const InCountryTour = ({
             removeFile={removeFile}
             removeUpdateFile={removeUpdateFile}
             error={formErrors.file_error}
-            data={data.files}
+            data={data?.files}
             isEditMode={edit}
             updateFile={formData.update_files}
           />

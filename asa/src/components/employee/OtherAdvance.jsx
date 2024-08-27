@@ -28,6 +28,8 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     other_advance_type: "",
     advance_type: "other_advance",
     files: [],
+    update_files: [],
+    delete_files: [],
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -35,10 +37,17 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const handleFileChange = (event) => {
     const newFiles = Array.from(event.target.files);
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      files: [...prevFormData.files, ...newFiles],
-    }));
+    if (!editData) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        files: [...prevFormData.files, ...newFiles],
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        update_files: [...prevFormData.update_files, ...newFiles],
+      }));
+    }
 
     setFormErrors((prevErrors) => {
       const newErrors = { ...prevErrors };
@@ -50,15 +59,18 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   };
 
   const removeFile = (indexToRemove) => {
-    setFormData((prevFormData) => {
-      const updatedFiles = prevFormData.files.filter(
-        (_, index) => index !== indexToRemove
-      );
-      return {
+    if (!editData) {
+      setFormData((prevFormData) => ({
         ...prevFormData,
-        files: updatedFiles,
-      };
-    });
+        files: prevFormData.files.filter((_, index) => index !== indexToRemove),
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        files: prevFormData.files.filter((file) => file.id !== indexToRemove),
+        delete_files: [...prevFormData.delete_files, indexToRemove],
+      }));
+    }
 
     setFormErrors((prevErrors) => {
       const newErrors = { ...prevErrors };
@@ -69,6 +81,13 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       }
       return newErrors;
     });
+  };
+
+  const removeUpdateFile = (indexToRemove) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      update_files: prevFormData.update_files.filter((_, index) => index !== indexToRemove),
+    }));
   };
 
   const fetchUserDetails = async () => {
@@ -175,10 +194,25 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     if (validateForm()) {
       try {
         const response = await AdvanceServices.update(data.id, formData);
+
+        const fileResponse = await FileServices.create(
+          response.id,
+          formData.update_files
+        );
+
+        const fileDeleteResponse = await FileServices.deleteFile(
+          response.id,
+          formData.delete_files
+        );
      
         if (response) {
           setSuccessMessage("Advance Updated successfully");
-          resetForm();
+          setFormData(
+            (prevFormData) => ({
+              ...prevFormData,
+              delete_files: initialFormData.delete_files,
+            }),
+          );
         } else {
           setErrorMessage("Internal Server Error");
         }
@@ -196,6 +230,8 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       other_advance_type: initialFormData.other_advance_type,
       files: initialFormData.files,
       purpose: initialFormData.purpose,
+      update_files: initialFormData.update_files,
+      delete_files: initialFormData.delete_files,
     }));
   };
 
@@ -206,7 +242,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         purpose: data.purpose || " - ",
         other_advance_type: data.remark || " - ",
         totalAmount: data.amount || " - ",
-        files: [],
+        files: data?.files,
       }));
     }
   }, [data]);
@@ -333,9 +369,12 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               name="relevantDocument"
               files={formData.files}
               handleFileChange={handleFileChange}
+              removeUpdateFile={removeUpdateFile}
               removeFile={removeFile}
               error={formErrors.file_error}
               data={data?.files}
+              isEditMode={editData}
+              updateFile={formData.update_files}
             />
             <div className="tourdetails col-xl-6 col-lg-6 col-md-6 col-12 mb-3">
               <label className="form-label">Purpose of advance</label>
