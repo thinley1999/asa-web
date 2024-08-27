@@ -13,6 +13,8 @@ const CustomFileInput = ({
   error,
   data,
   isEditMode,
+  updateFile,
+  removeUpdateFile
 }) => {
   console.log("MyCheck", isEditMode);
   return (
@@ -20,7 +22,7 @@ const CustomFileInput = ({
       <label className="form-label">{label}</label>
       {isEditMode || !data ? (
         <div>
-          {data && <FileList files={data} myEdit={isEditMode} />}
+          {data && !isEditMode && <FileList files={data} />}
           <div className="d-flex">
             <label
               className="btn btn-primary btn-file"
@@ -43,20 +45,39 @@ const CustomFileInput = ({
         data && <FileList files={data} />
       )}
 
-      <div className={`file-names ${files.length > 0 ? "padded" : ""}`}>
-        {files.map((file, index) => (
+      {isEditMode && (
+        <div className={`file-names ${files.length > 0 ? "padded" : ""}`}>
+          {files.map((file) => (
+            <div key={file.id} className="file-name">
+              {file.name}
+              <RiDeleteBin6Line
+                size={14}
+                className="remove-icon"
+                name={name}
+                onClick={() => removeFile(file.id)}
+                aria-label={`Remove ${file.name}`}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+   {updateFile &&
+      <div className={`file-names ${updateFile.length > 0 ? "padded" : ""}`}>
+        { updateFile.map((file, index) => (
           <div key={index} className="file-name">
-            {file.name}
+            {file.name} 
             <RiDeleteBin6Line
               size={14}
               className="remove-icon"
               name={name}
-              onClick={() => removeFile(index)}
+              onClick={() => removeUpdateFile(index)}
               aria-label={`Remove ${file.name}`}
             />
           </div>
         ))}
-      </div>
+      </div> 
+      }
 
       {error && (
         <div className="invalid-feedback" style={{ display: "block" }}>

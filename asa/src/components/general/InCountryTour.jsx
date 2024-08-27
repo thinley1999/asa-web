@@ -37,6 +37,8 @@ const InCountryTour = ({
     remark: " ",
     advance_type: "in_country_tour_advance",
     files: [],
+    update_files: [],
+    delete_files: [],
     advance_percentage: "",
     office_order: "",
   };
@@ -68,10 +70,17 @@ const InCountryTour = ({
   const handleFileChange = (event) => {
     const newFiles = Array.from(event.target.files);
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      files: [...prevFormData.files, ...newFiles],
-    }));
+    if (!edit) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        files: [...prevFormData.files, ...newFiles],
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        update_files: [...prevFormData.update_files, ...newFiles],
+      }));
+    }
 
     setFormErrors((prevErrors) => ({
       ...prevErrors,
@@ -80,9 +89,24 @@ const InCountryTour = ({
   };
 
   const removeFile = (indexToRemove) => {
+    if (!edit) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        files: prevFormData.files.filter((_, index) => index !== indexToRemove),
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        files: prevFormData.files.filter((file) => file.id !== indexToRemove),
+        delete_files: [...prevFormData.delete_files, indexToRemove],
+      }));
+    }
+  };
+
+  const removeUpdateFile = (indexToRemove) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      files: prevFormData.files.filter((_, index) => index !== indexToRemove),
+      update_files: prevFormData.update_files.filter((_, index) => index !== indexToRemove),
     }));
   };
 
@@ -236,10 +260,23 @@ const InCountryTour = ({
         );
         const fileResponse = await FileServices.create(
           advanceResponse.id,
-          formData.files
+          formData.update_files
         );
+
+        const fileDeleteResponse = await FileServices.deleteFile(
+          advanceResponse.id,
+          formData.delete_files
+        );
+       
         if (advanceResponse) {
           setSuccessMessage("Advance has been successfully updated.");
+          setFormData(
+            (prevFormData) => ({
+              ...prevFormData,
+              delete_files: initialFormData.delete_files,
+            }),
+          );
+
         } else {
           setErrorMessage("Your application submission has failed");
         }
@@ -261,6 +298,8 @@ const InCountryTour = ({
       advance_percentage: initialFormData.advance_percentage,
       remark: initialFormData.remark,
       files: initialFormData.files,
+      update_files: initialFormData.update_files,
+      delete_files: initialFormData.delete_files,
     }));
     setRows([]);
   };
@@ -332,6 +371,7 @@ const InCountryTour = ({
       office_order: data?.office_order || prevFormData.office_order,
       remark: data?.remark || prevFormData.remark,
       advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
+      files: data?.files,
       advance_percentage:
         data?.advance_percentage || prevFormData.advance_percentage,
     }));
@@ -356,7 +396,6 @@ const InCountryTour = ({
   };
 
   console.log("formData", formData);
-  console.log("travelItinerary", rows);
   return (
     <form onSubmit={handleSubmit}>
       {successMessage && (
@@ -444,9 +483,11 @@ const InCountryTour = ({
             files={formData.files}
             handleFileChange={handleFileChange}
             removeFile={removeFile}
+            removeUpdateFile={removeUpdateFile}
             error={formErrors.file_error}
-            data={data?.files}
+            data={data.files}
             isEditMode={edit}
+            updateFile={formData.update_files}
           />
         </div>
       </div>

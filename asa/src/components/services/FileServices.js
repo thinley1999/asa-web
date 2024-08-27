@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
-const create = async (id, files) => {
+const create = async (id, files = []) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.post(
@@ -49,7 +49,32 @@ const update = async (id, files) => {
   }
 };
 
+const deleteFile = async (id, file_id) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.delete(
+      `${API_URL}/api/files/${id}`, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          id: id,
+          file_id: file_id,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error Deleting files:", error);
+    throw error;
+  }
+};
+
 export default {
   create,
   update,
+  deleteFile,
 };
