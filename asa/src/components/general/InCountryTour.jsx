@@ -234,6 +234,10 @@ const InCountryTour = ({
           formData,
           rows
         );
+        const fileResponse = await FileServices.create(
+          advanceResponse.id,
+          formData.files
+        );
         if (advanceResponse) {
           setSuccessMessage("Advance has been successfully updated.");
         } else {
@@ -442,6 +446,7 @@ const InCountryTour = ({
             removeFile={removeFile}
             error={formErrors.file_error}
             data={data?.files}
+            isEditMode={edit}
           />
         </div>
       </div>

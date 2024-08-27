@@ -1,8 +1,9 @@
 import React from "react";
 import { FaRegFilePdf, FaEye } from "react-icons/fa";
-import { IoMdDownload } from "react-icons/io";
+import { FaCloudDownloadAlt } from "react-icons/fa";
+import { RiDeleteBinLine } from "react-icons/ri";
 
-const FileList = ({ files }) => {
+const FileList = ({ files, myEdit }) => {
   const handlePreview = (url) => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
@@ -15,6 +16,7 @@ const FileList = ({ files }) => {
     link.click();
     document.body.removeChild(link);
   };
+  console.log("MyCheck2", myEdit);
 
   return (
     <div className="file-names pt-2 ps-2 pe-2">
@@ -40,9 +42,16 @@ const FileList = ({ files }) => {
               className="btn btn-info preview-btn p-0 ms-2"
               onClick={() => handleDownload(file.url, file.name)}
             >
-              <IoMdDownload fontSize={12} />{" "}
-              <span style={{ fontSize: "12px" }}>Download</span>{" "}
+              <FaCloudDownloadAlt fontSize={12} />
             </button>
+            {myEdit && (
+              <button
+                type="button"
+                className="btn btn-danger preview-btn p-0 ms-2"
+              >
+                <RiDeleteBinLine fontSize={12} />
+              </button>
+            )}
           </div>
         </div>
       ))}

@@ -12,30 +12,35 @@ const CustomFileInput = ({
   removeFile,
   error,
   data,
+  isEditMode,
 }) => {
+  console.log("MyCheck", isEditMode);
   return (
     <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
       <label className="form-label">{label}</label>
-      {data ? (
-        <FileList files={data} />
-      ) : (
-        <div className="d-flex">
-          <label
-            className="btn btn-primary btn-file"
-            htmlFor={`file-upload-${name}`}
-          >
-            <FaCloudDownloadAlt size={20} /> <span>Upload Files</span>
-            <input
-              id={`file-upload-${name}`}
-              type="file"
-              multiple
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-              aria-label={`Upload files for ${label}`}
-            />
-          </label>
-          <span className="textwithbtn">Max file size 10 MB</span>
+      {isEditMode || !data ? (
+        <div>
+          {data && <FileList files={data} myEdit={isEditMode} />}
+          <div className="d-flex">
+            <label
+              className="btn btn-primary btn-file"
+              htmlFor={`file-upload-${name}`}
+            >
+              <FaCloudDownloadAlt size={20} /> <span>Upload Files</span>
+              <input
+                id={`file-upload-${name}`}
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+                aria-label={`Upload files for ${label}`}
+              />
+            </label>
+            <span className="textwithbtn">Max file size 10 MB</span>
+          </div>
         </div>
+      ) : (
+        data && <FileList files={data} />
       )}
 
       <div className={`file-names ${files.length > 0 ? "padded" : ""}`}>
@@ -52,6 +57,7 @@ const CustomFileInput = ({
           </div>
         ))}
       </div>
+
       {error && (
         <div className="invalid-feedback" style={{ display: "block" }}>
           {error}
