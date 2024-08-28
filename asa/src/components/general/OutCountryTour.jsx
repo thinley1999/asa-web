@@ -272,6 +272,7 @@ const OutCountryTour = ({
       files: initialFormData.files,
       update_files: initialFormData.update_files,
       delete_files: initialFormData.delete_files,
+      office_order: "",
     }));
     setRows([]);
     setFormErrors([]);
@@ -350,7 +351,7 @@ const OutCountryTour = ({
       office_order: data?.office_order || prevFormData.office_order,
       remark: data?.remark || prevFormData.remark,
       advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
-      files: data?.files,
+      files: data?.files || [],
       advance_percentage:
         data?.advance_percentage || prevFormData.advance_percentage,
     }));
