@@ -272,6 +272,7 @@ const OutCountryTour = ({
       files: initialFormData.files,
       update_files: initialFormData.update_files,
       delete_files: initialFormData.delete_files,
+      office_order: "",
     }));
     setRows([]);
     setFormErrors([]);
