@@ -47,14 +47,14 @@ const CustomFileInput = ({
 
        {(!isEditMode && !data) && (
         <div className={`file-names ${files?.length > 0 ? "padded" : ""}`}>
-          {files?.map((file) => (
-            <div key={file.id} className="file-name">
+          {files?.map((file, index) => (
+            <div key={index} className="file-name">
               {file.name}
               <RiDeleteBin6Line
                 size={14}
                 className="remove-icon"
                 name={name}
-                onClick={() => removeFile(file.id)}
+                onClick={() => removeFile(index)}
                 aria-label={`Remove ${file.name}`}
               />
             </div>
