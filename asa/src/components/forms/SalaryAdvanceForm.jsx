@@ -152,28 +152,49 @@ const SalaryAdvanceForm = ({ data, type }) => {
           <ol type="a">
             {type === "salary_advance" ? (
               <li>
-                Salary advance:{" "}
-                <u style={{ textUnderlineOffset: "2px" }}>
-                  {reportData?.previous_advance?.salary_advance || "N/A"}
-                </u>
+                Salary Advance:{" "}
+                {/* {reportData?.previous_advance?.salary_advance || "N/A"} */}
+                Nu.{" "}
+                {reportData?.previous_advance?.salary_advance
+                  ? parseFloat(
+                      reportData?.previous_advance?.salary_advance
+                    ).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  : "N/A"}
               </li>
             ) : (
               ""
             )}
 
             <li>
-              Other advance:{" "}
-              <u style={{ textUnderlineOffset: "2px" }}>
-                {reportData?.previous_advance?.other_advance || "N/A"}
-              </u>
+              Other Advance:{" "}
+              {/* {reportData?.previous_advance?.other_advance || "N/A"} */}
+              Nu.{" "}
+              {reportData?.previous_advance?.other_advance
+                ? parseFloat(
+                    reportData?.previous_advance?.other_advance
+                  ).toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : "N/A"}
             </li>
 
             {type === "salary_advance" ? (
               <li>
                 Tour Advance:{" "}
-                <u style={{ textUnderlineOffset: "2px" }}>
-                  {reportData?.previous_advance?.tour_advance || "N/A"}
-                </u>
+                {/* {reportData?.previous_advance?.tour_advance || "N/A"} */}
+                Nu.{" "}
+                {reportData?.previous_advance?.tour_advance
+                  ? parseFloat(
+                      reportData?.previous_advance?.tour_advance
+                    ).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  : "N/A"}
               </li>
             ) : (
               ""
@@ -181,10 +202,15 @@ const SalaryAdvanceForm = ({ data, type }) => {
           </ol>
           {type === "salary_advance" ? (
             <p className="formpTag">
-              2. <b>NET PAY: </b>{" "}
-              <u style={{ textUnderlineOffset: "2px" }}>
-                {reportData?.net_pay}
-              </u>
+              2. <b>NET PAY: </b>
+              {/* {reportData?.net_pay} */}
+              Nu.{" "}
+              {reportData?.net_pay
+                ? parseFloat(reportData?.net_pay).toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : "N/A"}
             </p>
           ) : (
             ""
@@ -205,10 +231,18 @@ const SalaryAdvanceForm = ({ data, type }) => {
 
           {type === "salary_advance" ? (
             <p className="formpTag">
-              4. Deduction per month:{" "}
-              <u style={{ textUnderlineOffset: "2px" }}>
-                {reportData?.detail?.deduction}
-              </u>
+              4. Deduction per month:
+              {/* {reportData?.detail?.deduction} */}
+              Nu.{" "}
+              {reportData?.detail?.deduction
+                ? parseFloat(reportData?.detail?.deduction).toLocaleString(
+                    "en-US",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  )
+                : "N/A"}
             </p>
           ) : (
             ""
