@@ -120,8 +120,13 @@ const SalaryAdvanceForm = ({ data, type }) => {
             </u>
           </p>
           <p className="formpTag">
-            Amount of Advance Required:{" "}
-            <u style={{ textUnderlineOffset: "2px" }}>{reportData?.amount}</u>
+            Amount of Advance Required: Nu.
+            {reportData?.amount
+              ? parseFloat(reportData.amount).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              : ""}
           </p>
           <p className="formpTag">
             Purpose for which Advance is required:{" "}
@@ -189,7 +194,13 @@ const SalaryAdvanceForm = ({ data, type }) => {
             {type === "salary_advance"
               ? "3. Amount recommended:"
               : "2.Amount recommended:"}{" "}
-            <u style={{ textUnderlineOffset: "2px" }}>{reportData?.amount}</u>
+            Nu.
+            {reportData?.amount
+              ? parseFloat(reportData.amount).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              : ""}
           </p>
 
           {type === "salary_advance" ? (

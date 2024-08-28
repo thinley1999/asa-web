@@ -111,18 +111,49 @@ const TourAdvanceForm = (data) => {
           <p className="formpTag col-6">Travel Advance Amount:</p>
           <p className="formpTag col-6">
             {reportData?.advance_amount?.Nu
-              ? `Nu. ${reportData.advance_amount.Nu}, `
+              ? `Nu. ${
+                  reportData.advance_amount.Nu
+                    ? parseFloat(reportData.advance_amount.Nu).toLocaleString(
+                        "en-US",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )
+                    : ""
+                }`
               : "0.0"}
             {reportData?.advance_amount?.USD
-              ? `USD. ${reportData.advance_amount.USD}, `
+              ? `USD. ${
+                  reportData.advance_amount.USD
+                    ? parseFloat(rreportData.advance_amount.USD).toLocaleString(
+                        "en-US",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )
+                    : ""
+                }, `
               : ""}
             {reportData?.advance_amount?.INR
-              ? `INR. ${reportData.advance_amount.INR}`
+              ? `INR. ${
+                  reportData.advance_amount.INR
+                    ? parseFloat(reportData.advance_amount.INR).toLocaleString(
+                        "en-US",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )
+                    : ""
+                }
+              `
               : ""}
           </p>
           <div className="col-12">
             <p className="formpTag">
-              Reason for Travel Advance:<u>{reportData?.purpose}</u>
+              Reason for Travel Advance:<u>{reportData?.remark}</u>
             </p>
             {/* <p className="formpTag">{reportData?.purpose}</p> */}
           </div>
@@ -217,13 +248,44 @@ const TourAdvanceForm = (data) => {
           <p className="formpTag">
             Please pay ………
             {reportData?.advance_amount?.Nu
-              ? `Nu. ${reportData.advance_amount.Nu}, `
-              : "0.0"}
+              ? `Nu. ${
+                  reportData.advance_amount.Nu
+                    ? parseFloat(reportData.advance_amount.Nu).toLocaleString(
+                        "en-US",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )
+                    : ""
+                }`
+              : "Nu 0.00"}
             {reportData?.advance_amount?.USD
-              ? `USD. ${reportData.advance_amount.USD}, `
+              ? `USD. ${
+                  reportData.advance_amount.USD
+                    ? parseFloat(rreportData.advance_amount.USD).toLocaleString(
+                        "en-US",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )
+                    : ""
+                }, `
               : ""}
             {reportData?.advance_amount?.INR
-              ? `INR. ${reportData.advance_amount.INR}, `
+              ? `INR. ${
+                  reportData.advance_amount.INR
+                    ? parseFloat(reportData.advance_amount.INR).toLocaleString(
+                        "en-US",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )
+                    : ""
+                }
+              `
               : ""}
             …………….as per office order No. ....{reportData?.office_order}……
           </p>
