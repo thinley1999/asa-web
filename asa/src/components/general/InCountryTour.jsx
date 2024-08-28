@@ -297,7 +297,7 @@ const InCountryTour = ({
       advanceAmount: initialFormData.advanceAmount,
       advance_percentage: initialFormData.advance_percentage,
       remark: initialFormData.remark,
-      files: initialFormData.files,
+      files: [],
       update_files: initialFormData.update_files,
       delete_files: initialFormData.delete_files,
     }));
@@ -371,7 +371,7 @@ const InCountryTour = ({
       office_order: data?.office_order || prevFormData.office_order,
       remark: data?.remark || prevFormData.remark,
       advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
-      files: data?.files,
+      files: data?.files || [],
       advance_percentage:
         data?.advance_percentage || prevFormData.advance_percentage,
     }));
@@ -480,7 +480,7 @@ const InCountryTour = ({
           <CustomFileInput
             label="Relevant Documents"
             name="relevantDocument"
-            files={formData.files}
+            files={formData?.files}
             handleFileChange={handleFileChange}
             removeFile={removeFile}
             removeUpdateFile={removeUpdateFile}

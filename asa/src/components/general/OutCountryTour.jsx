@@ -350,7 +350,7 @@ const OutCountryTour = ({
       office_order: data?.office_order || prevFormData.office_order,
       remark: data?.remark || prevFormData.remark,
       advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
-      files: data?.files,
+      files: data?.files || [],
       advance_percentage:
         data?.advance_percentage || prevFormData.advance_percentage,
     }));

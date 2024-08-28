@@ -14,7 +14,7 @@ const CustomFileInput = ({
   data,
   isEditMode,
   updateFile,
-  removeUpdateFile
+  removeUpdateFile,
 }) => {
   console.log("MyCheck", isEditMode);
   return (
@@ -45,6 +45,23 @@ const CustomFileInput = ({
         data && <FileList files={data} />
       )}
 
+       {(!isEditMode && !data) && (
+        <div className={`file-names ${files?.length > 0 ? "padded" : ""}`}>
+          {files?.map((file) => (
+            <div key={file.id} className="file-name">
+              {file.name}
+              <RiDeleteBin6Line
+                size={14}
+                className="remove-icon"
+                name={name}
+                onClick={() => removeFile(file.id)}
+                aria-label={`Remove ${file.name}`}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
       {isEditMode && (
         <div className={`file-names ${files.length > 0 ? "padded" : ""}`}>
           {files.map((file) => (
@@ -62,22 +79,22 @@ const CustomFileInput = ({
         </div>
       )}
 
-   {updateFile &&
-      <div className={`file-names ${updateFile.length > 0 ? "padded" : ""}`}>
-        { updateFile.map((file, index) => (
-          <div key={index} className="file-name">
-            {file.name} 
-            <RiDeleteBin6Line
-              size={14}
-              className="remove-icon"
-              name={name}
-              onClick={() => removeUpdateFile(index)}
-              aria-label={`Remove ${file.name}`}
-            />
-          </div>
-        ))}
-      </div> 
-      }
+      {updateFile && (
+        <div className={`file-names ${updateFile.length > 0 ? "padded" : ""}`}>
+          {updateFile.map((file, index) => (
+            <div key={index} className="file-name">
+              {file.name}
+              <RiDeleteBin6Line
+                size={14}
+                className="remove-icon"
+                name={name}
+                onClick={() => removeUpdateFile(index)}
+                aria-label={`Remove ${file.name}`}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {error && (
         <div className="invalid-feedback" style={{ display: "block" }}>
