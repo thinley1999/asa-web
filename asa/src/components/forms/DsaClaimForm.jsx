@@ -221,21 +221,79 @@ const DsaClaimForm = (data) => {
 
           <div>
             <p className="formpTag">
-              Total Claim: {totalNu ? `Nu ${totalNu}` : "Nu 0.0"}{" "}
-              {totalINR ? `,INR ${totalINR}` : ""}{" "}
+              Total Claim:
+              {totalNu
+                ? `Nu. ${
+                    totalNu
+                      ? parseFloat(totalNu).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : ""
+                  } `
+                : "Nu 0.00"}
+              {totalINR
+                ? `INR. ${
+                    totalINR
+                      ? parseFloat(totalINR).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : ""
+                  } `
+                : ""}
               {totalUSD ? `,USD ${totalUSD}` : ""}
+              {totalUSD
+                ? `USD. ${
+                    totalUSD
+                      ? parseFloat(totalUSD).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : ""
+                  } `
+                : ""}
             </p>
             <p className="formpTag">
               Advance:
-              {reportData.advance_amount?.Nu
-                ? `Nu ${reportData.advance_amount.Nu}`
-                : "Nu 0.0"}
-              {reportData.advance_amount?.INR
-                ? `,INR ${reportData.advance_amount.INR}`
-                : " "}
-              {reportData.advance_amount?.USD
-                ? `,USD ${reportData.advance_amount.USD}`
-                : " "}
+              {reportData?.advance_amount?.Nu
+                ? `Nu. ${
+                    reportData.advance_amount.Nu
+                      ? parseFloat(reportData.advance_amount.Nu).toLocaleString(
+                          "en-US",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        )
+                      : ""
+                  }`
+                : "0.0"}
+              {reportData?.advance_amount?.USD
+                ? `USD. ${
+                    reportData.advance_amount.USD
+                      ? parseFloat(
+                          rreportData.advance_amount.USD
+                        ).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : ""
+                  }, `
+                : ""}
+              {reportData?.advance_amount?.INR
+                ? `INR. ${
+                    reportData.advance_amount.INR
+                      ? parseFloat(
+                          reportData.advance_amount.INR
+                        ).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : ""
+                  }
+              `
+                : ""}
             </p>
             <div className="d-flex justify-content-between">
               <p className="formpTag">
