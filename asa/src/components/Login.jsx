@@ -52,7 +52,7 @@ const Login = () => {
       <div className="container-fluid">
         <div className="row">
           {/* Image column */}
-          <div className="col-sm-6 px-0 d-none d-md-block">
+          <div className="col-sm-6 px-0 d-none d-sm-block">
             <img
               src={vectorImage}
               alt="Login image"
