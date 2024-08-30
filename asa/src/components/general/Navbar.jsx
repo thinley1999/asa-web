@@ -66,7 +66,7 @@ const Navbar = ({
             className="btn px-1 py-0 btn1"
             onClick={handleMobileSidebarToggle}
           >
-            <RxHamburgerMenu size={24} />
+            <RxHamburgerMenu className="icon-size" />
           </button>
           <a className="customtag" href="#">
             {getHeading()}
@@ -78,11 +78,33 @@ const Navbar = ({
           type="button"
           onClick={handleSidebarToggle}
         >
-          <RxHamburgerMenu size={24} />
+          <RxHamburgerMenu className="icon-size" />
         </button>
-        <button className="p-0 border-0 btn-responsive btn" type="button">
-          <FaChevronDown size={24} />
-        </button>
+        {/* <button className="p-0 border-0 btn-responsive btn" type="button">
+          <FaChevronDown className="icon-size" />
+        </button> */}
+
+        <div className="d-block d-sm-none">
+          <span>
+            <button
+              type="button"
+              className="btn"
+              style={{ background: "#90c8ed" }}
+              id="showToastBtn"
+              onClick={showNotification}
+            >
+              <CiBellOn color="blue" size={24} />
+            </button>
+            <span className="badge">{notificationCount}</span>
+          </span>
+          <a className="profilelink text-decoration-none" href="/profile">
+            <img
+              src={user?.profile_pic?.url}
+              className="rounded-circle profile-img me-2"
+              alt="Profile"
+            />
+          </a>
+        </div>
 
         <div className="collapse navbar-collapse justify-content-start">
           <div className="navbar-nav mb-2 mb-lg-0">
@@ -105,13 +127,13 @@ const Navbar = ({
             </button>
             <span className="badge">{notificationCount}</span>
           </span>
-
-          <img
-            src={user?.profile_pic?.url}
-            className="rounded-circle me-2"
-            style={{ width: "8vh", height: "8vh" }}
-            alt="Profile"
-          />
+          <a className="profilelink text-decoration-none" href="/profile">
+            <img
+              src={user?.profile_pic?.url}
+              className="rounded-circle profile-img me-2"
+              alt="Profile"
+            />
+          </a>
           <div>
             <a className="profilelink text-decoration-none" href="/profile">
               <p className="username">
