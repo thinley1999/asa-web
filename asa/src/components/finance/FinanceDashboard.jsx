@@ -120,6 +120,8 @@ const FinanceDashboard = () => {
           ],
         },
         options: {
+          responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: {
               display: false,
@@ -141,6 +143,9 @@ const FinanceDashboard = () => {
           },
         },
       });
+
+      // Force resize
+      window.dispatchEvent(new Event("resize"));
     }
 
     if (pieChartRef.current && pieChartRef.current.getContext("2d")) {
@@ -173,6 +178,7 @@ const FinanceDashboard = () => {
           ],
         },
         options: {
+          responsive: true,
           maintainAspectRatio: false,
           cutoutPercentage: 65,
           plugins: {
@@ -193,6 +199,9 @@ const FinanceDashboard = () => {
           },
         },
       });
+
+      // Force resize
+      window.dispatchEvent(new Event("resize"));
     }
 
     return () => {
@@ -203,7 +212,7 @@ const FinanceDashboard = () => {
         pieChartInstanceRef.current.destroy();
       }
     };
-  }, [typeCount]);
+  }, [typeCount, monthlycount]);
 
   return (
     <div className="container">
