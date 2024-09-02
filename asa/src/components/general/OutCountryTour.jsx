@@ -524,6 +524,7 @@ const OutCountryTour = ({
               haltCount={haltCount}
               edit={edit}
               username={user.username}
+              outCountry={true}
             />
           )}
           <TravelDetailsTable

@@ -14,6 +14,7 @@ const TravelDetails = ({
   haltCount,
   edit,
   username,
+  outCountry,
 }) => {
   const [haltChecked, setHaltChecked] = useState(
     existingData?.halt_at || initialData?.halt_at ? true : false
@@ -32,7 +33,9 @@ const TravelDetails = ({
       start_date: "",
       end_date: "",
       from: "",
+      fromPlace: "",
       to: "",
+      toPlace: "",
       mode: "",
       mileage: "",
       rate: "",
@@ -114,6 +117,8 @@ const TravelDetails = ({
       halt_at,
       stop_at,
       dsa_percentage,
+      fromPlace,
+      toPlace,
     } = data;
     const newErrors = {};
 
@@ -139,6 +144,11 @@ const TravelDetails = ({
     if (stopChecked && !stop_at) {
       newErrors.stop_at =
         "Stop Over location is required when stop over is checked";
+    }
+
+    if (outCountry) {
+      if (!fromPlace) newErrors.fromPlace = "From Place is required";
+      if (!toPlace) newErrors.toPlace = "To Place is required";
     }
 
     if (Object.keys(newErrors).length === 0) {
@@ -300,6 +310,8 @@ const TravelDetails = ({
 
   if (!isOpen) return null;
 
+  console.log("out Country", outCountry);
+
   return (
     <div className="modal fade show" tabIndex="-1" style={{ display: "block" }}>
       <div
@@ -437,7 +449,9 @@ const TravelDetails = ({
                 )}
               </div>
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-                <label className="form-label">From</label>
+                <label className="form-label">
+                  {outCountry ? "From Country" : "From"}
+                </label>
                 <select
                   className={`form-select ${errors.from ? "is-invalid" : ""}`}
                   name="from"
@@ -462,8 +476,26 @@ const TravelDetails = ({
                   <div className="text-danger">{errors.from}</div>
                 )}
               </div>
+              {outCountry && (
+                <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+                  <label className="form-label">From Place</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="fromPlace"
+                    value={data.fromPlace || ""}
+                    onChange={handleChange}
+                    disabled={existingData ? (edit ? false : true) : false}
+                  />
+                  {errors.fromPlace && (
+                    <div className="text-danger">{errors.fromPlace}</div>
+                  )}
+                </div>
+              )}
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
-                <label className="form-label">To</label>
+                <label className="form-label">
+                  {outCountry ? "To Country" : "To"}
+                </label>
                 <select
                   className={`form-select ${errors.to ? "is-invalid" : ""}`}
                   name="to"
@@ -486,6 +518,22 @@ const TravelDetails = ({
                 </select>
                 {errors.to && <div className="text-danger">{errors.to}</div>}
               </div>
+              {outCountry && (
+                <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+                  <label className="form-label">To Place</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="toPlace"
+                    value={data.toPlace || ""}
+                    onChange={handleChange}
+                    disabled={existingData ? (edit ? false : true) : false}
+                  />
+                  {errors.toPlace && (
+                    <div className="text-danger">{errors.toPlace}</div>
+                  )}
+                </div>
+              )}
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">Mode of travel</label>
                 <select
