@@ -87,7 +87,7 @@ const RequestedAdvance = () => {
             <a href={`/viewRequestedAdvance/${row.id}`}>View</a>
           </span>{" "}
           {"  "}
-          {row.status === "pending" && (
+          {(row.status === "pending" || row.status === "rejected") && (
             <span className="datasubheading">
               <MdEdit size={20} />
               <a href={`/editRequestedAdvance/${row.id}`}>Edit</a>
