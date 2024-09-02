@@ -95,6 +95,28 @@ body.white-background {
   }
 }
 
+.icon-size {
+  font-size: 24px;
+}
+
+@media (max-width: 768px) {
+  .icon-size {
+    font-size: 18px;
+  }
+}
+
+.profile-img {
+  width: 8vh;
+  height: 8vh;
+}
+
+@media (max-width: 768px) {
+  .profile-img {
+    width: 6vh;
+    height: 6vh;
+  }
+}
+
 /* .content {
   margin-left: 250px;
   width: calc(100% - 250px);
@@ -543,6 +565,11 @@ a:hoover {
   .bargraph {
     height: 20rem;
   }
+}
+
+.bargraph canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* requested advance */

@@ -34,7 +34,7 @@ const InCountryTour = ({
     designation: " ",
     advanceAmount: {},
     totalAmount: 0,
-    remark: " ",
+    remark: "",
     advance_type: "in_country_tour_advance",
     files: [],
     update_files: [],
@@ -106,7 +106,9 @@ const InCountryTour = ({
   const removeUpdateFile = (indexToRemove) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      update_files: prevFormData.update_files.filter((_, index) => index !== indexToRemove),
+      update_files: prevFormData.update_files.filter(
+        (_, index) => index !== indexToRemove
+      ),
     }));
   };
 
@@ -136,6 +138,10 @@ const InCountryTour = ({
 
       if (name === "office_order") {
         delete newErrors.office_order_error;
+      }
+
+      if (name === "remark") {
+        delete newErrors.remark_error;
       }
 
       if (name === "advanceAmount.Nu") {
@@ -169,6 +175,10 @@ const InCountryTour = ({
 
     if (!formData.office_order) {
       errors.office_order_error = "Please enter office order number.";
+    }
+
+    if (!formData.remark) {
+      errors.remark_error = "Please enter remarks.";
     }
 
     if (!formData.advanceAmount?.Nu) {
@@ -267,16 +277,13 @@ const InCountryTour = ({
           advanceResponse.id,
           formData.delete_files
         );
-       
+
         if (advanceResponse) {
           setSuccessMessage("Advance has been successfully updated.");
-          setFormData(
-            (prevFormData) => ({
-              ...prevFormData,
-              delete_files: initialFormData.delete_files,
-            }),
-          );
-
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            delete_files: initialFormData.delete_files,
+          }));
         } else {
           setErrorMessage("Your application submission has failed");
         }
@@ -571,6 +578,14 @@ const InCountryTour = ({
                   value={formData.remark}
                   onChange={handleChange}
                 ></textarea>
+                {formErrors?.remark_error && (
+                  <div
+                    className="invalid-feedback"
+                    style={{ display: "block" }}
+                  >
+                    {formErrors?.remark_error}
+                  </div>
+                )}
               </div>
             </>
           )}
