@@ -33,9 +33,9 @@ const TravelDetails = ({
       start_date: "",
       end_date: "",
       from: "",
-      fromPlace: "",
+      from_place: "",
       to: "",
-      toPlace: "",
+      to_place: "",
       mode: "",
       mileage: "",
       rate: "",
@@ -117,8 +117,8 @@ const TravelDetails = ({
       halt_at,
       stop_at,
       dsa_percentage,
-      fromPlace,
-      toPlace,
+      from_place,
+      to_place,
     } = data;
     const newErrors = {};
 
@@ -146,9 +146,9 @@ const TravelDetails = ({
         "Stop Over location is required when stop over is checked";
     }
 
-    if (outCountry) {
-      if (!fromPlace) newErrors.fromPlace = "From Place is required";
-      if (!toPlace) newErrors.toPlace = "To Place is required";
+    if (outCountry && !haltChecked && !stopChecked) {
+      if (!from_place) newErrors.from_place = "From Place is required";
+      if (!to_place) newErrors.to_place = "To Place is required";
     }
 
     if (Object.keys(newErrors).length === 0) {
@@ -482,13 +482,17 @@ const TravelDetails = ({
                   <input
                     className="form-control"
                     type="text"
-                    name="fromPlace"
-                    value={data.fromPlace || ""}
+                    name="from_place"
+                    value={data.from_place || ""}
                     onChange={handleChange}
-                    disabled={existingData ? (edit ? false : true) : false}
+                    disabled={
+                      haltChecked || stopChecked || (existingData && !edit)
+                        ? true
+                        : false
+                    }
                   />
-                  {errors.fromPlace && (
-                    <div className="text-danger">{errors.fromPlace}</div>
+                  {errors.from_place && (
+                    <div className="text-danger">{errors.from_place}</div>
                   )}
                 </div>
               )}
@@ -524,13 +528,17 @@ const TravelDetails = ({
                   <input
                     className="form-control"
                     type="text"
-                    name="toPlace"
-                    value={data.toPlace || ""}
+                    name="to_place"
+                  value={data.to_place || ""}
                     onChange={handleChange}
-                    disabled={existingData ? (edit ? false : true) : false}
+                    disabled={
+                      haltChecked || stopChecked || (existingData && !edit)
+                        ? true
+                        : false
+                    }
                   />
-                  {errors.toPlace && (
-                    <div className="text-danger">{errors.toPlace}</div>
+                  {errors.to_place && (
+                    <div className="text-danger">{errors.to_place}</div>
                   )}
                 </div>
               )}
