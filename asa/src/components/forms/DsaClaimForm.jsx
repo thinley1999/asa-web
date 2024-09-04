@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import headerimage from "../../assets/img/head-img.png";
 import { isoToDate } from "../utils/IsoDate";
+import { isoToTime } from "../utils/IsoTime";
 
 const DsaClaimForm = (data) => {
   const formRef = useRef(null);
@@ -189,9 +190,9 @@ const DsaClaimForm = (data) => {
                       {isoToDate(itenary?.start_date) || "N/A"}
                     </td>
                     <td>{itenary?.from || "N/A"}</td>
-                    <td>{isoToDate(itenary?.start_date) || "N/A"}</td>
+                    <td>{isoToTime(itenary?.start_date) || "N/A"}</td>
                     <td>{itenary?.to || "N/A"}</td>
-                    <td>{isoToDate(itenary?.end_date) || "N/A"}</td>
+                    <td>{isoToTime(itenary?.end_date) || "N/A"}</td>
                     <td colSpan={2}>
                       {itenary?.currency} {itenary?.rate}
                     </td>
@@ -268,7 +269,7 @@ const DsaClaimForm = (data) => {
                         )
                       : ""
                   }`
-                : "0.0"}
+                : " Nu: 0.0 "}
               {reportData?.advance_amount?.USD
                 ? `USD. ${
                     reportData.advance_amount.USD
