@@ -53,24 +53,20 @@ const TravelDetailsTable = ({
       name: "To",
       selector: (row) => row.to,
     },
-    // {
-    //   name: "Mode",
-    //   selector: (row) => row.mode,
-    // },
     {
       name: "Total Amount",
       selector: (row) => row.rate,
     },
     {
       name: "Action",
-      cell: (row) => {
+      cell: (row, index) => {
         return (
           <div className="tabledetails">
             {existingData && !edit ? (
               <button
                 type="button"
                 className="btn btn-warning preview-btn p-0 ms-2 "
-                onClick={() => editRow(row)}
+                onClick={() => editRow(row, index)}
               >
                 <FaEye size={16} /> {}
                 <span style={{ fontSize: "13px" }}>Preview</span>
@@ -80,7 +76,7 @@ const TravelDetailsTable = ({
                 <button
                   type="button"
                   className="btn btn-success ms-2"
-                  onClick={() => editRow(row)}
+                  onClick={() => editRow(row, index)}
                 >
                   <MdModeEditOutline size={18} />
                 </button>

@@ -26,6 +26,7 @@ const OutCountryTour = ({
   const [showDialog, setShowDialog] = useState(false);
   const [rows, setRows] = useState([]);
   const [editData, setEditData] = useState(null);
+  const [editIndex, setEditIndex] = useState(null);
 
   const initialFormData = {
     firstName: " - ",
@@ -209,7 +210,7 @@ const OutCountryTour = ({
         updateFormDataWithUserName(response.data);
       }
     } catch (error) {
-      console.error("Error fetching current applications:", error);
+      // console.error("Error fetching current applications:", error);
     }
   };
 
@@ -317,11 +318,11 @@ const OutCountryTour = ({
     }));
   };
 
-  const haltCount = (id) => {
+  const haltCount = (index) => {
     let count = 0;
-    if (id){
-      for (let i = rows[0].id; i <= rows[id]; i++) {
-        if (rows[i].stop_at) {
+    if (index || index == 0){
+      for (let i = 0; i < index; i++) {
+        if (rows[i]?.stop_at) {
           count++;
         }
       }
@@ -332,7 +333,6 @@ const OutCountryTour = ({
         }
       }
     }
-    
     return count;
   };
 
@@ -368,8 +368,9 @@ const OutCountryTour = ({
     setEditData(null);
   };
 
-  const editRow = (rowData) => {
+  const editRow = (rowData, index) => {
     setEditData(rowData);
+    setEditIndex(index);
     setShowDialog(true);
   };
 
@@ -405,8 +406,6 @@ const OutCountryTour = ({
   const handleDialogClose = () => {
     setShowDialog(false);
   };
-
-  console.log("form data", formData);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -521,6 +520,7 @@ const OutCountryTour = ({
               edit={edit}
               username={user.username}
               outCountry={true}
+              editIndex={editIndex}
             />
           )}
           <TravelDetailsTable
