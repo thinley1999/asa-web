@@ -120,19 +120,6 @@ const OutCountryTour = ({
     }));
   };
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevFormData) => ({
-  //     ...prevFormData,
-  //     [name]: value,
-  //   }));
-
-  //   setFormErrors((prevErrors) => ({
-  //     ...prevErrors,
-  //     [name]: "",
-  //   }));
-  // };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     const keys = name.split(".");
@@ -357,7 +344,7 @@ const OutCountryTour = ({
     const dataToCheck = editData || newData;
     const currentHaltCount = haltCount();
 
-    if (dataToCheck.halt_at && currentHaltCount > 2) {
+    if (dataToCheck.stop_at && currentHaltCount > 2) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
         itinerary_error:
