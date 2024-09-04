@@ -47,27 +47,22 @@ const TravelDetails = ({
       return: false,
     }
   );
-  const halt_count = haltCount();
+  const halt_count = haltCount(initialData?.id);
 
   const formatDateForInput = (date) => {
     if (!date) return "";
 
-    // Parse the date-time string
     let d;
     if (typeof date === "string" && date.endsWith("Z")) {
-      // If the date-time string ends with "Z", it's in UTC time
       d = new Date(date);
     } else {
-      // If there's no "Z", treat the time as local time
       d = new Date(date + "Z");
     }
 
-    // Check if the date is valid
     if (isNaN(d.getTime())) {
       return "";
     }
 
-    // Use UTC methods to get the date and time components
     const year = d.getUTCFullYear();
     const month = ("0" + (d.getUTCMonth() + 1)).slice(-2);
     const day = ("0" + d.getUTCDate()).slice(-2);
@@ -196,10 +191,10 @@ const TravelDetails = ({
             halt_count + 1,
             stop_at
           );
-          const res2 = await RateServices.getThirdCountryRate(stop_at);
-          if (response && res2) {
+          // const res2 = await RateServices.getThirdCountryRate(stop_at);
+          if (response) {
             return {
-              rate: dsaPercentage * days * res2.rate + response.rate,
+              rate: response.rate,
               currency: response.currency,
             };
           }
@@ -385,10 +380,13 @@ const TravelDetails = ({
                         setData((prevData) => ({
                           ...prevData,
                           from: "",
+                          from_place: "",
                           to: "",
+                          to_place: "",
                           stop_at: "",
                           mode: "",
                           return: false,
+                          
                         }));
                         setReturnChecked(false);
                         setStopChecked(false);
@@ -434,7 +432,9 @@ const TravelDetails = ({
                           setData((prevData) => ({
                             ...prevData,
                             from: "",
+                            from_place: "",
                             to: "",
+                            to_place: "",
                             halt_at: "",
                             mode: "",
                             return: false,
@@ -635,10 +635,7 @@ const TravelDetails = ({
                     name="stop_at"
                     disabled={stopChecked && !data.return ? false : true}
                     value={data.stop_at}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setMode(e.target.value);
-                    }}
+                    onChange={handleChange}
                   >
                     <option value="" disabled>
                       Select Stop Over Location
