@@ -600,7 +600,7 @@ const TravelDetails = ({
                     errors.halt_at ? "is-invalid" : ""
                   }`}
                   name="halt_at"
-                  disabled={haltChecked && !data.return ? false : true}
+                  disabled={haltChecked && !data.return && (!existingData || edit) ? false : true}
                   value={data.halt_at}
                   onChange={(e) => {
                     handleChange(e);
@@ -629,7 +629,7 @@ const TravelDetails = ({
                       errors.stop_at ? "is-invalid" : ""
                     }`}
                     name="stop_at"
-                    disabled={stopChecked && !data.return ? false : true}
+                    disabled={stopChecked && !data.return && (!existingData || edit) ? false : true}
                     value={data.stop_at}
                     onChange={handleChange}
                   >
