@@ -15,6 +15,7 @@ const TravelDetails = ({
   edit,
   username,
   outCountry,
+  editIndex
 }) => {
   const [haltChecked, setHaltChecked] = useState(
     existingData?.halt_at || initialData?.halt_at ? true : false
@@ -47,7 +48,7 @@ const TravelDetails = ({
       return: false,
     }
   );
-  const halt_count = haltCount(initialData?.id);
+  const halt_count = haltCount(editIndex);
 
   const formatDateForInput = (date) => {
     if (!date) return "";
@@ -160,7 +161,7 @@ const TravelDetails = ({
         setDropDown(response.data);
       }
     } catch (error) {
-      console.error("Error fetching countries:", error);
+      // console.error("Error fetching countries:", error);
     }
   };
 
@@ -239,7 +240,7 @@ const TravelDetails = ({
         };
       }
     } catch (error) {
-      console.error("Error fetching rates:", error);
+      // console.error("Error fetching rates:", error);
       throw error;
     }
   };
@@ -249,7 +250,6 @@ const TravelDetails = ({
     setErrors(errors);
 
     if (!isValid) return;
-    console.log("data..", data);
 
     try {
       const {
@@ -278,11 +278,11 @@ const TravelDetails = ({
 
       setData((prevData) => ({ ...prevData, rate, currency }));
       onSave({ ...data, rate, currency });
-      console.log("data....", data);
+      // console.log("data....", data);
       setData([]);
       onClose();
     } catch (error) {
-      console.error("Error while submitting:", error);
+      // console.error("Error while submitting:", error);
     }
   };
 
@@ -301,11 +301,7 @@ const TravelDetails = ({
     }
   }, [type]);
 
-  console.log("data....", data);
-
   if (!isOpen) return null;
-
-  console.log("out Country", outCountry);
 
   return (
     <div className="modal fade show" tabIndex="-1" style={{ display: "block" }}>
@@ -604,7 +600,7 @@ const TravelDetails = ({
                     errors.halt_at ? "is-invalid" : ""
                   }`}
                   name="halt_at"
-                  disabled={haltChecked && !data.return ? false : true}
+                  disabled={haltChecked && !data.return && (!existingData || edit) ? false : true}
                   value={data.halt_at}
                   onChange={(e) => {
                     handleChange(e);
@@ -633,7 +629,7 @@ const TravelDetails = ({
                       errors.stop_at ? "is-invalid" : ""
                     }`}
                     name="stop_at"
-                    disabled={stopChecked && !data.return ? false : true}
+                    disabled={stopChecked && !data.return && (!existingData || edit) ? false : true}
                     value={data.stop_at}
                     onChange={handleChange}
                   >
