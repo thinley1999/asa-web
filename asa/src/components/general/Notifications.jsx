@@ -83,7 +83,6 @@ const Notifications = ({
       >
         <div className="toast-header">
           <h6 className="me-auto text-primary">Notifications</h6>
-          <a href="#">Mark all as read</a>
           <button
             type="button"
             className="btn-close"

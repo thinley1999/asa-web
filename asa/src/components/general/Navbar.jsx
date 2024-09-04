@@ -139,7 +139,7 @@ const Navbar = ({
               <p className="username">
                 {user.first_name} {user.middle_name} {user.last_name}
               </p>
-              {user.role && <p className="userrole">{user.role.name}</p>}
+              <p className="userrole">{user.position_title}</p>
             </a>
           </div>
         </div>

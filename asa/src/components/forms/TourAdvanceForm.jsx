@@ -126,7 +126,7 @@ const TourAdvanceForm = (data) => {
             {reportData?.advance_amount?.USD
               ? `USD. ${
                   reportData.advance_amount.USD
-                    ? parseFloat(rreportData.advance_amount.USD).toLocaleString(
+                    ? parseFloat(reportData.advance_amount.USD).toLocaleString(
                         "en-US",
                         {
                           minimumFractionDigits: 2,
@@ -207,9 +207,29 @@ const TourAdvanceForm = (data) => {
               {reportData?.user?.travel_itineraries.map((itenary, index) => (
                 <tr key={index}>
                   <td colSpan={2}>{isoToDate(itenary?.start_date) || "N/A"}</td>
-                  <td>{itenary?.from || "N/A"}</td>
-                  <td>{itenary?.to || "N/A"}</td>
+                  <td>
+                    {itenary.from_place || itenary.from
+                      ? `${itenary.from_place || ""}, ${
+                          itenary.from || ""
+                        }`.replace(/^,\s*|,\s*$/, "")
+                      : "N/A"}
+                  </td>
+                  <td>
+                    {" "}
+                    {itenary.to_place || itenary.to
+                      ? `${itenary.from_place || ""}, ${
+                          itenary.from || ""
+                        }`.replace(/^,\s*|,\s*$/, "")
+                      : "N/A"}
+                  </td>
                   <td colSpan={2}>{itenary?.mode || "N/A"}</td>
+                  <td colSpan={2}>
+                    {itenary?.halt_at
+                      ? `Halt at ${itenary.halt_at}`
+                      : itenary?.stop_at
+                      ? `Stop at ${itenary.stop_at}`
+                      : "N/A"}
+                  </td>
                   {/* <td colSpan={2} rowSpan={3} style={{ verticalAlign: "middle" }}>
                     Travelling
                   </td> */}
@@ -263,7 +283,7 @@ const TourAdvanceForm = (data) => {
             {reportData?.advance_amount?.USD
               ? `USD. ${
                   reportData.advance_amount.USD
-                    ? parseFloat(rreportData.advance_amount.USD).toLocaleString(
+                    ? parseFloat(reportData.advance_amount.USD).toLocaleString(
                         "en-US",
                         {
                           minimumFractionDigits: 2,

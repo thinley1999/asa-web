@@ -120,8 +120,8 @@ const MyApplications = ({
               {application.status === "dispatched" &&
                 application.claim_dsa !== true &&
                 ((application.advance_type === "ex_country_tour_advance" &&
-                  application.advance_percentage === 1.0) ||
-                  (application.advance_type === "in_country_tour_advance")) && (
+                  application.advance_percentage === "1.0") ||
+                  application.advance_type === "in_country_tour_advance") && (
                   <a
                     className="btn btn-outline-success mt-1 btn-fixed-width"
                     onClick={() => handleDSAClaim(application.id)}
