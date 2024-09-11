@@ -24,6 +24,10 @@ const MyApplications = ({
     navigate(`/dsaClaim/${id}`);
   };
 
+  const editApplication = (id) => {
+    navigate(`/editAdvance/${id}`);
+  }
+
   console.log("length check", applications?.advances?.length);
 
   if (applications?.advances?.length === 0) {
@@ -129,6 +133,16 @@ const MyApplications = ({
                     Claim DSA
                   </a>
                 )}
+
+              {(application.status === "pending" ||
+                application.status === "rejected") && (
+                <a
+                  className="btn btn-outline-success mt-1 btn-fixed-width"
+                  onClick={() => editApplication(application.id)}
+                >
+                  Edit Detail
+                </a>
+              )}
             </div>
           </div>
         ))}

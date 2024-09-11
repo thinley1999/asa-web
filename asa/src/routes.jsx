@@ -97,6 +97,11 @@ const routes = createBrowserRouter([
         children: [{ path: "", element: <EditRequestedAdvance /> }],
       },
       {
+        path: "editAdvance/:id",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <EditRequestedAdvance /> }],
+      },
+      {
         path: "requestedDsa",
         element: <PrivateRoute />,
         children: [{ path: "", element: <RequestedDsa /> }],
