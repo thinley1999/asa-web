@@ -615,7 +615,7 @@ const OutCountryTour = ({
                   name="remark"
                   rows="4"
                   disabled={data ? (edit ? false : true) : false}
-                  value={data ? data.remark : formData.remark}
+                  value={formData.remark}
                   onChange={handleChange}
                 ></textarea>
                 {formErrors?.remark_error && (
