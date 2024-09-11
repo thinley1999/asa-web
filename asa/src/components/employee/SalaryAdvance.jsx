@@ -164,7 +164,6 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
      
         if (response) {
           setSuccessMessage("Advance Updated successfully");
-          resetForm();
         } else {
           setErrorMessage("Internal Server Error");
         }
