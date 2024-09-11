@@ -15,7 +15,7 @@ const TravelDetails = ({
   edit,
   username,
   outCountry,
-  editIndex
+  editIndex,
 }) => {
   const [haltChecked, setHaltChecked] = useState(
     existingData?.halt_at || initialData?.halt_at ? true : false
@@ -382,7 +382,6 @@ const TravelDetails = ({
                           stop_at: "",
                           mode: "",
                           return: false,
-                          
                         }));
                         setReturnChecked(false);
                         setStopChecked(false);
@@ -525,7 +524,7 @@ const TravelDetails = ({
                     className="form-control"
                     type="text"
                     name="to_place"
-                  value={data.to_place || ""}
+                    value={data.to_place || ""}
                     onChange={handleChange}
                     disabled={
                       haltChecked || stopChecked || (existingData && !edit)
@@ -600,7 +599,11 @@ const TravelDetails = ({
                     errors.halt_at ? "is-invalid" : ""
                   }`}
                   name="halt_at"
-                  disabled={haltChecked && !data.return && (!existingData || edit) ? false : true}
+                  disabled={
+                    haltChecked && !data.return && (!existingData || edit)
+                      ? false
+                      : true
+                  }
                   value={data.halt_at}
                   onChange={(e) => {
                     handleChange(e);
@@ -629,7 +632,11 @@ const TravelDetails = ({
                       errors.stop_at ? "is-invalid" : ""
                     }`}
                     name="stop_at"
-                    disabled={stopChecked && !data.return && (!existingData || edit) ? false : true}
+                    disabled={
+                      stopChecked && !data.return && (!existingData || edit)
+                        ? false
+                        : true
+                    }
                     value={data.stop_at}
                     onChange={handleChange}
                   >
@@ -667,6 +674,7 @@ const TravelDetails = ({
                     Select Percentage
                   </option>
                   <option value="1">100%</option>
+                  <option value="0.7">70%</option>
                   <option value="0.5">50%</option>
                 </select>
                 {errors.dsa_percentage && (
