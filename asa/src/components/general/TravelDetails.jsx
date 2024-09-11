@@ -676,14 +676,14 @@ const TravelDetails = ({
                   <option value="" disabled>
                     Select Percentage
                   </option>
-                  <option value="100/100">100% (No meals & lodging)</option>
+                  <option value="1">100% (No meals & lodging)</option>
                   {department === "Management" && type === "inCountry" && (
-                    <option value="7/10">70% (lodging provided)</option>
+                    <option value="7/10">70% (Lodging provided)</option>
                   )}
                   {department === "Management" && type === "outCountry" && (
-                    <option value="7/12">58.33% (lodging provided)</option>
+                    <option value="7/12">58.33% (Lodging provided)</option>
                   )}
-                  <option value="1/2">50% (meals/lodging provide)</option>
+                  <option value="1/2">50% (Meals/lodging provide)</option>
                 </select>
                 {errors.dsa_percentage && (
                   <div className="text-danger">{errors.dsa_percentage}</div>
