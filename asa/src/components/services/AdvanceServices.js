@@ -114,6 +114,7 @@ const update = async (id, params, travel_itinerary = []) => {
           purpose: params.purpose,
           remark: params.remark || params.other_advance_type,
           advance_percentage: parseFloat(params.advance_percentage),
+          office_order: params.office_order,
         },
         salary_advance: {
           duration: params.duration,

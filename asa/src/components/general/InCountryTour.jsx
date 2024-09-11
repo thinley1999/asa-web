@@ -403,7 +403,6 @@ const InCountryTour = ({
     setEditData(null);
   };
 
-  console.log("formData", formData);
   return (
     <form onSubmit={handleSubmit}>
       {successMessage && (
