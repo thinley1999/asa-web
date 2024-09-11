@@ -182,7 +182,7 @@ const TravelDetails = ({
         response = await RateServices.getRate(from, to, edit ? username : "");
         if (mode === "Private Vehicle") {
           return {
-            rate: 16 * mileage + dsaPercentage * days * response.rate,
+            rate: eval(`${16} * ${mileage} + ${dsaPercentage} * ${days} * ${response.rate}`),
             currency: "Nu",
           };
         }
@@ -235,7 +235,7 @@ const TravelDetails = ({
 
       if (response) {
         return {
-          rate: dsaPercentage * days * response.rate,
+          rate: eval(`${dsaPercentage} * ${days} * ${response.rate}`), 
           currency: response.currency,
         };
       }
@@ -673,9 +673,10 @@ const TravelDetails = ({
                   <option value="" disabled>
                     Select Percentage
                   </option>
-                  <option value="1">100%</option>
-                  <option value="0.7">70%</option>
-                  <option value="0.5">50%</option>
+                  <option value="100/100">100%</option>
+                  <option value="7/10">70%</option>
+                  <option value="7/12">58.33%</option>
+                  <option value="1/2">50%</option>
                 </select>
                 {errors.dsa_percentage && (
                   <div className="text-danger">{errors.dsa_percentage}</div>
