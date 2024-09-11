@@ -320,13 +320,13 @@ const OutCountryTour = ({
 
   const haltCount = (index) => {
     let count = 0;
-    if (index || index == 0){
+    if (index || index == 0) {
       for (let i = 0; i < index; i++) {
         if (rows[i]?.stop_at) {
           count++;
         }
       }
-    }else{
+    } else {
       for (let i = 0; i < rows.length; i++) {
         if (rows[i].stop_at) {
           count++;
@@ -521,6 +521,7 @@ const OutCountryTour = ({
               username={user.username}
               outCountry={true}
               editIndex={editIndex}
+              department={formData.department}
             />
           )}
           <TravelDetailsTable

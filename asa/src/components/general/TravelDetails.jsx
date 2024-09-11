@@ -16,7 +16,9 @@ const TravelDetails = ({
   username,
   outCountry,
   editIndex,
+  department,
 }) => {
+  console.log("Department Test ", department);
   const [haltChecked, setHaltChecked] = useState(
     existingData?.halt_at || initialData?.halt_at ? true : false
   );
@@ -182,7 +184,11 @@ const TravelDetails = ({
         response = await RateServices.getRate(from, to, edit ? username : "");
         if (mode === "Private Vehicle") {
           return {
-            rate: eval(`${16} * ${mileage} + ${dsaPercentage} * ${days} * ${response.rate}`),
+            rate: eval(
+              `${16} * ${mileage} + ${dsaPercentage} * ${days} * ${
+                response.rate
+              }`
+            ),
             currency: "Nu",
           };
         }
@@ -235,7 +241,7 @@ const TravelDetails = ({
 
       if (response) {
         return {
-          rate: eval(`${dsaPercentage} * ${days} * ${response.rate}`), 
+          rate: eval(`${dsaPercentage} * ${days} * ${response.rate}`),
           currency: response.currency,
         };
       }
@@ -582,7 +588,6 @@ const TravelDetails = ({
                   error={errors.mileage || ""}
                 />
               )}
-
               <CustomInput
                 label="Number of days"
                 type="number"
@@ -591,7 +596,6 @@ const TravelDetails = ({
                 onChange={handleChange}
                 isDisable={true}
               />
-
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">Halt at</label>
                 <select
@@ -655,7 +659,6 @@ const TravelDetails = ({
                   )}
                 </div>
               )}
-
               <div className="col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
                 <label className="form-label">DSA Percentage</label>
                 <select
@@ -673,10 +676,14 @@ const TravelDetails = ({
                   <option value="" disabled>
                     Select Percentage
                   </option>
-                  <option value="100/100">100%</option>
-                  <option value="7/10">70%</option>
-                  <option value="7/12">58.33%</option>
-                  <option value="1/2">50%</option>
+                  <option value="100/100">100% (No meals & lodging)</option>
+                  {department === "Management" && type === "inCountry" && (
+                    <option value="7/10">70% (lodging provided)</option>
+                  )}
+                  {department === "Management" && type === "outCountry" && (
+                    <option value="7/12">58.33% (lodging provided)</option>
+                  )}
+                  <option value="1/2">50% (meals/lodging provide)</option>
                 </select>
                 {errors.dsa_percentage && (
                   <div className="text-danger">{errors.dsa_percentage}</div>
