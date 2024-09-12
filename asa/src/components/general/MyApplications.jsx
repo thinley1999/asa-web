@@ -26,7 +26,7 @@ const MyApplications = ({
 
   const editApplication = (id) => {
     navigate(`/editAdvance/${id}`);
-  }
+  };
 
   console.log("length check", applications?.advances?.length);
 
@@ -135,14 +135,18 @@ const MyApplications = ({
                 )}
 
               {(application.status === "pending" ||
-                application.status === "rejected") && (
-                <a
-                  className="btn btn-outline-success mt-1 btn-fixed-width"
-                  onClick={() => editApplication(application.id)}
-                >
-                  Edit Detail
-                </a>
-              )}
+                application.status === "rejected") &&
+                advance_type[application.advance_type] !==
+                  "In Country DSA Claim" &&
+                advance_type[application.advance_type] !==
+                  "Ex Country DSA Claim" && (
+                  <a
+                    className="btn btn-outline-success mt-1 btn-fixed-width"
+                    onClick={() => editApplication(application.id)}
+                  >
+                    Edit Detail
+                  </a>
+                )}
             </div>
           </div>
         ))}
