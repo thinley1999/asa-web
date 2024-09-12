@@ -41,6 +41,7 @@ const InCountryTour = ({
     delete_files: [],
     advance_percentage: "",
     office_order: "",
+    tour_type: "",
   };
   const [formData, setFormData] = useState(initialFormData);
   const [rows, setRows] = useState([]);
@@ -140,6 +141,10 @@ const InCountryTour = ({
         delete newErrors.office_order_error;
       }
 
+      if (name === "tour_type") {
+        delete newErrors.tour_type_error;
+      }
+
       if (name === "remark") {
         delete newErrors.remark_error;
       }
@@ -175,6 +180,10 @@ const InCountryTour = ({
 
     if (!formData.office_order) {
       errors.office_order_error = "Please enter office order number.";
+    }
+
+    if (!formData.tour_type) {
+      errors.tour_type_error = "Please select tour type.";
     }
 
     if (!formData.remark) {
@@ -308,6 +317,7 @@ const InCountryTour = ({
       update_files: initialFormData.update_files,
       delete_files: initialFormData.delete_files,
       office_order: "",
+      tour_type: "",
     }));
     setRows([]);
   };
@@ -380,6 +390,7 @@ const InCountryTour = ({
       remark: data?.remark || prevFormData.remark,
       advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
       files: data?.files || [],
+      tour_type: data?.tour_type || prevFormData.tour_type,
       advance_percentage:
         data?.advance_percentage || prevFormData.advance_percentage,
     }));
@@ -484,6 +495,23 @@ const InCountryTour = ({
             onChange={handleChange}
             error={formErrors?.office_order_error}
           />
+          <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
+            <label className="form-label">Tour Type</label>
+            <select
+              className="form-select"
+              name="tour_type"
+              value={formData.tour_type}
+              onChange={handleChange}
+              disabled={data ? (edit ? false : true) : false}
+            >
+              <option value="">Select Tour Type</option>
+              <option value="training">Training</option>
+              <option value="office tour">Office Tour</option>
+            </select>
+            {formErrors.tour_type_error && (
+              <div className="text-danger">{formErrors.tour_type_error}</div>
+            )}
+          </div>
           <CustomFileInput
             label="Relevant Documents"
             name="relevantDocument"

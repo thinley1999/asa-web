@@ -58,9 +58,11 @@ const create = async (params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
-    console.log('advance amount', params.advanceAmount);
+    console.log("advance amount", params.advanceAmount);
 
-    const filteredTravelItinerary = travel_itinerary.map(({ id, ...rest }) => rest);
+    const filteredTravelItinerary = travel_itinerary.map(
+      ({ id, ...rest }) => rest
+    );
 
     const response = await axios.post(
       `${API_URL}/api/advances`,
@@ -74,6 +76,7 @@ const create = async (params, travel_itinerary = []) => {
           remark: params.remark || params.other_advance_type,
           advance_percentage: parseFloat(params.advance_percentage),
           office_order: params.office_order,
+          tour_type: params.tour_type,
         },
         salary_advance: {
           duration: params.duration,
@@ -100,7 +103,7 @@ const update = async (id, params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
-    console.log('advance amount', params.advanceAmount);
+    console.log("advance amount", params.advanceAmount);
 
     const response = await axios.put(
       `${API_URL}/api/advances/${id}`,
@@ -115,6 +118,7 @@ const update = async (id, params, travel_itinerary = []) => {
           remark: params.remark || params.other_advance_type,
           advance_percentage: parseFloat(params.advance_percentage),
           office_order: params.office_order,
+          tour_type: params.tour_type,
         },
         salary_advance: {
           duration: params.duration,
@@ -214,7 +218,7 @@ const claimDsa = async (id, dsa_amount) => {
       `${API_URL}/api/advances/claim_dsa`,
       {
         id: id,
-        dsa_amount: dsa_amount
+        dsa_amount: dsa_amount,
       },
       {
         headers: {
