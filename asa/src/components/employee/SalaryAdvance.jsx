@@ -27,6 +27,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     username: " ",
     advance_type: "salary_advance",
     completion_month: "june 2023",
+    tour_type: "salary_advance"
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -45,6 +46,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         purpose: data.purpose || " ",
         advance_type: data.advance_type || "salary_advance",
         completion_month: data.advance_detail.completion_month || "june 2023",
+        tour_type: "salary_advance",
       }));
     }
   }, [data]);

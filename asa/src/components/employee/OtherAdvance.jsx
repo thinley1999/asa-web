@@ -30,6 +30,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     files: [],
     update_files: [],
     delete_files: [],
+    tour_type: "other_advance",
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -243,6 +244,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         other_advance_type: data.remark || " - ",
         totalAmount: data.amount || " - ",
         files: data?.files,
+        tour_type: "other_advance"
       }));
     }
   }, [data]);
