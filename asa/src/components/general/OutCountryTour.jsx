@@ -512,7 +512,7 @@ const OutCountryTour = ({
               <option value="">Select Tour Type</option>
               <option value="training">Training</option>
               <option value="meeting/seminar">Meeting/Seminar</option>
-              <option value="remittance">Remittance</option>
+              <option value="remittance">Cash Consignment(remittance)</option>
             </select>
             {formErrors.tour_type_error && (
               <div className="text-danger">{formErrors.tour_type_error}</div>
