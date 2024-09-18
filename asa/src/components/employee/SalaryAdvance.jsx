@@ -29,9 +29,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     completion_month: "june 2023",
     tour_type: "salary_advance"
   };
-
   const [formData, setFormData] = useState(initialFormData);
-
   const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
@@ -50,6 +48,31 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       }));
     }
   }, [data]);
+
+  function monthsUntilFinYearEnd(currentDate) {
+    let currentDay = currentDate.getDate();
+    let currentMonth = currentDate.getMonth() + 1;
+    let currentYear = currentDate.getFullYear();
+    let financialEndYear = null;
+  
+    if (currentMonth < 7) {
+        financialEndYear = currentYear;
+    } else {
+        financialEndYear = currentYear + 1;
+    }
+  
+    let monthsLeft;
+  
+    if (currentMonth >= 7) {
+        monthsLeft = 12 - currentMonth + 6;
+    } else {
+        monthsLeft = 6 - currentMonth;
+    }
+  
+    if (currentDay < 25) { monthsLeft += 1; }
+  
+    return Math.min(monthsLeft, 10);
+  }
 
   const fetchUserDetails = async () => {
     try {
@@ -121,6 +144,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   const validateForm = () => {
     let errors = {};
+    let maxDate = monthsUntilFinYearEnd(new Date());
+
     if (
       formData.totalAmount <= 0 ||
       formData.totalAmount > formData.thresholdAmount
@@ -128,8 +153,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       errors.advanceAmount =
         "Advance amount should be more than 0 and less than the threshold amount.";
     }
-    if (formData.duration <= 0 || formData.duration >= 11) {
-      errors.duration = "Duration should be more than 0 and less than 11.";
+    if (formData.duration <= 0 || formData.duration > maxDate) {
+      errors.duration = `Duration should be less than or equal to ${maxDate}.`;
     }
     if (!formData.purpose.trim()) {
       errors.purpose = "Purpose is required.";
