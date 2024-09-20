@@ -85,7 +85,7 @@ const ViewRequestedAdvance = () => {
         setErrorMessage("Internal Server Error");
       }
     } catch (error) {
-      setErrorMessage("An error occurred");
+      setErrorMessage("There was a clash with existing voucher. Please try again after few minutes.");
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
