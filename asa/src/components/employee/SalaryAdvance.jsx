@@ -107,7 +107,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     if (duration <= 0) {
       return 0;
     }
-    const deduction = parseFloat(totalAmount) / parseFloat(duration);
+    const deduction = Math.ceil(parseFloat(totalAmount) / parseFloat(duration));
     setFormData((prevFormData) => ({
       ...prevFormData,
       deduction: deduction,
