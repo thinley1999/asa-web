@@ -274,7 +274,7 @@ const DsaClaimForm = (data) => {
                 ? `USD. ${
                     reportData.advance_amount.USD
                       ? parseFloat(
-                          rreportData.advance_amount.USD
+                          reportData.advance_amount.USD
                         ).toLocaleString("en-US", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
