@@ -180,15 +180,14 @@ const TravelDetails = ({
   ) => {
     try {
       let response;
-      if (tourType === "inCountry") {
-        response = await RateServices.getRate(from, to, edit ? username : "");
+      if (tourType === "inCountry" || tourType === "outCountry") {
+        const rateType = tourType === "inCountry" ? from : "Other";
+        response = await RateServices.getRate(rateType, to, edit ? username : "");
+      
         if (mode === "Private Vehicle") {
+          const rate = 16 * mileage + dsaPercentage * days * response.rate;
           return {
-            rate: eval(
-              `${16} * ${mileage} + ${dsaPercentage} * ${days} * ${
-                response.rate
-              }`
-            ),
+            rate,
             currency: "Nu",
           };
         }
@@ -564,16 +563,13 @@ const TravelDetails = ({
                   </option>
                   <option value="Airplane">Airplane</option>
                   <option value="Train">Train</option>
-                  {type === "inCountry" && (
-                    <option value="Private Vehicle">Private Vehicle</option>
-                  )}
+                  <option value="Private Vehicle">Private Vehicle</option>
                   <option value="Pool Vehicle">Pool Vehicle</option>
                 </select>
                 {errors.mode && (
                   <div className="text-danger">{errors.mode}</div>
                 )}
               </div>
-              {type === "inCountry" && (
                 <CustomInput
                   label={"Mileage(Km)"}
                   name="mileage"
@@ -587,7 +583,6 @@ const TravelDetails = ({
                   onChange={handleChange}
                   error={errors.mileage || ""}
                 />
-              )}
               <CustomInput
                 label="Number of days"
                 type="number"
