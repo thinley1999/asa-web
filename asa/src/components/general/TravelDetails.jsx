@@ -180,7 +180,7 @@ const TravelDetails = ({
   ) => {
     try {
       let response;
-      if (mode === "Private Vehicle") {
+      if (mode === "Private Vehicle" || tourType === "inCountry") {
         const rateType = tourType === "inCountry" ? from : "Other";
         response = await RateServices.getRate(rateType, to, edit ? username : "");
           const rate = 16 * mileage + dsaPercentage * days * response.rate;
