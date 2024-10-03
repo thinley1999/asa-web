@@ -180,17 +180,14 @@ const TravelDetails = ({
   ) => {
     try {
       let response;
-      if (tourType === "inCountry" || tourType === "outCountry") {
+      if (mode === "Private Vehicle") {
         const rateType = tourType === "inCountry" ? from : "Other";
         response = await RateServices.getRate(rateType, to, edit ? username : "");
-      
-        if (mode === "Private Vehicle") {
           const rate = 16 * mileage + dsaPercentage * days * response.rate;
           return {
             rate,
             currency: "Nu",
           };
-        }
       } else if (tourType === "outCountry") {
         if (stop_at) {
           response = await RateServices.getStopOverRate(
