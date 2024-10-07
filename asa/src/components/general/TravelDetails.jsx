@@ -182,12 +182,22 @@ const TravelDetails = ({
       let response;
       if (mode === "Private Vehicle" || tourType === "inCountry") {
         const rateType = tourType === "inCountry" ? from : "Other";
+        if (mode === "Private Vehicle") {
         response = await RateServices.getRate(rateType, to, edit ? username : "");
-          const rate = 16 * mileage + dsaPercentage * days * response.rate;
+          const rate = (16 * mileage) + eval(`${dsaPercentage} * ${days} * ${response.rate}`);
+          
           return {
             rate,
             currency: "Nu",
           };
+        }else{
+          response = await RateServices.getRate(from, to, edit ? username : "");
+          const rate = eval(`${dsaPercentage} * ${days} * ${response.rate}`);
+          return {
+            rate,
+            currency: "Nu",
+          }
+        }
       } else if (tourType === "outCountry") {
         if (stop_at) {
           response = await RateServices.getStopOverRate(
