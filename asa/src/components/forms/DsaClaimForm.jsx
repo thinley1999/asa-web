@@ -243,7 +243,6 @@ const DsaClaimForm = (data) => {
                       : ""
                   } `
                 : ""}
-              {totalUSD ? `,USD ${totalUSD}` : ""}
               {totalUSD
                 ? `USD. ${
                     totalUSD
@@ -255,6 +254,13 @@ const DsaClaimForm = (data) => {
                   } `
                 : ""}
             </p>
+
+            {reportData?.additional_expense > 0 && (
+              <p className="formpTag">
+                Additional Expense: {reportData.additional_expense} USD
+              </p>
+            )}
+
             <p className="formpTag">
               Advance:
               {reportData?.advance_amount?.Nu

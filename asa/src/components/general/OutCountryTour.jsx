@@ -46,6 +46,7 @@ const OutCountryTour = ({
     tour_type: "",
     update_files: [],
     delete_files: [],
+    additional_expense: "",
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -53,7 +54,7 @@ const OutCountryTour = ({
   const totalAmount = () => {
     let Nu = 0;
     let INR = 0;
-    let USD = 0;
+    let USD = formData?.additional_expense == 200 ? 200 : 0;
     rows.forEach((row) => {
       if (row.currency == "Nu") {
         Nu += parseFloat(row.rate);
@@ -123,21 +124,24 @@ const OutCountryTour = ({
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     const keys = name.split(".");
 
+
     setFormData((prevFormData) => {
+      const newValue = type === "checkbox" ? (checked ? value : 0) : value;
+  
       if (keys.length === 1) {
         return {
           ...prevFormData,
-          [name]: value,
+          [name]: newValue,
         };
       } else {
         return {
           ...prevFormData,
           [keys[0]]: {
             ...prevFormData[keys[0]],
-            [keys[1]]: value,
+            [keys[1]]: newValue,
           },
         };
       }
@@ -311,6 +315,7 @@ const OutCountryTour = ({
       delete_files: initialFormData.delete_files,
       office_order: "",
       tour_type: "",
+      additional_expense: "",
     }));
     setRows([]);
     setFormErrors([]);
@@ -390,7 +395,7 @@ const OutCountryTour = ({
 
   useEffect(() => {
     totalAmount();
-  }, [rows, formData.advance_percentage]);
+  }, [rows, formData.advance_percentage, formData.additional_expense]);
 
   useEffect(() => {
     setFormData((prevFormData) => ({
@@ -400,6 +405,8 @@ const OutCountryTour = ({
       advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
       tour_type: data?.tour_type || prevFormData.tour_type,
       files: data?.files || [],
+      additional_expense:
+        data?.additional_expense || prevFormData.additional_expense,
       advance_percentage:
         data?.advance_percentage || prevFormData.advance_percentage,
     }));
@@ -576,6 +583,32 @@ const OutCountryTour = ({
               <FaPlus size={18} />
             </button>
           </div>
+          {/* {formData?.department === "Management" && ( */}
+            <div className="col-12 mb-4">
+              <label className="form-label">
+                Additional Expense(Management only)
+              </label>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  name="additional_expense"
+                  value={200}
+                  checked={
+                    parseFloat(formData.additional_expense) === 200
+                      ? true
+                      : false
+                  }
+                  onChange={handleChange}
+                  disabled={data ? (edit ? false : true) : false}
+                />
+                <label className="form-check-label">
+                  Local conveyance and communication expenses(200 USD)
+                </label>
+              </div>
+            </div>
+          {/* )} */}
+
           <CustomInput
             label="Total Amount"
             type="text"

@@ -77,6 +77,7 @@ const create = async (params, travel_itinerary = []) => {
           advance_percentage: parseFloat(params.advance_percentage),
           office_order: params.office_order,
           tour_type: params.tour_type,
+          additional_expense: params.additional_expense,
         },
         salary_advance: {
           duration: params.duration,
@@ -119,6 +120,7 @@ const update = async (id, params, travel_itinerary = []) => {
           advance_percentage: parseFloat(params.advance_percentage),
           office_order: params.office_order,
           tour_type: params.tour_type,
+          additional_expense: params.additional_expense,
         },
         salary_advance: {
           duration: params.duration,

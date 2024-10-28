@@ -122,7 +122,7 @@ const TourAdvanceForm = (data) => {
                       )
                     : ""
                 }`
-              : "0.0"}
+              : "Nu. 0.0, "}
             {reportData?.advance_amount?.USD
               ? `USD. ${
                   reportData.advance_amount.USD
