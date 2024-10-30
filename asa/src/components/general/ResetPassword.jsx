@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import zxcvbn from "zxcvbn";
 
 const ResetPassword = ({ isOpen, onClose, onSubmit }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [formErrors, setFormErrors] = useState({});
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
   if (!isOpen) return null;
 
@@ -19,6 +21,8 @@ const ResetPassword = ({ isOpen, onClose, onSubmit }) => {
       errors.newPassword = "New Password is required.";
     } else if (newPassword.length <= 5) {
       errors.newPassword = "New Password must be greater than 5 characters.";
+    } else if (passwordStrength < 3) {
+      errors.newPassword = "Password is not strong enough.";
     }
 
     if (!confirmPassword.trim()) {
@@ -45,6 +49,7 @@ const ResetPassword = ({ isOpen, onClose, onSubmit }) => {
       setNewPassword("");
       setConfirmPassword("");
       setFormErrors({});
+      setPasswordStrength(0);
     }
   };
 
@@ -59,9 +64,20 @@ const ResetPassword = ({ isOpen, onClose, onSubmit }) => {
       setOldPassword(value);
     } else if (field === "newPassword") {
       setNewPassword(value);
+      setPasswordStrength(zxcvbn(value).score);
     } else if (field === "confirmPassword") {
       setConfirmPassword(value);
     }
+  };
+
+  const getStrengthColor = () => {
+    const colors = ["#d9534f", "#f0ad4e", "#5bc0de", "#5cb85c", "#0275d8"];
+    return colors[passwordStrength] || "#d9534f";
+  };
+
+  const getPasswordStrengthMessage = () => {
+    const messages = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
+    return messages[passwordStrength] || "";
   };
 
   return (
@@ -104,6 +120,35 @@ const ResetPassword = ({ isOpen, onClose, onSubmit }) => {
                 {formErrors.newPassword && (
                   <div className="text-danger">{formErrors.newPassword}</div>
                 )}
+
+                {newPassword.length > 0 && (
+                  <>
+                    <div
+                      className="d-flex justify-content-between mt-2"
+                      style={{ fontSize: "0.9rem" }}
+                    >
+                      <span>Password Strength</span>
+                      <span
+                        className={`text-${
+                          passwordStrength >= 3 ? "success" : "danger"
+                        }`}
+                      >
+                        {getPasswordStrengthMessage()}
+                      </span>
+                    </div>
+
+                    <div className="progress mt-2" style={{ height: "8px" }}>
+                      <div
+                        className="progress-bar"
+                        role="progressbar"
+                        style={{
+                          width: `${(passwordStrength + 1) * 20}%`,
+                          backgroundColor: getStrengthColor(),
+                        }}
+                      ></div>
+                    </div>
+                  </>
+                )}
               </div>
               <div className="mt-3">
                 <label className="form-label">Confirm Password</label>
@@ -130,7 +175,11 @@ const ResetPassword = ({ isOpen, onClose, onSubmit }) => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={passwordStrength < 3}
+                >
                   Submit
                 </button>
               </div>
