@@ -217,8 +217,8 @@ const TourAdvanceForm = (data) => {
                   <td>
                     {" "}
                     {itenary.to_place || itenary.to
-                      ? `${itenary.from_place || ""}, ${
-                          itenary.from || ""
+                      ? `${itenary.to_place || ""}, ${
+                          itenary.to || ""
                         }`.replace(/^,\s*|,\s*$/, "")
                       : "N/A"}
                   </td>
