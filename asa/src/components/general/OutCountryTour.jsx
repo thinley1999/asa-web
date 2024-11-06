@@ -583,7 +583,7 @@ const OutCountryTour = ({
               <FaPlus size={18} />
             </button>
           </div>
-          {/* {formData?.department === "Management" && ( */}
+          {formData?.department === "Management" && (
             <div className="col-12 mb-4">
               <label className="form-label">
                 Additional Expense(Management only)
@@ -607,7 +607,7 @@ const OutCountryTour = ({
                 </label>
               </div>
             </div>
-          {/* )} */}
+          )} 
 
           <CustomInput
             label="Total Amount"
