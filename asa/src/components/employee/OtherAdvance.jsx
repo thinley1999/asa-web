@@ -261,9 +261,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     setErrorMessage("");
   };
 
-  console.log("formData ....", formData.files);
-  console.log("subii ....", showButtons);
-
   return (
     <div>
       {successMessage && (

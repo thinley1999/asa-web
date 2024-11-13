@@ -26,7 +26,6 @@ const ViewRequestedAdvance = () => {
     try {
       const response = await AdvanceServices.showDetail(id);
       setAdvanceData(response.data);
-      console.log("response", response.data);
     } catch (error) {
       console.error("Error fetching current applications:", error);
     }
@@ -114,8 +113,6 @@ const ViewRequestedAdvance = () => {
   useEffect(() => {
     handleShowButtons();
   }, [advanceData]);
-
-  console.log("advance permission...", advancePermission);
 
   return (
     <div>

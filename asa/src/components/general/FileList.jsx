@@ -16,7 +16,6 @@ const FileList = ({ files, myEdit }) => {
     link.click();
     document.body.removeChild(link);
   };
-  console.log("MyCheck2", myEdit);
 
   return (
     <div className="file-names pt-2 ps-2 pe-2">

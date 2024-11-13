@@ -93,8 +93,6 @@ const DsaClaim = () => {
         rate,
       };
 
-      console.log("updatedFormData", updatedFormData);
-
       const response = await ItenararyService.updateRow(updatedFormData);
       if (response) {
         fetchItinaries();
@@ -428,10 +426,6 @@ const DsaClaim = () => {
   if (formData === null) {
     return null;
   }
-
-  console.log("formData:", formData);
-  console.log("itineraries", itinararies);
-  console.log("advance", advance);
 
   return (
     <div>

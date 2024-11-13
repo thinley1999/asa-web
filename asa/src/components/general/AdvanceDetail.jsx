@@ -15,7 +15,6 @@ const AdvanceDetail = () => {
     try {
       const response = await AdvanceServices.showDetail(id);
       setAdvanceData(response.data);
-      console.log("Fetched data:", response.data);
     } catch (error) {
       setFetchError(error.message);
       console.error("Error fetching data:", error);

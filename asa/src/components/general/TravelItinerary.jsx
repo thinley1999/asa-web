@@ -44,8 +44,6 @@ const TravelItinerary = ({
     setShowDialog(false);
   };
 
-  console.log("data", data);
-
   return (
     <div className="bg-white px-4">
       <label className="form-label">Travel Itinerary</label>

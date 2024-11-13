@@ -22,7 +22,6 @@ const TourAdvanceForm = (data) => {
       setReportData(data?.data?.report);
     }
   }, [data]);
-  console.log(reportData, "data");
   const exportPDF = () => {
     if (formRef.current) {
       const scale = 3; // Increase the scale to capture higher resolution image

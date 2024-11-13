@@ -13,7 +13,6 @@ const IndividualReport = () => {
     try {
       const response = await ReportServices.show(id);
       setReport(response?.data);
-      console.log("response", response);
     } catch (error) {
       console.error("Error fetching report:", error);
     }

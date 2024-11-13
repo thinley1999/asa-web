@@ -75,9 +75,6 @@ const EmployeeApplications = () => {
     }
   }, [activeTab]);
 
-  console.log("current", currentapplication);
-  console.log("previous", previousapplication);
-
   return (
     <div>
       {isLoggedIn && <LoginoutMessage message="Login Successful!!!" />}

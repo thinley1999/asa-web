@@ -103,8 +103,6 @@ const Reports = () => {
       console.log("Validation errors", errors);
     }
   };
-
-  console.log("response message", reportData);
   // console.log("reportdata length", reportData.length);
 
   return (

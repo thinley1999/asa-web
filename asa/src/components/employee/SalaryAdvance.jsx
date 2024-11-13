@@ -168,7 +168,6 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     if (validateForm()) {
       try {
         const response = await AdvanceServices.create(formData);
-        console.log("response", response);
 
         if (response) {
           setSuccessMessage("Advance created successfully");

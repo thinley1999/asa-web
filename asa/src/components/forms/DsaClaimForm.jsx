@@ -23,7 +23,6 @@ const DsaClaimForm = (data) => {
       setReportData(data?.data?.report);
     }
   }, [data]);
-  console.log("mydata", reportData);
 
   const exportPDF = () => {
     if (formRef.current) {

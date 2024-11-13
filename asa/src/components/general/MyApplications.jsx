@@ -28,8 +28,6 @@ const MyApplications = ({
     navigate(`/editAdvance/${id}`);
   };
 
-  console.log("length check", applications?.advances?.length);
-
   if (applications?.advances?.length === 0) {
     return (
       <div className="bg-white px-4 py-4 my-3">

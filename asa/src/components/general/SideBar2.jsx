@@ -116,7 +116,6 @@ const SideBar2 = ({ handleCloseSidebar }) => {
   };
 
   const handleButtonClick = () => {
-    console.log("btn3 clicked");
     handleCloseSidebar();
   };
 

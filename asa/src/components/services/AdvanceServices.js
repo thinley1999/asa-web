@@ -58,8 +58,6 @@ const create = async (params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
-    console.log("advance amount", params.advanceAmount);
-
     const filteredTravelItinerary = travel_itinerary.map(
       ({ id, ...rest }) => rest
     );
@@ -103,8 +101,6 @@ const create = async (params, travel_itinerary = []) => {
 const update = async (id, params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
-
-    console.log("advance amount", params.advanceAmount);
 
     const response = await axios.put(
       `${API_URL}/api/advances/${id}`,

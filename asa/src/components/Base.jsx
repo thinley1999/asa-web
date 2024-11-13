@@ -20,7 +20,6 @@ const Base = () => {
   };
 
   const toggleShowNotification = () => {
-    console.log("hehehe...");
     setShowNotification(!showNotification);
   };
 

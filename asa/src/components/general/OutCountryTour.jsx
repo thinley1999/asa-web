@@ -425,7 +425,6 @@ const OutCountryTour = ({
     setShowDialog(false);
   };
 
-  console.log("Hello", formData.tour_type);
   return (
     <form onSubmit={handleSubmit}>
       {successMessage && (

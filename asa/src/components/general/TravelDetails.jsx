@@ -18,7 +18,6 @@ const TravelDetails = ({
   editIndex,
   department,
 }) => {
-  console.log("Department Test ", department);
   const [haltChecked, setHaltChecked] = useState(
     existingData?.halt_at || initialData?.halt_at ? true : false
   );

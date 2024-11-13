@@ -16,7 +16,6 @@ const CustomFileInput = ({
   updateFile,
   removeUpdateFile,
 }) => {
-  console.log("MyCheck", isEditMode);
   return (
     <div className="tourdetails col-xl-4 col-lg-4 col-md-4 col-12 mb-3">
       <label className="form-label">{label}</label>

@@ -35,8 +35,6 @@ const FinanceDashboard = () => {
     },
   });
 
-  console.log("statusCount...", statusCount);
-
   const [monthlycount, setMonthlyCount] = useState([]);
 
   const [applicationDetails, setApplicationDetails] = useState([]);
