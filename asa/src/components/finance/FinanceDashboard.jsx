@@ -328,7 +328,7 @@ const FinanceDashboard = () => {
           </div>
         </div>
 
-        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        {/* <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
           <div className="card pt-3 pe-2 mb-2 pb-4">
             <div className="d-flex justify-content-between">
               <div className="ms-3">
@@ -348,7 +348,7 @@ const FinanceDashboard = () => {
               </h1>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="row my-2">
