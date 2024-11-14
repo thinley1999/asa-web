@@ -128,7 +128,7 @@ const TravelDetails = ({
       newErrors.mileage = "Mileage is required for private vehicle";
     }
 
-    if (!haltChecked && !stopChecked) {
+    if (!haltChecked) {
       if (!from) newErrors.from = "From location is required";
       if (!to) newErrors.to = "To location is required";
       if (!mode) newErrors.mode = "Mode of travel is required";
@@ -143,7 +143,7 @@ const TravelDetails = ({
         "Stop Over location is required when stop over is checked";
     }
 
-    if (outCountry && !haltChecked && !stopChecked) {
+    if (outCountry && !haltChecked) {
       if (!from_place) newErrors.from_place = "From Place is required";
       if (!to_place) newErrors.to_place = "To Place is required";
     }
@@ -179,38 +179,41 @@ const TravelDetails = ({
   ) => {
     try {
       let response;
+      let stop_response;
+
       if (mode === "Private Vehicle" || tourType === "inCountry") {
         const rateType = tourType === "inCountry" ? from : "Other";
         if (mode === "Private Vehicle") {
-        response = await RateServices.getRate(rateType, to, edit ? username : "");
-          const rate = (16 * mileage) + eval(`${dsaPercentage} * ${days} * ${response.rate}`);
-          
+          response = await RateServices.getRate(
+            rateType,
+            to,
+            edit ? username : ""
+          );
+          const rate =
+            16 * mileage +
+            eval(`${dsaPercentage} * ${days} * ${response.rate}`);
+
           return {
             rate,
             currency: "Nu",
           };
-        }else{
+        } else {
           response = await RateServices.getRate(from, to, edit ? username : "");
           const rate = eval(`${dsaPercentage} * ${days} * ${response.rate}`);
           return {
             rate,
             currency: "Nu",
-          }
+          };
         }
       } else if (tourType === "outCountry") {
         if (stop_at) {
-          response = await RateServices.getStopOverRate(
+          stop_response = await RateServices.getStopOverRate(
             halt_count + 1,
             stop_at
           );
-          // const res2 = await RateServices.getThirdCountryRate(stop_at);
-          if (response) {
-            return {
-              rate: response.rate,
-              currency: response.currency,
-            };
-          }
-        } else if (
+        }
+
+        if (
           (from === "India" && to === "India") ||
           (from === "Bhutan" && to === "Bhutan")
         ) {
@@ -244,14 +247,20 @@ const TravelDetails = ({
         }
       }
 
-      if (response) {
+      if (response || stop_response) {
+        if (response && stop_response) {
+          if (response.currency != stop_response.currency) { 
+            throw new Error("Currency mismatch between response and stop_response.");
+          }
+        }
         return {
-          rate: eval(`${dsaPercentage} * ${days} * ${response.rate}`),
+          rate:
+            eval(`${dsaPercentage} * ${days} * ${response.rate}`) +
+            (stop_response ? stop_response.rate : 0),
           currency: response.currency,
         };
       }
     } catch (error) {
-      // console.error("Error fetching rates:", error);
       throw error;
     }
   };
@@ -437,16 +446,16 @@ const TravelDetails = ({
                         if (e.target.checked) {
                           setData((prevData) => ({
                             ...prevData,
-                            from: "",
-                            from_place: "",
-                            to: "",
-                            to_place: "",
-                            halt_at: "",
-                            mode: "",
                             return: false,
                           }));
                           setHaltChecked(false);
                           setReturnChecked(false);
+                        }
+                        else{
+                          setData((prevData) => ({
+                            ...prevData,
+                            stop_at: "",
+                          }))
                         }
                       }}
                     />
@@ -464,9 +473,7 @@ const TravelDetails = ({
                   value={data.from}
                   onChange={handleChange}
                   disabled={
-                    haltChecked || stopChecked || (existingData && !edit)
-                      ? true
-                      : false
+                    haltChecked || (existingData && !edit) ? true : false
                   }
                 >
                   <option value="" disabled>
@@ -492,9 +499,7 @@ const TravelDetails = ({
                     value={data.from_place || ""}
                     onChange={handleChange}
                     disabled={
-                      haltChecked || stopChecked || (existingData && !edit)
-                        ? true
-                        : false
+                      haltChecked || (existingData && !edit) ? true : false
                     }
                   />
                   {errors.from_place && (
@@ -512,9 +517,7 @@ const TravelDetails = ({
                   value={data.to}
                   onChange={handleChange}
                   disabled={
-                    haltChecked || stopChecked || (existingData && !edit)
-                      ? true
-                      : false
+                    haltChecked || (existingData && !edit) ? true : false
                   }
                 >
                   <option value="" disabled>
@@ -538,9 +541,7 @@ const TravelDetails = ({
                     value={data.to_place || ""}
                     onChange={handleChange}
                     disabled={
-                      haltChecked || stopChecked || (existingData && !edit)
-                        ? true
-                        : false
+                      haltChecked || (existingData && !edit) ? true : false
                     }
                   />
                   {errors.to_place && (
@@ -555,9 +556,7 @@ const TravelDetails = ({
                   name="mode"
                   value={data.mode}
                   disabled={
-                    haltChecked || stopChecked || (existingData && !edit)
-                      ? true
-                      : false
+                    haltChecked || (existingData && !edit) ? true : false
                   }
                   onChange={(e) => {
                     handleChange(e);
@@ -576,19 +575,19 @@ const TravelDetails = ({
                   <div className="text-danger">{errors.mode}</div>
                 )}
               </div>
-                <CustomInput
-                  label={"Mileage(Km)"}
-                  name="mileage"
-                  type="number"
-                  isDisable={
-                    data.mode !== "Private Vehicle" || (existingData && !edit)
-                      ? true
-                      : false
-                  }
-                  value={data.mileage}
-                  onChange={handleChange}
-                  error={errors.mileage || ""}
-                />
+              <CustomInput
+                label={"Mileage(Km)"}
+                name="mileage"
+                type="number"
+                isDisable={
+                  data.mode !== "Private Vehicle" || (existingData && !edit)
+                    ? true
+                    : false
+                }
+                value={data.mileage}
+                onChange={handleChange}
+                error={errors.mileage || ""}
+              />
               <CustomInput
                 label="Number of days"
                 type="number"
@@ -685,7 +684,9 @@ const TravelDetails = ({
                     <option value="7/12">58.33% (Lodging provided)</option>
                   )}
                   <option value="1/2">50% (Lodging provided)</option>
-                  <option value="3/10">30% (Both Meals and Lodging provided)</option>
+                  <option value="3/10">
+                    30% (Both Meals and Lodging provided)
+                  </option>
                 </select>
                 {errors.dsa_percentage && (
                   <div className="text-danger">{errors.dsa_percentage}</div>
