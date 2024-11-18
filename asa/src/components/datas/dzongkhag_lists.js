@@ -10,7 +10,7 @@ export const dzongkhags = [
   "Paro",
   "Pemagatshel",
   "Punakha",
-  "P/Ling",
+  "Phuentsholing",
   "Samdrup Jongkhar",
   "Samtse",
   "Sarpang",
