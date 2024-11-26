@@ -47,6 +47,7 @@ const OutCountryTour = ({
     update_files: [],
     delete_files: [],
     additional_expense: "",
+    tickets: [],
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -127,10 +128,9 @@ const OutCountryTour = ({
     const { name, value, type, checked } = e.target;
     const keys = name.split(".");
 
-
     setFormData((prevFormData) => {
       const newValue = type === "checkbox" ? (checked ? value : 0) : value;
-  
+
       if (keys.length === 1) {
         return {
           ...prevFormData,
@@ -405,6 +405,7 @@ const OutCountryTour = ({
       advanceAmount: data?.advance_amount || prevFormData.advanceAmount,
       tour_type: data?.tour_type || prevFormData.tour_type,
       files: data?.files || [],
+      tickets: data?.tickets || [],
       additional_expense:
         data?.additional_expense || prevFormData.additional_expense,
       advance_percentage:
@@ -606,7 +607,24 @@ const OutCountryTour = ({
                 </label>
               </div>
             </div>
-          )} 
+          )}
+
+          {isDSA && (
+            <div className="col-12 mb-3">
+              <CustomFileInput
+                label="Boarding Pass(Travel Documents)"
+                name="relevantDocument2"
+                files={formData.tickets}
+                handleFileChange={handleFileChange}
+                removeFile={removeFile}
+                removeUpdateFile={removeUpdateFile}
+                error={formErrors.file_error}
+                data={data?.tickets}
+                isEditMode={edit}
+                updateFile={formData.update_files}
+              />
+            </div>
+          )}
 
           <CustomInput
             label="Total Amount"

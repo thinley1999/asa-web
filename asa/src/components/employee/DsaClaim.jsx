@@ -9,6 +9,8 @@ import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
 import AdvanceServices from "../services/AdvanceServices";
 import { dzongkhags } from "../datas/dzongkhag_lists";
+import CustomFileInput from "../general/CustomFileInput";
+import FileServices from "../services/FileServices";
 
 const DsaClaim = () => {
   const [itinararies, setItineraries] = useState([]);
@@ -22,6 +24,8 @@ const DsaClaim = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [advance, setAdvance] = useState(null);
   const [showButton, setShowButton] = useState(true);
+  const [formErrors, setFormErrors] = useState([]);
+  const [tickets, setTickets] = useState({ tickets: [], updateTickets: [] });
 
   const handleRowClicked = (row) => {
     setFormData(row);
@@ -60,10 +64,13 @@ const DsaClaim = () => {
     });
 
     const advancePercentage = parseFloat(advance?.advance_percentage) || 0;
-    const isExCountryAdvance = advance?.advance_type === "ex_country_tour_advance";
+    const isExCountryAdvance =
+      advance?.advance_type === "ex_country_tour_advance";
 
     setDsaAmount({
-      Nu: isExCountryAdvance ? Nu.toFixed(2) : (Nu - (advance?.advance_amount?.Nu)).toFixed(2),
+      Nu: isExCountryAdvance
+        ? Nu.toFixed(2)
+        : (Nu - advance?.advance_amount?.Nu).toFixed(2),
       INR: (INR * (1 - advancePercentage)).toFixed(2),
       USD: (USD * (1 - advancePercentage)).toFixed(2),
     });
@@ -340,17 +347,74 @@ const DsaClaim = () => {
     }
   };
 
-  const handleClaim = async () => {
+  const checkTicket = () => {
+    console.log('i am here');
+    let errors = {};
+
+    if (tickets.tickets.length <= 0) {
+      errors.file_error =
+        "Please upload relevant boarding pass(both back and front).";
+    }
+    setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleClaim = async (e) => {
+    e.preventDefault();
     try {
-      const response = await AdvanceServices.claimDsa(id, dsa_amount);
-      if (response) {
-        setSuccessMessage("Dsa Claimed Successfully");
-        setShowButton(false);
+      const validateTicket = checkTicket();
+      if (validateTicket) {
+        const response = await AdvanceServices.claimDsa(id, dsa_amount);
+        if (response) {
+          const fileResponse = await FileServices.create(
+            response.id,
+            tickets.tickets,
+            "tickets"
+          );
+
+          if (fileResponse && fileResponse.status === 201) {
+            setSuccessMessage("Dsa Claimed Successfully");
+            setShowButton(false);
+          } else {
+            setErrorMessage("File creation failed");
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching advance:", error);
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleFileChange = (event) => {
+    const newFiles = Array.from(event.target.files);
+    setTickets((prevFormData) => ({
+      ...prevFormData,
+      tickets: [...prevFormData.tickets, ...newFiles],
+    }));
+
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      file_error: "",
+    }));
+  };
+
+  const removeFile = (indexToRemove) => {
+    setTickets((prevFormData) => ({
+      ...prevFormData,
+      tickets: prevFormData.tickets.filter(
+        (_, index) => index !== indexToRemove
+      ),
+    }));
+  };
+
+  const removeUpdateFile = (indexToRemove) => {
+    setTickets((prevFormData) => ({
+      ...prevFormData,
+      updateTickets: prevFormData.updateTickets.filter(
+        (_, index) => index !== indexToRemove
+      ),
+    }));
   };
 
   const handleCloseSuccessMessage = () => {
@@ -426,6 +490,8 @@ const DsaClaim = () => {
   if (formData === null) {
     return null;
   }
+
+  console.log(advance, "advance");
 
   return (
     <div>
@@ -573,6 +639,24 @@ const DsaClaim = () => {
           />
         </div>
         <div className="divider1"></div>
+        <br />
+        {advance?.advance_type === "ex_country_tour_advance" && (
+          <>
+            <CustomFileInput
+              label="Boarding Pass(Travel Documents)"
+              name="relevantDocument2"
+              files={tickets.tickets}
+              handleFileChange={handleFileChange}
+              removeFile={removeFile}
+              removeUpdateFile={removeUpdateFile}
+              error={formErrors.file_error}
+              // data={advance?.tickets}
+              isEditMode={false}
+              updateFile={tickets.updateTickets}
+            />
+          </>
+        )}
+        <br />
         <ClaimInput
           label="DSA Amount"
           type="text"

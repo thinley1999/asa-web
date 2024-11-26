@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
-const create = async (id, files = []) => {
+const create = async (id, files = [], file_type) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.post(
@@ -10,6 +10,7 @@ const create = async (id, files = []) => {
       {
         id: id,
         files: files,
+        file_type: file_type,
       },
       {
         headers: {
@@ -61,7 +62,7 @@ const deleteFile = async (id, file_id) => {
         },
         data: {
           id: id,
-          file_id: file_id,
+          file_id: file_id
         },
       }
     );

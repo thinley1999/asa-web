@@ -5,6 +5,7 @@ import AdvanceServices from "../services/AdvanceServices";
 import { FaSearch } from "react-icons/fa";
 import { BsFillFilterSquareFill } from "react-icons/bs";
 import { advance_type } from "../datas/advance_type";
+import { MdEdit } from "react-icons/md";
 
 const RequestedDsa = () => {
   const customStyles = {
@@ -83,6 +84,13 @@ const RequestedDsa = () => {
           <span className="datasubheading">
             <a href={`/viewRequestedAdvance/${row.id}`}>View More</a>
           </span>
+          {"  "}
+          {(row.status === "pending" || row.status === "rejected") && (
+            <span className="datasubheading">
+              <MdEdit size={20} />
+              <a href={`/editRequestedAdvance/${row.id}`}>Edit</a>
+            </span>
+          )}
         </div>
       ),
     },
