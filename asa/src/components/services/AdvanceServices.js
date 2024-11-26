@@ -107,7 +107,6 @@ const update = async (id, params, travel_itinerary = []) => {
       {
         advance: {
           id: id,
-          advance_type: params.advance_type,
           status: "pending",
           advance_amount: params.advanceAmount,
           amount: parseFloat(params.totalAmount),

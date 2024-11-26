@@ -45,7 +45,9 @@ const OutCountryTour = ({
     office_order: "",
     tour_type: "",
     update_files: [],
+    update_tickets: [],
     delete_files: [],
+    delete_tickets: [],
     additional_expense: "",
     tickets: [],
   };
@@ -79,20 +81,16 @@ const OutCountryTour = ({
     }));
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = (event, key) => {
     const newFiles = Array.from(event.target.files);
 
-    if (!edit) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        files: [...prevFormData.files, ...newFiles],
-      }));
-    } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        update_files: [...prevFormData.update_files, ...newFiles],
-      }));
-    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [edit ? `update_${key}` : key]: [
+        ...(prevFormData[edit ? `update_${key}` : key] || []),
+        ...newFiles,
+      ],
+    }));
 
     setFormErrors((prevErrors) => ({
       ...prevErrors,
@@ -100,25 +98,32 @@ const OutCountryTour = ({
     }));
   };
 
-  const removeFile = (indexToRemove) => {
-    if (!edit) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        files: prevFormData.files.filter((_, index) => index !== indexToRemove),
-      }));
-    } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        files: prevFormData.files.filter((file) => file.id !== indexToRemove),
-        delete_files: [...prevFormData.delete_files, indexToRemove],
-      }));
-    }
+  const removeFile = (indexToRemove, key) => {
+    setFormData((prevFormData) => {
+      if (edit) {
+        const deleteKey = key === 'files' ? 'delete_files' : 'delete_tickets';
+  
+        return {
+          ...prevFormData,
+          [key]: prevFormData[key].filter((file) => file.id !== indexToRemove),
+          [deleteKey]: [
+            ...(prevFormData[deleteKey] || []),
+            indexToRemove,
+          ],
+        };
+      } else {
+        return {
+          ...prevFormData,
+          [key]: prevFormData[key].filter((_, index) => index !== indexToRemove),
+        };
+      }
+    });
   };
 
-  const removeUpdateFile = (indexToRemove) => {
+  const removeUpdateFile = (indexToRemove, key) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      update_files: prevFormData.update_files.filter(
+      [`update_${key}`]: prevFormData[`update_${key}`].filter(
         (_, index) => index !== indexToRemove
       ),
     }));
@@ -184,9 +189,21 @@ const OutCountryTour = ({
           formData.update_files
         );
 
+        const ticketResponse = await FileServices.create(
+          advanceResponse.id,
+          formData.update_tickets,
+          "tickets"
+        );
+
         const fileDeleteResponse = await FileServices.deleteFile(
           advanceResponse.id,
           formData.delete_files
+        );
+
+        const ticketDeleteResponse = await FileServices.deleteFile(
+          advanceResponse.id,
+          formData.delete_tickets,
+          "tickets"
         );
 
         if (advanceResponse) {
@@ -194,6 +211,7 @@ const OutCountryTour = ({
           setFormData((prevFormData) => ({
             ...prevFormData,
             delete_files: initialFormData.delete_files,
+            delete_tickets: initialFormData.delete_tickets,
           }));
         } else {
           setErrorMessage("Your application submission has failed");
@@ -529,9 +547,9 @@ const OutCountryTour = ({
             label="Relevant Documents"
             name="relevantDocument1"
             files={formData.files}
-            handleFileChange={handleFileChange}
-            removeFile={removeFile}
-            removeUpdateFile={removeUpdateFile}
+            handleFileChange={(event) => handleFileChange(event, "files")}
+            removeFile={(index) => removeFile(index, "files")}
+            removeUpdateFile={(index) => removeUpdateFile(index, "files")}
             error={formErrors.file_error}
             data={data?.files}
             isEditMode={edit}
@@ -612,16 +630,16 @@ const OutCountryTour = ({
           {isDSA && (
             <div className="col-12 mb-3">
               <CustomFileInput
-                label="Boarding Pass(Travel Documents)"
+                label="Boarding Pass (Travel Documents)"
                 name="relevantDocument2"
                 files={formData.tickets}
-                handleFileChange={handleFileChange}
-                removeFile={removeFile}
-                removeUpdateFile={removeUpdateFile}
+                handleFileChange={(event) => handleFileChange(event, "tickets")}
+                removeFile={(index) => removeFile(index, "tickets")}
+                removeUpdateFile={(index) => removeUpdateFile(index, "tickets")}
                 error={formErrors.file_error}
                 data={data?.tickets}
                 isEditMode={edit}
-                updateFile={formData.update_files}
+                updateFile={formData.update_tickets}
               />
             </div>
           )}

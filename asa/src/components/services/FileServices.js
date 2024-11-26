@@ -25,7 +25,7 @@ const create = async (id, files = [], file_type) => {
   }
 };
 
-const update = async (id, files) => {
+const update = async (id, files, file_type) => {
   try {
     const token = localStorage.getItem("token");
 
@@ -34,6 +34,7 @@ const update = async (id, files) => {
       {
         id: id,
         files: files,
+        file_type: file_type,
       },
       {
         headers: {
@@ -50,7 +51,7 @@ const update = async (id, files) => {
   }
 };
 
-const deleteFile = async (id, file_id) => {
+const deleteFile = async (id, file_id, file_type) => {
   try {
     const token = localStorage.getItem("token");
 
@@ -62,7 +63,8 @@ const deleteFile = async (id, file_id) => {
         },
         data: {
           id: id,
-          file_id: file_id
+          file_id: file_id,
+          file_type: file_type,
         },
       }
     );

@@ -353,7 +353,7 @@ const DsaClaim = () => {
 
     if (tickets.tickets.length <= 0) {
       errors.file_error =
-        "Please upload relevant boarding pass(both back and front).";
+        "Please upload relevant boarding pass of the travel.";
     }
     setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
     return Object.keys(errors).length === 0;

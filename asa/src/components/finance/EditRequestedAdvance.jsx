@@ -59,7 +59,7 @@ const EditRequestedAdvance = () => {
             editData = {true}
           />
         )}
-        {advanceData.advance_type === "ex_country_tour_advance" || advanceData.advance_type === "ex_country_dsa_claim"  && (
+        {(advanceData.advance_type === "ex_country_tour_advance" || advanceData.advance_type === "ex_country_dsa_claim")  && (
           <OutCountryTour
             data={advanceData}
             isDSA= {advanceData.claim_dsa}
