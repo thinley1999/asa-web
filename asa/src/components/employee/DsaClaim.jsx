@@ -348,12 +348,11 @@ const DsaClaim = () => {
   };
 
   const checkTicket = () => {
-    console.log('i am here');
+    console.log("i am here");
     let errors = {};
 
     if (tickets.tickets.length <= 0) {
-      errors.file_error =
-        "Please upload relevant boarding pass of the travel.";
+      errors.file_error = "Please upload relevant boarding pass of the travel.";
     }
     setFormErrors((prevErrors) => ({ ...prevErrors, ...errors }));
     return Object.keys(errors).length === 0;
@@ -362,29 +361,36 @@ const DsaClaim = () => {
   const handleClaim = async (e) => {
     e.preventDefault();
     try {
-      const validateTicket = checkTicket();
+      const validateTicket = advance?.advance_type === "ex_country_tour_advance" && checkTicket();
       if (validateTicket) {
         const response = await AdvanceServices.claimDsa(id, dsa_amount);
         if (response) {
-          const fileResponse = await FileServices.create(
-            response.id,
-            tickets.tickets,
-            "tickets"
-          );
-
-          if (fileResponse && fileResponse.status === 201) {
+          const fileResponse = await FileServices.create(response.id, tickets.tickets, "tickets");
+          if (fileResponse?.status === 201) {
             setSuccessMessage("Dsa Claimed Successfully");
             setShowButton(false);
-          } else {
-            setErrorMessage("File creation failed");
+            return; 
           }
+          setErrorMessage("File creation failed");
+          return; 
+        }
+      } else {
+        const res = await AdvanceServices.claimDsa(id, dsa_amount);
+        if (res) {
+          setSuccessMessage("Dsa Claimed Successfully");
+          setShowButton(false);
+        } else {
+          setErrorMessage("DSA claim failed");
         }
       }
     } catch (error) {
       console.error("Error fetching advance:", error);
+      setErrorMessage("An error occurred while claiming the DSA.");
     }
+  
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  
 
   const handleFileChange = (event) => {
     const newFiles = Array.from(event.target.files);
