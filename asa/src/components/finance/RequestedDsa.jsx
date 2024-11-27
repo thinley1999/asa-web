@@ -285,7 +285,7 @@ const RequestedDsa = () => {
             <input
               className="form-control"
               type="text"
-              placeholder="Search application by employee ID"
+              placeholder="Search by employee ID"
               onChange={handleFilter}
               value={searchTerm}
             />
