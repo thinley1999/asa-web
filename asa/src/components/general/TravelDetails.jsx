@@ -238,7 +238,7 @@ const TravelDetails = ({
           );
         } else if (halt_at) {
           if (halt_at == "India" || halt_at == "Bhutan") {
-            response = await RateServices.getRate("Other", halt_at);
+            response = await RateServices.getRate("Other", halt_at, edit ? username : "");
           } else {
             response = await RateServices.getThirdCountryRate(halt_at);
           }
