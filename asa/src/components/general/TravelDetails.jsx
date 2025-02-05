@@ -687,6 +687,11 @@ const TravelDetails = ({
                   <option value="3/10">
                     30% (Both Meals and Lodging provided)
                   </option>
+                  {
+                    type === "outCountry" && (
+                      <option value="1/5">20% (Partially Funded)</option>
+                    )
+                  }
                 </select>
                 {errors.dsa_percentage && (
                   <div className="text-danger">{errors.dsa_percentage}</div>
