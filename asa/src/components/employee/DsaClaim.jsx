@@ -24,6 +24,7 @@ const DsaClaim = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [advance, setAdvance] = useState(null);
   const [showButton, setShowButton] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
   const [tickets, setTickets] = useState({ tickets: [], updateTickets: [] });
 
@@ -360,6 +361,9 @@ const DsaClaim = () => {
 
   const handleClaim = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     try {
       const validateTicket = advance?.advance_type === "ex_country_tour_advance" && checkTicket();
       if (validateTicket) {
@@ -369,6 +373,7 @@ const DsaClaim = () => {
           if (fileResponse?.status === 201) {
             setSuccessMessage("Dsa Claimed Successfully");
             setShowButton(false);
+            setIsSubmitting(false);
             return; 
           }
           setErrorMessage("File creation failed");
@@ -379,13 +384,15 @@ const DsaClaim = () => {
         if (res) {
           setSuccessMessage("Dsa Claimed Successfully");
           setShowButton(false);
+          setIsSubmitting(false);
         } else {
           setErrorMessage("DSA claim failed");
+          setIsSubmitting(false);
         }
       }
     } catch (error) {
-      console.error("Error fetching advance:", error);
       setErrorMessage("An error occurred while claiming the DSA.");
+      setIsSubmitting(false);
     }
   
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -680,8 +687,9 @@ const DsaClaim = () => {
               type="submit"
               className="btn btn-primary px-5"
               onClick={handleClaim}
+              disabled={isSubmitting}
             >
-              Claim Now
+              {isSubmitting ? "Processing..." : "Claim Now"}
             </button>
           </div>
         )}
