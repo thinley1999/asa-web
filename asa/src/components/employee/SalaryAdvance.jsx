@@ -142,16 +142,14 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     });
   };
 
-  const validateForm = () => {
+  const validateForm = (isUpdate = false) => {
     let errors = {};
     let maxDate = monthsUntilFinYearEnd(new Date());
-
-    if (
-      formData.totalAmount <= 0 ||
-      formData.totalAmount > formData.thresholdAmount
-    ) {
+  
+    // Allow amount to be more than threshold during update
+    if (formData.totalAmount <= 0 || (!isUpdate && formData.totalAmount > formData.thresholdAmount)) {
       errors.advanceAmount =
-        "Advance amount should be more than 0 and less than the threshold amount.";
+        "Advance amount should be more than 0" + (isUpdate ? "" : " and less than the threshold amount.");
     }
     if (formData.duration <= 0 || formData.duration > maxDate) {
       errors.duration = `Duration should be less than or equal to ${maxDate}.`;
@@ -165,7 +163,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (validateForm(false)) {
       try {
         const response = await AdvanceServices.create(formData);
 
@@ -184,7 +182,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   const updateAdvance = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (validateForm(true)) {
       try {
         const response = await AdvanceServices.update(data.id, formData);
      
