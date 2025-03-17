@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import profileImage from "../assets/img/Thinley.jpeg";
 import { Outlet } from "react-router-dom";
 import Notifications from "./general/Notifications";
@@ -6,14 +6,22 @@ import SideBar from "./general/SideBar";
 import Navbar from "./general/Navbar";
 import SideBar2 from "./general/SideBar2";
 import useZoomLevels from "./general/useZoomLevel";
+import UserUndertaking from "./general/UserUndertaking";
+import UserServices from "./services/UserServices";
 
 const Base = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isMobileSidebarVisible, setIsMobileSidebarVisible] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [showUserUndertaking, setShowUserUndertaking] = useState(true);
+  const [user, setUser] = useState([]);
 
   const zoomLevel = useZoomLevels();
+
+  useEffect(() => {
+      fetchUserDetails();
+    }, []);
 
   const updateNotificationCount = (newCount) => {
     setNotificationCount(newCount);
@@ -33,6 +41,28 @@ const Base = () => {
 
   const handleCloseSidebar = () => {
     setIsMobileSidebarVisible(false);
+  };
+
+  const fetchUserDetails = async () => {
+      try {
+        const response = await UserServices.showDetail();
+        if (response && response.status === 200) {
+          setUser(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+   };
+
+  const acceptTermsAndConditions = async () => {
+    try {
+      const response = await UserServices.acceptTerms(user.id);
+      if (response && response.status === 200) {
+        setShowUserUndertaking(false);
+      }
+    } catch (error) {
+      console.error("Error accepting terms:", error);
+    }
   };
 
   return (
@@ -59,6 +89,11 @@ const Base = () => {
         <div className={`px-2 pt-2 outlet ${zoomLevel}`}>
           <Outlet />
         </div>
+       {
+        (showUserUndertaking && user?.accepted_terms === false) && (
+          <UserUndertaking user={user} onClose={acceptTermsAndConditions}/>
+        )
+       }
       </div>
 
       {/* Mobile Sidebar */}

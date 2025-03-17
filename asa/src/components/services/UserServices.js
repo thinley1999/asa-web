@@ -61,10 +61,32 @@ const resetpassword = async (params) => {
   }
 };
 
+const acceptTerms = async (id) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/users/accept_terms`,
+      {
+        id: id
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getUserPermission,
   showDetail,
   create,
   update,
   resetpassword,
+  acceptTerms
 };
