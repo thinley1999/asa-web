@@ -353,6 +353,16 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               )}
             </div>
           </div>
+          {
+              ( data?.vch_no && data.status == "dispatched") && 
+                <CustomInput
+                label="Voucher No(ICBS)"
+                type="text"
+                value={data?.vch_no}
+                name="vch_no"
+                isDisable={true}
+              />
+            }
         </div>
         <div className="bg-white px-4 pb-3 text-center">
           {!data && (
