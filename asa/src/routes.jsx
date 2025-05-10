@@ -24,9 +24,11 @@ import EditRequestedAdvance from "./components/finance/EditRequestedAdvance";
 import TourAdvanceForm from "./components/forms/TourAdvanceForm";
 import DsaClaimForm from "./components/forms/DsaClaimForm";
 import IndividualReport from "./components/forms/IndividualReport";
+import ResetPassword from "./components/ResetPassword";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
+  { path: "/user/resetPassword", element: <ResetPassword /> },
   {
     path: "/",
     element: <Base />,

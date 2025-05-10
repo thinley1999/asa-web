@@ -9,6 +9,9 @@ import ErrorMessageToast from "./general/ErrorMessageToast";
 
 const Login = () => {
   const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmployeeId, setForgotEmployeeId] = useState("");
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -45,10 +48,70 @@ const Login = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    try {
+      const response = await AuthServices.forgotPassword(forgotEmployeeId);
+      if (response.status === 200) {
+        setForgotPasswordMessage("Password reset instructions sent to your email.");
+      } else {
+        setForgotPasswordMessage("Unable to send reset instructions.");
+      }
+    } catch (err) {
+      setForgotPasswordMessage(
+        err.response?.data?.error || "Error occurred while requesting password reset."
+      );
+    }
+  };
+
+  const closeModal = () => {
+    setShowForgotPassword(false);
+    setForgotEmployeeId("");
+    setForgotPasswordMessage("");
+  };
+
   return (
     <div className="vh-100">
       {isLoggedOut && <LoginoutMessage message="Logout Successful!!!" />}
       {error && <ErrorMessageToast message={error} />}
+      {showForgotPassword && (
+        <div className="modal" tabIndex="-1" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Forgot Password</h5>
+                <button type="button" className="btn-close" onClick={closeModal}></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label htmlFor="employeeId" className="form-label">Employee ID</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="employeeId"
+                    placeholder="Enter Employee ID"
+                    value={forgotEmployeeId}
+                    onChange={(e) => setForgotEmployeeId(e.target.value)}
+                  />
+                </div>
+                {forgotPasswordMessage && (
+                  <div className={`alert ${forgotPasswordMessage.includes("sent") ? "alert-success" : "alert-danger"}`}>
+                    {forgotPasswordMessage}
+                  </div>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  onClick={handleForgotPassword}
+                >
+                  Forgot Password
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="container-fluid">
         <div className="row">
           {/* Image column */}
@@ -105,7 +168,13 @@ const Login = () => {
               </form>
               <div style={{ maxWidth: "23rem", width: "100%" }}>
                 <p className="small mb-5 pb-lg-2 text-center customlabel">
-                  <a href="#!">Forgot password?</a>
+                <button
+                  type="button"
+                  className="btn btn-link p-0"
+                  onClick={() => setShowForgotPassword(true)}
+                >
+                  Forgot password?
+                </button>
                 </p>
               </div>
             </div>

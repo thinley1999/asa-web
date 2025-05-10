@@ -34,7 +34,19 @@ const logout = async () => {
   }
 };
 
+const forgotPassword = async (employeeId) => {
+  try {
+    const response = await axios.post(`${API_URL}/api/users/reset_password`, {
+      username: employeeId,
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   login,
   logout,
+  forgotPassword,
 };
