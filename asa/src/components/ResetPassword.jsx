@@ -10,6 +10,7 @@ const ResetPassword = () => {
   const [error, setError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,6 +23,8 @@ const ResetPassword = () => {
     if (password) {
       const result = zxcvbn(password);
       setPasswordStrength(result.score);
+    } else {
+      setPasswordStrength(0);
     }
   }, [password]);
 
@@ -33,7 +36,7 @@ const ResetPassword = () => {
     } else if (password.length < 8) {
       errors.password = 'Password must be at least 8 characters';
     } else if (passwordStrength < 3) {
-      errors.password = 'Password is too weak';
+      errors.password = 'Password is too weak (must be at least "Good")';
     }
 
     if (!passwordConfirmation) {
@@ -80,6 +83,10 @@ const ResetPassword = () => {
       return;
     }
 
+    setIsLoading(true);
+    setError('');
+    setMessage('');
+
     try {
       const response = await UserServices.changePassword({
         token,
@@ -88,13 +95,26 @@ const ResetPassword = () => {
       });
       
       setMessage(response.data.message || 'Password reset successfully');
-      setError('');
-      setTimeout(() => navigate('/'), 2000);
+      setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong. Please try again.');
-      setMessage('');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  // Loader component
+  const Loader = ({ small = false }) => (
+    <div className="d-flex justify-content-center align-items-center">
+      <div 
+        className={`spinner-border ${small ? 'spinner-border-sm' : ''} text-white`}
+        role="status"
+      >
+        <span className="visually-hidden">Loading...</span>
+      </div>
+      <span className="ms-2">Processing...</span>
+    </div>
+  );
 
   return (
     <div className="container mt-5">
@@ -111,7 +131,7 @@ const ResetPassword = () => {
                   <label htmlFor="password" className="form-label">
                     New Password 
                     {password && (
-                      <span className={`badge ${getPasswordStrengthColor()} ms-4`}>
+                      <span className={`badge ${getPasswordStrengthColor()} ms-2`}>
                         {getPasswordStrengthText()}
                       </span>
                     )}
@@ -123,6 +143,7 @@ const ResetPassword = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                   {validationErrors.password && (
                     <div className="invalid-feedback">{validationErrors.password}</div>
@@ -153,20 +174,39 @@ const ResetPassword = () => {
                     value={passwordConfirmation}
                     onChange={(e) => setPasswordConfirmation(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                   {validationErrors.passwordConfirmation && (
                     <div className="invalid-feedback">{validationErrors.passwordConfirmation}</div>
                   )}
                 </div>
                 
-                <button type="submit" className="btn btn-primary w-100">
-                  Reset Password
+                <button 
+                  type="submit" 
+                  className="btn btn-primary w-100"
+                  disabled={isLoading || !password || !passwordConfirmation}
+                >
+                  {isLoading ? <Loader small /> : 'Reset Password'}
                 </button>
               </form>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Full page loader overlay */}
+      {isLoading && (
+        <div 
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" 
+          style={{ 
+            zIndex: 9999, 
+            backgroundColor: 'rgba(0,0,0,0.5)', 
+            pointerEvents: 'none' 
+          }}
+        >
+          <div className="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} />
+        </div>
+      )}
     </div>
   );
 };
