@@ -61,6 +61,23 @@ const resetpassword = async (params) => {
   }
 };
 
+const changePassword = async ({token, password, passwordConfirmation}) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/users/change_password`,
+      {
+        token: token,
+        password: password,
+        password_confirmation: passwordConfirmation
+      }
+    );
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const acceptTerms = async (id) => {
   const token = localStorage.getItem("token");
   try {
@@ -88,5 +105,6 @@ export default {
   create,
   update,
   resetpassword,
+  changePassword,
   acceptTerms
 };
