@@ -9,10 +9,9 @@ import UserServices from "../services/UserServices";
 import { CgDanger } from "react-icons/cg";
 
 const Dashboard = () => {
-  const { permissions } = usePermissions();
+  const { permissions, permissionsLoading} = usePermissions();
   const [dashboardPermission, setDashboardPermission] = useState(null);
   const [user, setUser] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchUserDetails();
@@ -24,7 +23,6 @@ const Dashboard = () => {
         (permission) => permission.resource === "dashboard"
       );
       setDashboardPermission(dashboardPerm || {});
-      setLoading(false);
     }
   }, [permissions]);
   
@@ -60,7 +58,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {loading ? (
+      { permissionsLoading ? (
         <LoadingPage />
       ) : dashboardPermission?.actions?.view ? (
         <FinanceDashboard />
