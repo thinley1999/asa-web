@@ -12,6 +12,7 @@ const Dashboard = () => {
   const { permissions } = usePermissions();
   const [dashboardPermission, setDashboardPermission] = useState(null);
   const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchUserDetails();
@@ -23,8 +24,10 @@ const Dashboard = () => {
         (permission) => permission.resource === "dashboard"
       );
       setDashboardPermission(dashboardPerm || {});
+      setLoading(false);
     }
   }, [permissions]);
+  
 
   const fetchUserDetails = async () => {
     try {
@@ -57,7 +60,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {dashboardPermission === null ? (
+      {loading ? (
         <LoadingPage />
       ) : dashboardPermission?.actions?.view ? (
         <FinanceDashboard />
