@@ -18,11 +18,11 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (permissions) {
+    if (permissions && permissions.length > 0) {
       const dashboardPerm = permissions.find(
         (permission) => permission.resource === "dashboard"
       );
-      setDashboardPermission(dashboardPerm);
+      setDashboardPermission(dashboardPerm || {});
     }
   }, [permissions]);
 
