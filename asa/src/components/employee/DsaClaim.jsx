@@ -11,6 +11,7 @@ import AdvanceServices from "../services/AdvanceServices";
 import { dzongkhags } from "../datas/dzongkhag_lists";
 import CustomFileInput from "../general/CustomFileInput";
 import FileServices from "../services/FileServices";
+import Loader from "../general/Loader";
 
 const DsaClaim = () => {
   const [itinararies, setItineraries] = useState([]);
@@ -27,6 +28,7 @@ const DsaClaim = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
   const [tickets, setTickets] = useState({ tickets: [], updateTickets: [] });
+  const [loading, setLoading] = useState(false);
 
   const handleRowClicked = (row) => {
     setFormData(row);
@@ -367,6 +369,7 @@ const DsaClaim = () => {
     try {
       const validateTicket = advance?.advance_type === "ex_country_tour_advance" && checkTicket();
       if (validateTicket) {
+        setLoading(true);
         const response = await AdvanceServices.claimDsa(id, dsa_amount);
         if (response) {
           const fileResponse = await FileServices.create(response.id, tickets.tickets, "tickets");
@@ -393,6 +396,8 @@ const DsaClaim = () => {
     } catch (error) {
       setErrorMessage("An error occurred while claiming the DSA.");
       setIsSubmitting(false);
+    }finally {
+      setLoading(false);
     }
   
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -508,6 +513,7 @@ const DsaClaim = () => {
 
   return (
     <div>
+      {loading && <Loader text="Submitting..." />}
       {successMessage && (
         <SuccessMessage
           message={successMessage}

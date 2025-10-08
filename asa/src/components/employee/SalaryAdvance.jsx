@@ -6,11 +6,13 @@ import AdvanceServices from "../services/AdvanceServices";
 import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
 import { formatDate } from "../utils/DateUtils";
+import Loader from "../general/Loader";
 
 const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const [user, setUser] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const initialFormData = {
     firstName: " - ",
@@ -164,6 +166,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm(false)) {
+      setLoading(true);
       try {
         const response = await AdvanceServices.create(formData);
 
@@ -175,6 +178,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         }
       } catch (error) {
         setErrorMessage(error.response?.data?.message || "An error occurred");
+      } finally {
+        setLoading(false);
       }
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -184,6 +189,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     e.preventDefault();
     if (validateForm(true)) {
       try {
+        setLoading(true);
         const response = await AdvanceServices.update(data.id, formData);
      
         if (response) {
@@ -193,6 +199,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         }
       } catch (error) {
         setErrorMessage(error.response?.data?.message || "An error occurred");
+      } finally {
+        setLoading(false);
       }
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -228,6 +236,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   return (
     <div>
+      {loading && <Loader text="Submitting..." />}
       {successMessage && (
         <SuccessMessage
           message={successMessage}

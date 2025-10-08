@@ -10,6 +10,7 @@ import ErrorMessage from "./ErrorMessage";
 import { FaPlus } from "react-icons/fa";
 import TravelDetails from "./TravelDetails";
 import TravelDetailsTable from "./TravelDetailsTable";
+import Loader from "./Loader";
 
 const OutCountryTour = ({
   data,
@@ -27,6 +28,7 @@ const OutCountryTour = ({
   const [rows, setRows] = useState([]);
   const [editData, setEditData] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const initialFormData = {
     firstName: " - ",
@@ -178,6 +180,7 @@ const OutCountryTour = ({
 
     if (isFormValid && isTravelItineraryValid) {
       try {
+        setLoading(true);
         const advanceResponse = await AdvanceServices.update(
           data.id,
           formData,
@@ -221,6 +224,9 @@ const OutCountryTour = ({
           error.response?.data?.message ||
             "An error occurred during submission. Please try again."
         );
+      }
+      finally {
+        setLoading(false);
       }
     }
 
@@ -292,6 +298,7 @@ const OutCountryTour = ({
 
     if (isFormValid && isTravelItineraryValid) {
       try {
+        setLoading(true);
         const advanceResponse = await AdvanceServices.create(formData, rows);
         if (advanceResponse) {
           const fileResponse = await FileServices.create(
@@ -315,6 +322,8 @@ const OutCountryTour = ({
           error.response?.data?.message ||
             "An error occurred during submission. Please try again."
         );
+      }finally {
+        setLoading(false);
       }
     }
 
@@ -446,6 +455,7 @@ const OutCountryTour = ({
 
   return (
     <form onSubmit={handleSubmit}>
+      {loading && <Loader text="Submitting..." />}
       {successMessage && (
         <SuccessMessage
           message={successMessage}

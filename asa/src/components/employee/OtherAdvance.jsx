@@ -8,12 +8,14 @@ import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
 import SuccessMessage from "../general/SuccessMessage";
 import ErrorMessage from "../general/ErrorMessage";
+import Loader from "../general/Loader";
 
 const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [formErrors, setFormErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const initialFormData = {
     firstName: " - ",
@@ -167,6 +169,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      setLoading(true);
       try {
         const response = await AdvanceServices.create(formData);
 
@@ -187,12 +190,16 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       } catch (error) {
         setErrorMessage(error.response?.data?.message || "An error occurred");
       }
+      finally {
+        setLoading(false);
+      }
     }
   };
 
   const updateAdvance = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      setLoading(true);
       try {
         const response = await AdvanceServices.update(data.id, formData);
 
@@ -219,6 +226,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         }
       } catch (error) {
         setErrorMessage(error.response?.data?.message || "An error occurred");
+      }
+      finally {
+        setLoading(false);
       }
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -263,6 +273,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   return (
     <div>
+      {loading && <Loader text="Submitting..." />}
       {successMessage && (
         <SuccessMessage
           message={successMessage}
