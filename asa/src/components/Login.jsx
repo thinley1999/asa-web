@@ -7,6 +7,23 @@ import AuthServices from "./services/AuthServices";
 import LoginoutMessage from "./general/LoginoutMessage";
 import ErrorMessageToast from "./general/ErrorMessageToast";
 
+// Import shadcn/ui components
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { Loader2, Lock, User } from "lucide-react";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Separator } from "./ui/separator";
+
 const Login = () => {
   const [isLoggedOut, setIsLoggedOut] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -85,153 +102,214 @@ const Login = () => {
     setForgotPasswordMessage("");
   };
 
-  const Loader = ({ small = false }) => (
-    <div className="d-flex justify-content-center">
-      <div 
-        className={`spinner-border ${small ? "spinner-border-sm" : ""} text-white`} 
-        role="status"
-      >
-        <span className="visually-hidden">Loading...</span>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="vh-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       {isLoggedOut && <LoginoutMessage message="Logout Successful!!!" />}
       {error && <ErrorMessageToast message={error} />}
 
-      {/* Forgot Password Modal */}
-      {showForgotPassword && (
-        <div className="modal" tabIndex="-1" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Forgot Password</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
-                  onClick={closeModal}
-                  disabled={isForgotPasswordLoading}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label htmlFor="employeeId" className="form-label">Employee ID</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="employeeId"
-                    placeholder="Enter Employee ID"
-                    value={forgotEmployeeId}
-                    onChange={(e) => setForgotEmployeeId(e.target.value)}
-                    disabled={isForgotPasswordLoading}
-                  />
-                </div>
-                {forgotPasswordMessage && (
-                  <div className={`alert ${forgotPasswordMessage.includes("sent") ? "alert-success" : "alert-danger"}`}>
-                    {forgotPasswordMessage}
-                  </div>
-                )}
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-primary" 
-                  onClick={handleForgotPassword}
-                  disabled={isForgotPasswordLoading || !forgotEmployeeId.trim()}
-                >
-                  {isForgotPasswordLoading ? <Loader small /> : "Submit"}
-                </button>
-              </div>
+      {/* Forgot Password Dialog */}
+      <Dialog open={showForgotPassword} onOpenChange={closeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Forgot Password</DialogTitle>
+            <DialogDescription>
+              Enter your Employee ID to receive password reset instructions.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="employeeId">Employee ID</Label>
+              <Input
+                id="employeeId"
+                placeholder="Enter your Employee ID"
+                value={forgotEmployeeId}
+                onChange={(e) => setForgotEmployeeId(e.target.value)}
+                disabled={isForgotPasswordLoading}
+              />
             </div>
+            
+            {forgotPasswordMessage && (
+              <Alert variant={forgotPasswordMessage.includes("sent") ? "default" : "destructive"}>
+                <AlertDescription>
+                  {forgotPasswordMessage}
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
-        </div>
-      )}
+          
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={closeModal}
+              disabled={isForgotPasswordLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleForgotPassword}
+              disabled={isForgotPasswordLoading || !forgotEmployeeId.trim()}
+            >
+              {isForgotPasswordLoading && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isForgotPasswordLoading ? "Sending..." : "Send Instructions"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {/* Main Login Content */}
-      <div className="container-fluid">
-        <div className="row">
-          {/* Image column */}
-          <div className="col-sm-6 px-0 d-none d-sm-block">
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[calc(100vh-4rem)]">
+          {/* Image Section */}
+          <div className="hidden lg:block rounded-2xl overflow-hidden shadow-2xl">
             <img
               src={vectorImage}
               alt="Login"
-              className="img-fluid vh-100"
-              style={{ objectFit: "contain" }}
+              className="w-full h-[85vh] object-cover"
             />
           </div>
 
-          {/* Form column */}
-          <div className="col-sm-6 mt-5">
-            <div className="px-5 ms-xl-4">
-              <img
-                src={logoImage}
-                alt="Company Logo"
-                className="img-fluid d-block mx-auto"
-                style={{ width: "18vh" }}
-              />
-              <p className="customheading">Login to your account</p>
-            </div>
-            <div className="d-flex flex-column align-items-center justify-content-center h-custom-2 px-5 ms-xl-4">
-              <form
-                style={{ maxWidth: "23rem", width: "100%" }}
-                onSubmit={handleLogin}
-              >
-                <div className="form-outline mb-4">
-                  <label className="form-label customlabel">Employee ID</label>
-                  <input
-                    type="text"
-                    name="username"
-                    className="form-control"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    disabled={isLoading}
+          {/* Login Form Section */}
+          <div className="flex flex-col items-center justify-center">
+            <Card className="w-full max-w-md shadow-xl border-0">
+              <CardHeader className="space-y-1 text-center">
+                <div className="flex justify-center mb-4">
+                  <img
+                    src={logoImage}
+                    alt="Company Logo"
+                    className="h-16"
                   />
                 </div>
-                <div className="form-outline mb-4">
-                  <label className="form-label customlabel">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    className="form-control"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="form-outline mb-4">
-                  <button 
-                    type="submit" 
-                    className="btn custombutton w-100"
+                <CardTitle className="text-2xl font-bold">
+                  Welcome Back
+                </CardTitle>
+                <CardDescription className="text-gray-500 dark:text-gray-400">
+                  Login to your account
+                </CardDescription>
+              </CardHeader>
+              
+              <CardContent>
+                <form onSubmit={handleLogin} className="space-y-6">
+                  <div className="space-y-4">
+                    {/* Employee ID Input */}
+                    <div className="space-y-2">
+                      <Label htmlFor="username" className="text-sm font-medium">
+                        Employee ID
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="username"
+                          type="text"
+                          placeholder="Enter your Employee ID"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          disabled={isLoading}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Password Input */}
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-sm font-medium">
+                        Password
+                      </Label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="Enter your password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          disabled={isLoading}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Forgot Password Link */}
+                  <div className="text-right">
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="px-0 text-sm text-blue-600 hover:text-blue-800"
+                      onClick={() => setShowForgotPassword(true)}
+                      disabled={isLoading}
+                    >
+                      Forgot your password?
+                    </Button>
+                  </div>
+
+                  {/* Login Button */}
+                  <Button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700"
                     disabled={isLoading || !username.trim() || !password.trim()}
                   >
-                    {isLoading ? <Loader /> : "Login"}
-                  </button>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing In...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                </form>
+
+                {/* Error Message Display */}
+                {error && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Divider */}
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <Separator />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-gray-500">
+                      Secure Login
+                    </span>
+                  </div>
                 </div>
-              </form>
-              <div style={{ maxWidth: "23rem", width: "100%" }}>
-                <p className="small mb-5 pb-lg-2 text-center customlabel">
-                  <button
-                    type="button"
-                    className="btn btn-link p-0"
-                    onClick={() => setShowForgotPassword(true)}
-                    disabled={isLoading}
-                  >
-                    Forgot password?
-                  </button>
-                </p>
-              </div>
-            </div>
+
+                {/* Additional Info */}
+                <div className="text-center text-sm text-gray-500">
+                  <p>
+                    Contact IT support if you encounter any issues
+                    <br />
+                    logging into your account.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Footer Note */}
+            <p className="mt-8 text-center text-sm text-gray-500">
+              © {new Date().getFullYear()} All rights reserved.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Full-page loader for better UX */}
+      {/* Full-page Loader */}
       {(isLoading || isForgotPasswordLoading) && (
-        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" 
-             style={{ zIndex: 9999, backgroundColor: 'rgba(0,0,0,0.3)', pointerEvents: 'none' }}>
-          <div className="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-white border-t-transparent" />
+            <p className="text-white font-medium">
+              {isForgotPasswordLoading ? "Processing your request..." : "Signing in..."}
+            </p>
+          </div>
         </div>
       )}
     </div>
