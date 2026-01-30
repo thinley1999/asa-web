@@ -9,7 +9,7 @@ const TourAdvance = () => {
   const [activeTab, setActiveTab] = useState("incountrytour");
 
   return (
-    <Card className="w-full">
+    <Card className="w-full p-4">
       <Tabs 
         defaultValue="incountrytour" 
         value={activeTab} 

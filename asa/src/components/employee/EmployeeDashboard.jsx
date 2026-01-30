@@ -261,12 +261,12 @@ const EmployeeApplications = () => {
           onValueChange={setActiveTab}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-2 h-10">
+          <TabsList className="grid w-full grid-cols-2 h-14 mb-6">
             <TabsTrigger
               value="currentapplication"
-              className="flex items-center gap-2 h-8 text-sm"
+              className="h-12 text-base gap-2"
             >
-              <FaBusinessTime className="h-4 w-4" />
+              <FaBusinessTime className="h-5 w-5" />
               Current
               {!loading.current && currentApplications.length > 0 && (
                 <Badge
@@ -279,9 +279,9 @@ const EmployeeApplications = () => {
             </TabsTrigger>
             <TabsTrigger
               value="previousapplication"
-              className="flex items-center gap-2 h-8 text-sm"
+              className="h-12 text-base gap-2"
             >
-              <FaBusinessTime className="h-4 w-4" />
+              <FaBusinessTime className="h-5 w-5" />
               Previous
               {!loading.previous && previousApplications.length > 0 && (
                 <Badge

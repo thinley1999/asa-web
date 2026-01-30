@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -39,6 +38,7 @@ import {
   Route,
   Building,
   Globe,
+  ChevronRight,
 } from "lucide-react";
 import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
@@ -63,14 +63,13 @@ const TravelDetails = ({
   const [stopChecked, setStopChecked] = useState(
     existingData?.stop_at || initialData?.stop_at ? true : false
   );
-  const [returnChecked, setReturnChecked] = useState(initialData?.return);
-  const [mode, setMode] = useState("");
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([]);
   const [tourType, setTourType] = useState(type);
   const [dropDown, setDropDown] = useState([]);
   const [calculatedRate, setCalculatedRate] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showCalculationError, setShowCalculationError] = useState(false);
   
   const [data, setData] = useState(
     initialData || {
@@ -148,6 +147,11 @@ const TravelDetails = ({
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
+    
+    // Clear calculation error when user makes changes
+    if (showCalculationError) {
+      setShowCalculationError(false);
+    }
   };
 
   const handleSelectChange = (name, value) => {
@@ -157,9 +161,98 @@ const TravelDetails = ({
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
+    
+    // Clear mileage when mode changes from Private Vehicle
+    if (name === "mode" && value !== "Private Vehicle") {
+      setData(prev => ({ ...prev, mileage: "" }));
+      if (errors.mileage) {
+        setErrors(prev => ({ ...prev, mileage: undefined }));
+      }
+    }
+    
+    // Clear calculation error when user makes changes
+    if (showCalculationError) {
+      setShowCalculationError(false);
+    }
   };
 
-  const validateData = () => {
+  const handleHaltCheckChange = (checked) => {
+    setHaltChecked(checked);
+    if (checked) {
+      // Clear all route-related fields when halt is checked
+      setData(prevData => ({
+        ...prevData,
+        from: "",
+        from_place: "",
+        to: "",
+        to_place: "",
+        stop_at: "",
+        mode: "",
+        mileage: "",
+        halt_at: "",
+        return: false,
+      }));
+      // Clear related errors
+      setErrors(prev => ({
+        ...prev,
+        from: undefined,
+        from_place: undefined,
+        to: undefined,
+        to_place: undefined,
+        stop_at: undefined,
+        mode: undefined,
+        mileage: undefined,
+        halt_at: undefined,
+      }));
+      setStopChecked(false);
+    }
+  };
+
+  const handleReturnCheckChange = (checked) => {
+    setData(prevData => ({
+      ...prevData,
+      halt_at: "",
+      stop_at: "",
+      return: checked,
+    }));
+    // Clear related errors
+    setErrors(prev => ({
+      ...prev,
+      halt_at: undefined,
+      stop_at: undefined,
+    }));
+    setHaltChecked(false);
+    setStopChecked(false);
+  };
+
+  const handleStopOverCheckChange = (checked) => {
+    setStopChecked(checked);
+    if (checked) {
+      setData(prevData => ({
+        ...prevData,
+        return: false,
+        stop_at: "",
+      }));
+      // Clear related errors
+      setErrors(prev => ({
+        ...prev,
+        return: undefined,
+        stop_at: undefined,
+      }));
+      setHaltChecked(false);
+    } else {
+      setData(prevData => ({
+        ...prevData,
+        stop_at: "",
+      }));
+      setErrors(prev => ({
+        ...prev,
+        stop_at: undefined,
+      }));
+    }
+  };
+
+  const validateData = (showAllErrors = false) => {
     const {
       start_date,
       end_date,
@@ -184,6 +277,7 @@ const TravelDetails = ({
       newErrors.mileage = "Mileage is required for private vehicle";
     }
 
+    // Only validate route fields if not on halt journey
     if (!haltChecked) {
       if (!from) newErrors.from = "From location is required";
       if (!to) newErrors.to = "To location is required";
@@ -199,16 +293,17 @@ const TravelDetails = ({
         "Stop Over location is required when stop over is checked";
     }
 
+    // Only validate place details for international travel when not on halt journey
     if (outCountry && !haltChecked) {
       if (!from_place) newErrors.from_place = "From Place is required";
       if (!to_place) newErrors.to_place = "To Place is required";
     }
 
-    if (Object.keys(newErrors).length === 0) {
-      return { isValid: true, errors: {} };
+    if (showAllErrors) {
+      setErrors(newErrors);
     }
 
-    return { isValid: false, errors: newErrors };
+    return Object.keys(newErrors).length === 0;
   };
 
   const fetchCountry = async () => {
@@ -321,8 +416,12 @@ const TravelDetails = ({
   };
 
   const calculateRate = async () => {
-    const { isValid } = validateData();
-    if (!isValid) return;
+    // First validate all fields and show errors
+    const isValid = validateData(true);
+    if (!isValid) {
+      setShowCalculationError(true);
+      return;
+    }
 
     setIsCalculating(true);
     try {
@@ -341,20 +440,21 @@ const TravelDetails = ({
       );
 
       setCalculatedRate(rateData);
+      setShowCalculationError(false);
     } catch (error) {
       console.error("Error calculating rate:", error);
       setErrors(prev => ({
         ...prev,
         calculation: "Failed to calculate rate. Please check your inputs."
       }));
+      setShowCalculationError(true);
     } finally {
       setIsCalculating(false);
     }
   };
 
   const handleSubmit = async () => {
-    const { isValid, errors: validationErrors } = validateData();
-    setErrors(validationErrors);
+    const isValid = validateData(true);
 
     if (!isValid) return;
 
@@ -406,7 +506,6 @@ const TravelDetails = ({
   useEffect(() => {
     if (initialData) {
       setData(initialData);
-      setMode(initialData.mode || "");
       if (initialData.rate) {
         setCalculatedRate({
           rate: initialData.rate,
@@ -551,23 +650,7 @@ const TravelDetails = ({
                         <Checkbox
                           id="halt"
                           checked={haltChecked}
-                          onCheckedChange={(checked) => {
-                            setHaltChecked(checked);
-                            if (checked) {
-                              setData((prevData) => ({
-                                ...prevData,
-                                from: "",
-                                from_place: "",
-                                to: "",
-                                to_place: "",
-                                stop_at: "",
-                                mode: "",
-                                return: false,
-                              }));
-                              setReturnChecked(false);
-                              setStopChecked(false);
-                            }
-                          }}
+                          onCheckedChange={handleHaltCheckChange}
                           disabled={isDisabled}
                         />
                         <Label htmlFor="halt" className="flex items-center gap-2 cursor-pointer flex-1">
@@ -583,16 +666,7 @@ const TravelDetails = ({
                         <Checkbox
                           id="return"
                           checked={data.return}
-                          onCheckedChange={(checked) => {
-                            setData((prevData) => ({
-                              ...prevData,
-                              halt_at: "",
-                              stop_at: "",
-                              return: checked,
-                            }));
-                            setHaltChecked(false);
-                            setStopChecked(false);
-                          }}
+                          onCheckedChange={handleReturnCheckChange}
                           disabled={isDisabled}
                         />
                         <Label htmlFor="return" className="flex items-center gap-2 cursor-pointer flex-1">
@@ -609,22 +683,7 @@ const TravelDetails = ({
                           <Checkbox
                             id="stop_over"
                             checked={stopChecked}
-                            onCheckedChange={(checked) => {
-                              setStopChecked(checked);
-                              if (checked) {
-                                setData((prevData) => ({
-                                  ...prevData,
-                                  return: false,
-                                }));
-                                setHaltChecked(false);
-                                setReturnChecked(false);
-                              } else {
-                                setData((prevData) => ({
-                                  ...prevData,
-                                  stop_at: "",
-                                }));
-                              }
-                            }}
+                            onCheckedChange={handleStopOverCheckChange}
                             disabled={isDisabled}
                           />
                           <Label htmlFor="stop_over" className="flex items-center gap-2 cursor-pointer flex-1">
@@ -648,67 +707,72 @@ const TravelDetails = ({
             <Card>
               <CardContent className="pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* From Location */}
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      {outCountry ? <Globe className="h-4 w-4" /> : <Building className="h-4 w-4" />}
-                      {outCountry ? "From Country" : "From Location"}
-                    </Label>
-                    <Select
-                      value={data.from}
-                      onValueChange={(value) => handleSelectChange("from", value)}
-                      disabled={haltChecked || isDisabled}
-                    >
-                      <SelectTrigger className={errors.from ? "border-red-500" : ""}>
-                        <SelectValue placeholder="Select starting point" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {dropDown.map((item, index) => (
-                          <SelectItem key={index} value={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.from && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {errors.from}
-                      </p>
-                    )}
-                  </div>
+                  {/* Only show From/To locations when NOT on halt journey */}
+                  {!haltChecked && (
+                    <>
+                      {/* From Location */}
+                      <div className="space-y-2">
+                        <Label className="flex items-center gap-2">
+                          {outCountry ? <Globe className="h-4 w-4" /> : <Building className="h-4 w-4" />}
+                          {outCountry ? "From Country" : "From Location"}
+                        </Label>
+                        <Select
+                          value={data.from}
+                          onValueChange={(value) => handleSelectChange("from", value)}
+                          disabled={isDisabled}
+                        >
+                          <SelectTrigger className={errors.from ? "border-red-500" : ""}>
+                            <SelectValue placeholder="Select starting point" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {dropDown.map((item, index) => (
+                              <SelectItem key={index} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.from && (
+                          <p className="text-sm text-red-500 flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            {errors.from}
+                          </p>
+                        )}
+                      </div>
 
-                  {/* To Location */}
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      {outCountry ? <Globe className="h-4 w-4" /> : <Building className="h-4 w-4" />}
-                      {outCountry ? "To Country" : "To Location"}
-                    </Label>
-                    <Select
-                      value={data.to}
-                      onValueChange={(value) => handleSelectChange("to", value)}
-                      disabled={haltChecked || isDisabled}
-                    >
-                      <SelectTrigger className={errors.to ? "border-red-500" : ""}>
-                        <SelectValue placeholder="Select destination" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {dropDown.map((item, index) => (
-                          <SelectItem key={index} value={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.to && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {errors.to}
-                      </p>
-                    )}
-                  </div>
+                      {/* To Location */}
+                      <div className="space-y-2">
+                        <Label className="flex items-center gap-2">
+                          {outCountry ? <Globe className="h-4 w-4" /> : <Building className="h-4 w-4" />}
+                          {outCountry ? "To Country" : "To Location"}
+                        </Label>
+                        <Select
+                          value={data.to}
+                          onValueChange={(value) => handleSelectChange("to", value)}
+                          disabled={isDisabled}
+                        >
+                          <SelectTrigger className={errors.to ? "border-red-500" : ""}>
+                            <SelectValue placeholder="Select destination" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {dropDown.map((item, index) => (
+                              <SelectItem key={index} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.to && (
+                          <p className="text-sm text-red-500 flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            {errors.to}
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
 
-                  {/* Halt Location */}
+                  {/* Halt Location - Only shown when Halt is checked */}
                   {haltChecked && (
                     <div className="md:col-span-2 space-y-2">
                       <Label className="flex items-center gap-2">
@@ -718,7 +782,7 @@ const TravelDetails = ({
                       <Select
                         value={data.halt_at}
                         onValueChange={(value) => handleSelectChange("halt_at", value)}
-                        disabled={haltChecked && !data.return && !isDisabled ? false : true}
+                        disabled={isDisabled}
                       >
                         <SelectTrigger className={errors.halt_at ? "border-red-500" : ""}>
                           <SelectValue placeholder="Select where to halt" />
@@ -740,8 +804,8 @@ const TravelDetails = ({
                     </div>
                   )}
 
-                  {/* Stop Over Location */}
-                  {stopChecked && type === "outCountry" && (
+                  {/* Stop Over Location - Only shown when Stop Over is checked */}
+                  {stopChecked && type === "outCountry" && !haltChecked && (
                     <div className="md:col-span-2 space-y-2">
                       <Label className="flex items-center gap-2">
                         <Navigation className="h-4 w-4 text-purple-600" />
@@ -750,7 +814,7 @@ const TravelDetails = ({
                       <Select
                         value={data.stop_at}
                         onValueChange={(value) => handleSelectChange("stop_at", value)}
-                        disabled={stopChecked && !data.return && !isDisabled ? false : true}
+                        disabled={isDisabled}
                       >
                         <SelectTrigger className={errors.stop_at ? "border-red-500" : ""}>
                           <SelectValue placeholder="Select stop over location" />
@@ -772,7 +836,7 @@ const TravelDetails = ({
                     </div>
                   )}
 
-                  {/* Place Details for International Travel */}
+                  {/* Place Details for International Travel - Only shown when not on Halt and outCountry */}
                   {outCountry && !haltChecked && (
                     <>
                       <div className="space-y-2">
@@ -815,60 +879,59 @@ const TravelDetails = ({
                     </>
                   )}
 
-                  {/* Mode of Travel */}
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Route className="h-4 w-4" />
-                      Mode of Travel
-                    </Label>
-                    <Select
-                      value={data.mode}
-                      onValueChange={(value) => {
-                        handleSelectChange("mode", value);
-                        setMode(value);
-                      }}
-                      disabled={haltChecked || isDisabled}
-                    >
-                      <SelectTrigger className={errors.mode ? "border-red-500" : ""}>
-                        <SelectValue placeholder="Select travel mode" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Airplane">
-                          <div className="flex items-center gap-2">
-                            <Plane className="h-4 w-4" />
-                            Airplane
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="Train">
-                          <div className="flex items-center gap-2">
-                            <Train className="h-4 w-4" />
-                            Train
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="Private Vehicle">
-                          <div className="flex items-center gap-2">
-                            <Car className="h-4 w-4" />
-                            Private Vehicle
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="Pool Vehicle">
-                          <div className="flex items-center gap-2">
-                            <Navigation className="h-4 w-4" />
-                            Pool Vehicle
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {errors.mode && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {errors.mode}
-                      </p>
-                    )}
-                  </div>
+                  {/* Mode of Travel - Only shown when NOT on Halt journey */}
+                  {!haltChecked && (
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Route className="h-4 w-4" />
+                        Mode of Travel
+                      </Label>
+                      <Select
+                        value={data.mode}
+                        onValueChange={(value) => handleSelectChange("mode", value)}
+                        disabled={isDisabled}
+                      >
+                        <SelectTrigger className={errors.mode ? "border-red-500" : ""}>
+                          <SelectValue placeholder="Select travel mode" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Airplane">
+                            <div className="flex items-center gap-2">
+                              <Plane className="h-4 w-4" />
+                              Airplane
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="Train">
+                            <div className="flex items-center gap-2">
+                              <Train className="h-4 w-4" />
+                              Train
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="Private Vehicle">
+                            <div className="flex items-center gap-2">
+                              <Car className="h-4 w-4" />
+                              Private Vehicle
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="Pool Vehicle">
+                            <div className="flex items-center gap-2">
+                              <Navigation className="h-4 w-4" />
+                              Pool Vehicle
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.mode && (
+                        <p className="text-sm text-red-500 flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          {errors.mode}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
-                  {/* Mileage for Private Vehicle */}
-                  {mode === "Private Vehicle" && (
+                  {/* Mileage for Private Vehicle - Only shown when Private Vehicle is selected AND not on Halt journey */}
+                  {data.mode === "Private Vehicle" && !haltChecked && (
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2">
                         <Car className="h-4 w-4" />
@@ -882,6 +945,8 @@ const TravelDetails = ({
                         disabled={isDisabled}
                         placeholder="Enter total kilometers"
                         className={errors.mileage ? "border-red-500" : ""}
+                        min="0"
+                        step="0.1"
                       />
                       {errors.mileage && (
                         <p className="text-sm text-red-500 flex items-center gap-1">
@@ -971,6 +1036,16 @@ const TravelDetails = ({
                     )}
                   </div>
 
+                  {/* Calculation Error Alert */}
+                  {showCalculationError && Object.keys(errors).length > 0 && (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        Please fill in all required fields before calculating. Check all tabs for missing information.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
                   {/* Calculate Button */}
                   <Button
                     onClick={calculateRate}
@@ -1016,18 +1091,89 @@ const TravelDetails = ({
                       </CardContent>
                     </Card>
                   )}
+
+                  {/* Navigation to fix errors */}
+                  {showCalculationError && Object.keys(errors).length > 0 && (
+                    <Card className="border-amber-200 bg-amber-50">
+                      <CardContent className="pt-4">
+                        <div className="space-y-2">
+                          <p className="font-medium text-amber-800">Missing Required Fields:</p>
+                          <div className="space-y-1">
+                            {errors.start_date && (
+                              <div className="flex items-center gap-2 text-sm text-amber-700">
+                                <ChevronRight className="h-3 w-3" />
+                                <span>Start Date - </span>
+                                <Button
+                                  variant="link"
+                                  className="p-0 h-auto text-amber-700 hover:text-amber-800"
+                                  onClick={() => document.querySelector('[data-tab="basic"]').click()}
+                                >
+                                  Go to Basic Info
+                                </Button>
+                              </div>
+                            )}
+                            {errors.end_date && (
+                              <div className="flex items-center gap-2 text-sm text-amber-700">
+                                <ChevronRight className="h-3 w-3" />
+                                <span>End Date - </span>
+                                <Button
+                                  variant="link"
+                                  className="p-0 h-auto text-amber-700 hover:text-amber-800"
+                                  onClick={() => document.querySelector('[data-tab="basic"]').click()}
+                                >
+                                  Go to Basic Info
+                                </Button>
+                              </div>
+                            )}
+                            {(errors.from || errors.to || errors.mode || errors.mileage) && (
+                              <div className="flex items-center gap-2 text-sm text-amber-700">
+                                <ChevronRight className="h-3 w-3" />
+                                <span>Route Details - </span>
+                                <Button
+                                  variant="link"
+                                  className="p-0 h-auto text-amber-700 hover:text-amber-800"
+                                  onClick={() => document.querySelector('[data-tab="route"]').click()}
+                                >
+                                  Go to Route Details
+                                </Button>
+                              </div>
+                            )}
+                            {errors.halt_at && (
+                              <div className="flex items-center gap-2 text-sm text-amber-700">
+                                <ChevronRight className="h-3 w-3" />
+                                <span>Halt Location - </span>
+                                <Button
+                                  variant="link"
+                                  className="p-0 h-auto text-amber-700 hover:text-amber-800"
+                                  onClick={() => document.querySelector('[data-tab="route"]').click()}
+                                >
+                                  Go to Route Details
+                                </Button>
+                              </div>
+                            )}
+                            {errors.dsa_percentage && (
+                              <div className="flex items-center gap-2 text-sm text-amber-700">
+                                <ChevronRight className="h-3 w-3" />
+                                <span>DSA Percentage - Already on Calculation tab</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
 
-        {/* Error Display */}
+        {/* Global Error Display */}
         {Object.keys(errors).length > 0 && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Please fix the errors in the form before proceeding
+              Please fix the errors in the form before proceeding. {showCalculationError && "Click the links above to navigate to missing fields."}
             </AlertDescription>
           </Alert>
         )}
