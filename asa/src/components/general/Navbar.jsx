@@ -90,7 +90,7 @@ const Navbar = ({
             variant="ghost"
             size="icon"
             className="hidden lg:inline-flex"
-            onClick={handleSidebarToggle}
+            // onClick={handleSidebarToggle}
           >
             <Menu className="h-5 w-5" />
           </Button>

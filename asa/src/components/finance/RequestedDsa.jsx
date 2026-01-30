@@ -38,7 +38,6 @@ import {
   Search,
   Filter,
   Eye,
-  Edit,
   Download,
   MoreHorizontal,
   Calendar,
@@ -67,7 +66,7 @@ const RequestedDsa = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchQuery, setSearchQuery] = useState(""); // Separate state for actual search query
+  const [searchQuery, setSearchQuery] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedStatuses, setSelectedStatuses] = useState([
     "pending",
@@ -505,17 +504,6 @@ const RequestedDsa = () => {
                             <Eye className="h-3.5 w-3.5" />
                             View
                           </Button>
-                          {(row.status === "pending" || row.status === "rejected") && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="gap-1"
-                              onClick={() => window.location.href = `/editRequestedAdvance/${row.id}`}
-                            >
-                              <Edit className="h-3.5 w-3.5" />
-                              Edit
-                            </Button>
-                          )}
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon">
@@ -530,12 +518,6 @@ const RequestedDsa = () => {
                                   <Eye className="mr-2 h-4 w-4" />
                                   View Details
                                 </DropdownMenuItem>
-                                {(row.status === "pending" || row.status === "rejected") && (
-                                  <DropdownMenuItem onClick={() => window.location.href = `/editRequestedAdvance/${row.id}`}>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit Claim
-                                  </DropdownMenuItem>
-                                )}
                                 <DropdownMenuItem>
                                   <Download className="mr-2 h-4 w-4" />
                                   Download Receipt
