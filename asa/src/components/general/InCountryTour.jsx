@@ -762,13 +762,6 @@ const InCountryTour = ({
                           Halt
                         </Badge>
                         : Staying at a place for training/meetings •{" "}
-                        <Badge
-                          variant="secondary"
-                          className="text-xs mr-1 ml-2"
-                        >
-                          Stop Over
-                        </Badge>
-                        : Incidental stopping during travel •{" "}
                         <Badge variant="default" className="text-xs ml-2">
                           Return Trip
                         </Badge>

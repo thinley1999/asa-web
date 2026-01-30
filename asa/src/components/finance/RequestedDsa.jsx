@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -57,18 +57,17 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Checkbox } from "@/components/ui/checkbox";
 import AdvanceServices from "../services/AdvanceServices";
 import { advance_type } from "../datas/advance_type";
 import { format } from "date-fns";
 
 const RequestedDsa = () => {
   const [records, setRecords] = useState([]);
-  const [filteredRecords, setFilteredRecords] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState(""); // Separate state for actual search query
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedStatuses, setSelectedStatuses] = useState([
     "pending",
@@ -143,10 +142,10 @@ const RequestedDsa = () => {
     return <Icon className="h-3 w-3 mr-1" />;
   };
 
-  const fetchDsaClaims = async (pageNum, perPage) => {
-    if (selectedStatuses.length === 0 || selectedDsaTypes.length === 0) {
+  // Use useCallback to memoize the fetch function
+  const fetchDsaClaims = useCallback(async (pageNum, perPage, search, statuses, types) => {
+    if (statuses.length === 0 || types.length === 0) {
       setRecords([]);
-      setFilteredRecords([]);
       setTotalPages(0);
       setIsLoading(false);
       return;
@@ -154,33 +153,44 @@ const RequestedDsa = () => {
 
     setIsLoading(true);
     const dsaParams = {
-      status: selectedStatuses,
-      advance_type: selectedDsaTypes,
+      status: statuses,
+      advance_type: types,
       page: pageNum,
       per_page: perPage,
-      search_query: searchTerm,
+      search_query: search,
       type: "claim_dsa",
     };
 
     try {
       const response = await AdvanceServices.get(dsaParams);
       setRecords(response.data.advances);
-      setFilteredRecords(response.data.advances);
       setTotalPages(response.data.pagy.pages);
     } catch (error) {
       console.error("Error fetching DSA claims:", error);
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  // Fetch data when page, rowsPerPage, searchQuery, selectedStatuses, or selectedDsaTypes change
+  useEffect(() => {
+    fetchDsaClaims(page, rowsPerPage, searchQuery, selectedStatuses, selectedDsaTypes);
+  }, [page, rowsPerPage, searchQuery, selectedStatuses, selectedDsaTypes, fetchDsaClaims]);
+
+  const handleSearchInput = (e) => {
+    setSearchTerm(e.target.value);
   };
 
-  useEffect(() => {
-    fetchDsaClaims(page, rowsPerPage);
-  }, [page, selectedStatuses, selectedDsaTypes, rowsPerPage, searchTerm]);
+  const handleSearchSubmit = (e) => {
+    if (e.key === 'Enter') {
+      setSearchQuery(searchTerm);
+      setPage(1); // Reset to first page when searching
+    }
+  };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-    setPage(1);
+  const handleSearchButtonClick = () => {
+    setSearchQuery(searchTerm);
+    setPage(1); // Reset to first page when searching
   };
 
   const handleStatusToggle = (status) => {
@@ -189,7 +199,7 @@ const RequestedDsa = () => {
         ? prev.filter(s => s !== status)
         : [...prev, status]
     );
-    setPage(1);
+    setPage(1); // Reset to first page when status changes
   };
 
   const handleDsaTypeToggle = (type) => {
@@ -198,7 +208,7 @@ const RequestedDsa = () => {
         ? prev.filter(t => t !== type)
         : [...prev, type]
     );
-    setPage(1);
+    setPage(1); // Reset to first page when type changes
   };
 
   const handleRowsPerPageChange = (value) => {
@@ -219,6 +229,7 @@ const RequestedDsa = () => {
       "in_country_dsa_claim",
     ]);
     setSearchTerm("");
+    setSearchQuery("");
     setPage(1);
   };
 
@@ -309,8 +320,17 @@ const RequestedDsa = () => {
                   placeholder="Search by name, email, or ID..."
                   className="pl-9"
                   value={searchTerm}
-                  onChange={handleSearch}
+                  onChange={handleSearchInput}
+                  onKeyDown={handleSearchSubmit}
                 />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7"
+                  onClick={handleSearchButtonClick}
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
               </div>
 
               <DropdownMenu>
@@ -400,18 +420,18 @@ const RequestedDsa = () => {
                   Array.from({ length: 5 }).map((_, index) => (
                     <SkeletonRow key={index} />
                   ))
-                ) : filteredRecords.length === 0 ? (
+                ) : records.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="h-64 text-center">
                       <div className="flex flex-col items-center justify-center">
                         <FileText className="h-12 w-12 text-muted-foreground mb-4" />
                         <h3 className="text-lg font-semibold mb-2">No DSA claims found</h3>
                         <p className="text-sm text-muted-foreground mb-4">
-                          {searchTerm 
+                          {searchQuery 
                             ? "No claims match your search criteria" 
                             : "No claims match your current filters"}
                         </p>
-                        {(searchTerm || selectedStatuses.length === 0 || selectedDsaTypes.length === 0) && (
+                        {(searchQuery || selectedStatuses.length === 0 || selectedDsaTypes.length === 0) && (
                           <Button
                             variant="outline"
                             onClick={resetFilters}
@@ -423,7 +443,7 @@ const RequestedDsa = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredRecords.map((row) => (
+                  records.map((row) => (
                     <TableRow key={row.id} className="hover:bg-muted/50">
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -536,7 +556,7 @@ const RequestedDsa = () => {
             </Table>
           </div>
 
-          {filteredRecords.length > 0 && (
+          {records.length > 0 && (
             <div className="flex items-center justify-between px-2 py-4">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
