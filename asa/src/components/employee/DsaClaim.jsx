@@ -1,17 +1,83 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "react-data-table-component";
-import ItenararyService from "../services/ItenararyService";
 import { useParams } from "react-router-dom";
-import ClaimInput from "../general/ClaimInput";
-import ClaimDropDown from "./ClainDropDown";
+import { toast } from "sonner";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  AlertCircle,
+  Upload,
+  Plane,
+  Car,
+  Train,
+  Bus,
+  Plus,
+  Edit,
+  Trash2,
+  FileText,
+  Save,
+  Check,
+  Loader2,
+  CalendarDays,
+  MapPin,
+  Navigation,
+  DollarSign,
+  Percent,
+  Clock,
+  Route,
+  FileUp,
+  X,
+} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+
+import ItenararyService from "../services/ItenararyService";
 import RateServices from "../services/RateServices";
-import SuccessMessage from "../general/SuccessMessage";
-import ErrorMessage from "../general/ErrorMessage";
 import AdvanceServices from "../services/AdvanceServices";
-import { dzongkhags } from "../datas/dzongkhag_lists";
-import CustomFileInput from "../general/CustomFileInput";
 import FileServices from "../services/FileServices";
-import Loader from "../general/Loader";
+import { dzongkhags } from "../datas/dzongkhag_lists";
 
 const DsaClaim = () => {
   const [itinararies, setItineraries] = useState([]);
@@ -21,17 +87,38 @@ const DsaClaim = () => {
   const [countries, setCountries] = useState([]);
   const [newForm, setNewForm] = useState(false);
   const [errors, setErrors] = useState({});
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [advance, setAdvance] = useState(null);
   const [showButton, setShowButton] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
   const [tickets, setTickets] = useState({ tickets: [], updateTickets: [] });
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Initialize form data
+  const initializeFormData = () => ({
+    start_date: "",
+    end_date: "",
+    from: "",
+    to: "",
+    halt_at: "",
+    mode: "",
+    mileage: "",
+    dsa_percentage: "",
+    days: "",
+    rate: "",
+    advance_id: id,
+    notes: "",
+  });
 
   const handleRowClicked = (row) => {
     setFormData(row);
+    setSelectedRow(row);
+    setNewForm(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -46,6 +133,7 @@ const DsaClaim = () => {
         }
       } catch (error) {
         console.error("Error fetching countries:", error);
+        toast.error("Failed to fetch countries");
       }
     }
   };
@@ -82,7 +170,10 @@ const DsaClaim = () => {
   const handleSave = async () => {
     const { isValid, errors } = validateData();
     setErrors(errors);
-    if (!isValid) return;
+    if (!isValid) {
+      toast.error("Please fix the errors before saving");
+      return;
+    }
 
     try {
       const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
@@ -95,7 +186,7 @@ const DsaClaim = () => {
         days,
         mode,
         mileage,
-        halt_at
+        halt_at,
       );
 
       const updatedFormData = {
@@ -106,13 +197,13 @@ const DsaClaim = () => {
       const response = await ItenararyService.updateRow(updatedFormData);
       if (response) {
         fetchItinaries();
+        toast.success("Itinerary updated successfully");
+        setSelectedRow(null);
       }
-      setSuccessMessage("Data Updated Successfully");
     } catch (error) {
-      console.error("Error fetching countries:", error);
-      setErrorMessage(error);
+      console.error("Error updating itinerary:", error);
+      toast.error("Failed to update itinerary");
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async () => {
@@ -121,68 +212,61 @@ const DsaClaim = () => {
 
       if (response) {
         fetchItinaries();
+        toast.success("Itinerary deleted successfully");
+        setDeleteDialogOpen(false);
+        setFormData(initializeFormData());
+        setSelectedRow(null);
       }
-      setSuccessMessage("Delete Successful");
     } catch (error) {
-      console.error("Error fetching countries:", error);
-      setErrorMessage(error);
+      console.error("Error deleting itinerary:", error);
+      toast.error("Failed to delete itinerary");
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleAddRow = async () => {
     const { isValid, errors } = validateData();
     setErrors(errors);
-    if (!isValid) return;
-
-    if (newForm) {
-      try {
-        const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
-          formData;
-
-        const rate = await fetchRate(
-          from,
-          to,
-          dsa_percentage,
-          days,
-          mode,
-          mileage,
-          halt_at
-        );
-
-        const updatedFormData = {
-          ...formData,
-          rate,
-        };
-
-        const response = await ItenararyService.addRow(updatedFormData);
-        if (response) {
-          fetchItinaries();
-        }
-        setSuccessMessage("New rows added successfully");
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-        setErrorMessage(error);
-      }
+    if (!isValid) {
+      toast.error("Please fill all required fields");
+      return;
     }
-    setNewForm(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    try {
+      const { from, to, dsa_percentage, days, mode, mileage, halt_at } =
+        formData;
+
+      const rate = await fetchRate(
+        from,
+        to,
+        dsa_percentage,
+        days,
+        mode,
+        mileage,
+        halt_at,
+      );
+
+      const updatedFormData = {
+        ...formData,
+        rate,
+      };
+
+      const response = await ItenararyService.addRow(updatedFormData);
+      if (response) {
+        fetchItinaries();
+        toast.success("New itinerary added successfully");
+        setFormData(initializeFormData());
+        setNewForm(false);
+      }
+    } catch (error) {
+      console.error("Error adding itinerary:", error);
+      toast.error("Failed to add itinerary");
+    }
   };
 
   const handleResetForm = () => {
     setNewForm(true);
-    setFormData({
-      start_date: null,
-      end_date: null,
-      to: null,
-      halt_at: null,
-      mode: null,
-      mileage: null,
-      dsa_percentage: null,
-      days: null,
-      rate: null,
-      advance_id: id,
-    });
+    setFormData(initializeFormData());
+    setSelectedRow(null);
   };
 
   const getNumberOfDays = (start_date, end_date) => {
@@ -262,6 +346,20 @@ const DsaClaim = () => {
     }
   };
 
+  const handleCheckboxChange = (name, checked) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: checked ? "on" : "",
+    }));
+  };
+
+  const handleSelectChange = (name, value) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
   const formatDateForInput = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -273,16 +371,32 @@ const DsaClaim = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
+  const formatDisplayDate = (date) => {
+    if (!date) return "N/A";
+    return new Date(date).toLocaleDateString("en-US", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   const fetchItinaries = async () => {
     try {
       const response = await ItenararyService.getItineraries(id);
 
       if (response) {
         setItineraries(response);
-        setFormData(response[0]);
+        if (response.length > 0 && !selectedRow) {
+          setFormData(response[0]);
+          setSelectedRow(response[0]);
+        }
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error fetching current applications:", error);
+      toast.error("Failed to fetch itineraries");
+      setIsLoading(false);
     }
   };
 
@@ -294,6 +408,7 @@ const DsaClaim = () => {
       }
     } catch (error) {
       console.error("Error fetching advance:", error);
+      toast.error("Failed to fetch advance details");
     }
   };
 
@@ -305,7 +420,7 @@ const DsaClaim = () => {
     mode,
     mileage,
     halt_at,
-    type
+    type,
   ) => {
     try {
       if (mode === "Private Vehicle") {
@@ -319,7 +434,7 @@ const DsaClaim = () => {
         if (halt_at) {
           response = await RateServices.getStopOverRate(
             halt_count + 1,
-            halt_at
+            halt_at,
           );
         } else if (
           (from === "India" && to === "India") ||
@@ -351,7 +466,6 @@ const DsaClaim = () => {
   };
 
   const checkTicket = () => {
-    console.log("i am here");
     let errors = {};
 
     if (tickets.tickets.length <= 0) {
@@ -367,130 +481,105 @@ const DsaClaim = () => {
     setIsSubmitting(true);
 
     try {
-      const validateTicket = advance?.advance_type === "ex_country_tour_advance" && checkTicket();
+      const validateTicket =
+        advance?.advance_type === "ex_country_tour_advance" && checkTicket();
       if (validateTicket) {
         setLoading(true);
         const response = await AdvanceServices.claimDsa(id, dsa_amount);
         if (response) {
-          const fileResponse = await FileServices.create(response.id, tickets.tickets, "tickets");
+          const fileResponse = await FileServices.create(
+            response.id,
+            tickets.tickets,
+            "tickets",
+          );
           if (fileResponse?.status === 201) {
-            setSuccessMessage("Dsa Claimed Successfully");
+            toast.success("DSA Claimed Successfully");
             setShowButton(false);
             setIsSubmitting(false);
-            return; 
+            return;
           }
-          setErrorMessage("File creation failed");
-          return; 
+          toast.error("File creation failed");
+          return;
         }
       } else {
         const res = await AdvanceServices.claimDsa(id, dsa_amount);
         if (res) {
-          setSuccessMessage("Dsa Claimed Successfully");
+          toast.success("DSA Claimed Successfully");
           setShowButton(false);
           setIsSubmitting(false);
         } else {
-          setErrorMessage("DSA claim failed");
+          toast.error("DSA claim failed");
           setIsSubmitting(false);
         }
       }
     } catch (error) {
-      setErrorMessage("An error occurred while claiming the DSA.");
+      toast.error("An error occurred while claiming the DSA.");
       setIsSubmitting(false);
-    }finally {
+    } finally {
       setLoading(false);
     }
-  
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const newFiles = Array.from(event.target.files);
-    setTickets((prevFormData) => ({
-      ...prevFormData,
-      tickets: [...prevFormData.tickets, ...newFiles],
-    }));
+    setIsUploading(true);
 
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      file_error: "",
-    }));
+    // Simulate upload progress
+    for (let i = 0; i <= 100; i += 10) {
+      setTimeout(() => setUploadProgress(i), i * 50);
+    }
+
+    setTimeout(() => {
+      setTickets((prevFormData) => ({
+        ...prevFormData,
+        tickets: [...prevFormData.tickets, ...newFiles],
+      }));
+
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        file_error: "",
+      }));
+
+      setIsUploading(false);
+      setUploadProgress(0);
+      toast.success(`${newFiles.length} file(s) uploaded successfully`);
+    }, 1000);
   };
 
   const removeFile = (indexToRemove) => {
     setTickets((prevFormData) => ({
       ...prevFormData,
       tickets: prevFormData.tickets.filter(
-        (_, index) => index !== indexToRemove
+        (_, index) => index !== indexToRemove,
       ),
     }));
+    toast.info("File removed");
   };
 
   const removeUpdateFile = (indexToRemove) => {
     setTickets((prevFormData) => ({
       ...prevFormData,
       updateTickets: prevFormData.updateTickets.filter(
-        (_, index) => index !== indexToRemove
+        (_, index) => index !== indexToRemove,
       ),
     }));
   };
 
-  const handleCloseSuccessMessage = () => {
-    setSuccessMessage("");
+  const getModeIcon = (mode) => {
+    switch (mode) {
+      case "Airplane":
+        return <Plane className="h-4 w-4" />;
+      case "Train":
+        return <Train className="h-4 w-4" />;
+      case "Bus":
+        return <Bus className="h-4 w-4" />;
+      case "Private Vehicle":
+      case "Pool Vehicle":
+        return <Car className="h-4 w-4" />;
+      default:
+        return <Route className="h-4 w-4" />;
+    }
   };
-
-  const handleCloseErrorMessage = () => {
-    setErrors("");
-  };
-
-  const customStyles = {
-    headRow: {
-      style: {
-        backgroundColor: "#f4f2ff",
-        color: "#6e6893",
-      },
-    },
-    headCells: {
-      style: {
-        fontSize: "15px",
-        fontWeight: "600",
-        textTransform: "uppercase",
-      },
-    },
-  };
-
-  const columns = [
-    {
-      name: "From Date",
-      sortable: true,
-      selector: (row) => row.start_date,
-    },
-    {
-      name: "To Date",
-      sortable: true,
-      selector: (row) => row.end_date,
-    },
-    {
-      name: "From",
-      selector: (row) => row.from,
-    },
-    {
-      name: "To",
-      selector: (row) => row.to,
-    },
-    {
-      name: "DSA Percent",
-      selector: (row) => row.dsa_percentage,
-    },
-    {
-      name: "No. of Days",
-      selector: (row) => row.days,
-    },
-    {
-      name: "DSA Amount",
-      selector: (row) => row.rate,
-    },
-  ];
 
   useEffect(() => {
     fetchItinaries();
@@ -505,203 +594,855 @@ const DsaClaim = () => {
     calculateDsa();
   }, [advance, itinararies]);
 
-  if (formData === null) {
-    return null;
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8 space-y-6">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <Skeleton key={index} className="h-20 w-full" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
-  console.log(advance, "advance");
-
   return (
-    <div>
-      {loading && <Loader text="Submitting..." />}
-      {successMessage && (
-        <SuccessMessage
-          message={successMessage}
-          onClose={handleCloseSuccessMessage}
-        />
-      )}
-      {errorMessage && (
-        <ErrorMessage
-          message={errorMessage}
-          onClose={handleCloseErrorMessage}
-        />
-      )}
-      <div className="bg-white px-4 py-4">
-        <div className="row w-100">
-          <ClaimInput
-            label="From Date"
-            type="datetime-local"
-            name="start_date"
-            value={formatDateForInput(formData.start_date)}
-            handleChange={handleFormChange}
-            errors={errors?.start_date}
-          />
-          <ClaimInput
-            label="To Date"
-            type="datetime-local"
-            name="end_date"
-            value={formatDateForInput(formData.end_date)}
-            handleChange={handleFormChange}
-            errors={errors?.end_date}
-          />
-          <ClaimDropDown
-            label="From"
-            name="from"
-            disoptions="Select From"
-            value={formData.from}
-            handleChange={handleFormChange}
-            dropDown={countries}
-            errors={errors?.from}
-          />
-          <ClaimDropDown
-            label="To"
-            name="to"
-            disoptions="Select To"
-            value={formData.to}
-            handleChange={handleFormChange}
-            dropDown={countries}
-            errors={errors?.to}
-          />
-          <div className="col-xl-3 col-lg-3 col-md-3 col-12 mb-3">
-            <label></label>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="halt_at"
-                checked={formData.halt_at ? true : false}
-                onChange={handleFormChange}
-              />
-              <label className="form-check-label">Halt?</label>
+    <div className="container mx-auto py-1 space-y-4">
+      {/* Summary Card */}
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="space-y-1">
+              <h3 className="text-lg font-semibold">Claim Summary</h3>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Route className="h-4 w-4" />
+                  <span>{itinararies.length} itineraries</span>
+                </div>
+              </div>
             </div>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="return"
-                onChange={handleFormChange}
-              />
-              <label className="form-check-label">
-                Return on the same day?
-              </label>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-2xl font-bold text-primary">
+                  {advance?.advance_type === "ex_country_tour_advance" ? (
+                    <div className="flex flex-col">
+                      <span>Nu. {dsa_amount?.Nu}</span>
+                      <span className="text-sm font-normal text-muted-foreground">
+                        + INR {dsa_amount?.INR} + USD {dsa_amount?.USD}
+                      </span>
+                    </div>
+                  ) : (
+                    <span>Nu. {dsa_amount?.Nu}</span>
+                  )}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total DSA Amount
+                </div>
+              </div>
             </div>
           </div>
-          <ClaimDropDown
-            label="Halt AT"
-            name="halt_at"
-            value={formData.halt_at}
-            handleChange={handleFormChange}
-            dropDown={countries}
-            isDisable={formData?.halt_at ? false : true}
-            errors={errors?.halt_at}
-            disoptions="Select Halt Location"
-          />
-          <ClaimDropDown
-            label="Mode of Travel"
-            name="mode"
-            disoptions="Select Mode"
-            value={formData.mode}
-            handleChange={handleFormChange}
-            dropDown={["Airplane", "Train", "Private Vehicle", "Pool Vehicle"]}
-            errors={errors?.mode}
-          />
-          <ClaimInput
-            label="Mileage"
-            type="number"
-            name="mileage"
-            value={formData.mileage}
-            handleChange={handleFormChange}
-            isDisable={formData?.mode === "Private Vehicle" ? false : true}
-            errors={errors?.mileage}
-          />
-          <ClaimDropDown
-            label="DSA Percentage"
-            name="dsa_percentage"
-            value={formData.dsa_percentage}
-            handleChange={handleFormChange}
-            dropDown={["100", "50"]}
-            errors={errors?.dsa_percentage}
-            disoptions="Select Percentage"
-          />
-          <ClaimInput
-            label="No. of Days"
-            type="number"
-            name="days"
-            value={formData.days}
-            handleChange={handleFormChange}
-            isDisable={true}
-          />
-        </div>
-        <div className="d-flex justify-content-start">
-          <button
-            type="button"
-            className="btn btn-primary me-5 mb-2 mybtn"
-            onClick={handleSave}
-          >
-            Update
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary me-5 mb-2 mybtn"
-            onClick={handleDelete}
-          >
-            Delete
-          </button>
-        </div>
-        <div className="divider1"></div>
-        <div className="row w-100">
-          <DataTable
-            columns={columns}
-            data={itinararies}
-            customStyles={customStyles}
-            onRowClicked={handleRowClicked}
-          />
-        </div>
-        <div className="divider1"></div>
-        <br />
-        {advance?.advance_type === "ex_country_tour_advance" && (
-          <>
-            <CustomFileInput
-              label="Boarding Pass(Travel Documents)"
-              name="relevantDocument2"
-              files={tickets.tickets}
-              handleFileChange={handleFileChange}
-              removeFile={removeFile}
-              removeUpdateFile={removeUpdateFile}
-              error={formErrors.file_error}
-              // data={advance?.tickets}
-              isEditMode={false}
-              updateFile={tickets.updateTickets}
-            />
-          </>
-        )}
-        <br />
-        <ClaimInput
-          label="DSA Amount"
-          type="text"
-          name="dsa_amount"
-          value={
-            advance?.advance_type === "ex_country_tour_advance"
-              ? `Nu.${dsa_amount?.Nu}, INR.${dsa_amount?.INR}, USD.${dsa_amount?.USD}`
-              : `Nu.${dsa_amount?.Nu}`
-          }
-          isDisable={true}
-        />
-        {showButton && (
-          <div className="bg-white px-4 pb-3 text-center">
-            <button
-              type="submit"
-              className="btn btn-primary px-5"
-              onClick={handleClaim}
+        </CardContent>
+      </Card>
+
+      {/* Itinerary Form Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Edit className="h-5 w-5" />
+            {selectedRow ? "Edit Itinerary" : "Add New Itinerary"}
+          </CardTitle>
+          <CardDescription>
+            Fill in the travel details to calculate DSA
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Date Fields */}
+            <div className="space-y-2">
+              <Label htmlFor="start_date" className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4" />
+                Start Date *
+              </Label>
+              <Input
+                id="start_date"
+                type="datetime-local"
+                name="start_date"
+                value={formatDateForInput(formData?.start_date)}
+                onChange={handleFormChange}
+                className={errors?.start_date ? "border-red-500" : ""}
+              />
+              {errors?.start_date && (
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.start_date}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="end_date" className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4" />
+                End Date *
+              </Label>
+              <Input
+                id="end_date"
+                type="datetime-local"
+                name="end_date"
+                value={formatDateForInput(formData?.end_date)}
+                onChange={handleFormChange}
+                className={errors?.end_date ? "border-red-500" : ""}
+              />
+              {errors?.end_date && (
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.end_date}
+                </p>
+              )}
+            </div>
+
+            {/* Days Display */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Number of Days
+              </Label>
+              <div className="flex items-center h-10 px-3 border rounded-md bg-muted">
+                <span className="font-medium">{formData?.days || 0} days</span>
+              </div>
+            </div>
+
+            {/* Location Fields */}
+            <div className="space-y-2">
+              <Label htmlFor="from" className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                From *
+              </Label>
+              <Select
+                value={formData?.from || ""}
+                onValueChange={(value) => handleSelectChange("from", value)}
+              >
+                <SelectTrigger className={errors?.from ? "border-red-500" : ""}>
+                  <SelectValue placeholder="Select location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map((country) => (
+                    <SelectItem
+                      key={country.id || country}
+                      value={country.name || country}
+                    >
+                      {country.name || country}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors?.from && (
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.from}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="to" className="flex items-center gap-2">
+                <Navigation className="h-4 w-4" />
+                To *
+              </Label>
+              <Select
+                value={formData?.to || ""}
+                onValueChange={(value) => handleSelectChange("to", value)}
+              >
+                <SelectTrigger className={errors?.to ? "border-red-500" : ""}>
+                  <SelectValue placeholder="Select location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map((country) => (
+                    <SelectItem
+                      key={country.id || country}
+                      value={country.name || country}
+                    >
+                      {country.name || country}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors?.to && (
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.to}
+                </p>
+              )}
+            </div>
+
+            {/* Travel Mode */}
+            <div className="space-y-2">
+              <Label htmlFor="mode" className="flex items-center gap-2">
+                <Route className="h-4 w-4" />
+                Travel Mode *
+              </Label>
+              <Select
+                value={formData?.mode || ""}
+                onValueChange={(value) => handleSelectChange("mode", value)}
+              >
+                <SelectTrigger className={errors?.mode ? "border-red-500" : ""}>
+                  <SelectValue placeholder="Select mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Airplane">
+                    <div className="flex items-center gap-2">
+                      <Plane className="h-4 w-4" />
+                      Airplane
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Train">
+                    <div className="flex items-center gap-2">
+                      <Train className="h-4 w-4" />
+                      Train
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Bus">
+                    <div className="flex items-center gap-2">
+                      <Bus className="h-4 w-4" />
+                      Bus
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Private Vehicle">
+                    <div className="flex items-center gap-2">
+                      <Car className="h-4 w-4" />
+                      Private Vehicle
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Pool Vehicle">
+                    <div className="flex items-center gap-2">
+                      <Car className="h-4 w-4" />
+                      Pool Vehicle
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {errors?.mode && (
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.mode}
+                </p>
+              )}
+            </div>
+
+            {/* Mileage */}
+            {formData?.mode === "Private Vehicle" && (
+              <div className="space-y-2">
+                <Label htmlFor="mileage">Mileage (km) *</Label>
+                <Input
+                  id="mileage"
+                  type="number"
+                  name="mileage"
+                  value={formData?.mileage || ""}
+                  onChange={handleFormChange}
+                  className={errors?.mileage ? "border-red-500" : ""}
+                  placeholder="Enter mileage"
+                />
+                {errors?.mileage && (
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.mileage}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* DSA Percentage */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="dsa_percentage"
+                className="flex items-center gap-2"
+              >
+                <Percent className="h-4 w-4" />
+                DSA Percentage *
+              </Label>
+              <Select
+                value={formData?.dsa_percentage || ""}
+                onValueChange={(value) =>
+                  handleSelectChange("dsa_percentage", value)
+                }
+              >
+                <SelectTrigger
+                  className={errors?.dsa_percentage ? "border-red-500" : ""}
+                >
+                  <SelectValue placeholder="Select percentage" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="100">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4" />
+                      100% (Full Day)
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="50">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      50% (Half Day)
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {errors?.dsa_percentage && (
+                <p className="text-sm text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.dsa_percentage}
+                </p>
+              )}
+            </div>
+
+            {/* Checkboxes */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="halt_at"
+                  checked={formData?.halt_at === "on"}
+                  onCheckedChange={(checked) =>
+                    handleCheckboxChange("halt_at", checked)
+                  }
+                />
+                <Label htmlFor="halt_at" className="cursor-pointer">
+                  Halt during travel
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="return"
+                  onCheckedChange={(checked) =>
+                    handleCheckboxChange("return", checked)
+                  }
+                />
+                <Label htmlFor="return" className="cursor-pointer">
+                  Return same day
+                </Label>
+              </div>
+            </div>
+
+            {/* Halt Location */}
+            {formData?.halt_at === "on" && (
+              <div className="space-y-2">
+                <Label htmlFor="halt_at_location">Halt Location *</Label>
+                <Select
+                  value={formData?.halt_at || ""}
+                  onValueChange={(value) =>
+                    handleSelectChange("halt_at", value)
+                  }
+                >
+                  <SelectTrigger
+                    className={errors?.halt_at ? "border-red-500" : ""}
+                  >
+                    <SelectValue placeholder="Select halt location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem
+                        key={country.id || country}
+                        value={country.name || country}
+                      >
+                        {country.name || country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors?.halt_at && (
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.halt_at}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Notes */}
+            <div className="md:col-span-3 space-y-2">
+              <Label htmlFor="notes">Additional Notes</Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                value={formData?.notes || ""}
+                onChange={handleFormChange}
+                placeholder="Any additional information about this itinerary..."
+                rows={2}
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t">
+            <Button
+              type="button"
+              onClick={selectedRow ? handleSave : handleAddRow}
+              className="gap-2"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Processing..." : "Claim Now"}
-            </button>
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              {selectedRow ? "Update Itinerary" : "Add Itinerary"}
+            </Button>
+
+            {selectedRow && (
+              <Button
+                type="button"
+                onClick={() => setDeleteDialogOpen(true)}
+                variant="destructive"
+                className="gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </Button>
+            )}
+
+            <Button
+              type="button"
+              onClick={handleResetForm}
+              variant="outline"
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              New Itinerary
+            </Button>
+
+            {selectedRow && (
+              <Button
+                type="button"
+                onClick={() => {
+                  setFormData(initializeFormData());
+                  setSelectedRow(null);
+                }}
+                variant="ghost"
+              >
+                Cancel Edit
+              </Button>
+            )}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Itineraries Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Route className="h-5 w-5" />
+            Travel Itineraries ({itinararies.length})
+          </CardTitle>
+          <CardDescription>
+            Click on any row to edit the details
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {itinararies.length === 0 ? (
+            <div className="text-center py-12 border rounded-lg">
+              <Route className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">
+                No Itineraries Added
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Add your first travel itinerary to calculate DSA
+              </p>
+              <Button onClick={handleResetForm} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add First Itinerary
+              </Button>
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[180px]">Date Range</TableHead>
+                    <TableHead>From → To</TableHead>
+                    <TableHead>Travel Mode</TableHead>
+                    <TableHead>DSA %</TableHead>
+                    <TableHead>Days</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead className="w-[80px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {itinararies.map((item, index) => (
+                    <TableRow
+                      key={item.id || index}
+                      className={`cursor-pointer hover:bg-muted/50 ${
+                        selectedRow?.id === item.id ? "bg-primary/5" : ""
+                      }`}
+                      onClick={() => handleRowClicked(item)}
+                    >
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium">
+                            {formatDisplayDate(item.start_date)}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            to {formatDisplayDate(item.end_date)}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="font-normal">
+                            {item.from}
+                          </Badge>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                          <Badge variant="outline" className="font-normal">
+                            {item.to}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {getModeIcon(item.mode)}
+                          <span>{item.mode}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            item.dsa_percentage === "100"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {(parseFloat(item.dsa_percentage) * 100).toFixed(2)}%
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <span>{item.days} days</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right font-medium">
+                        <div className="flex items-center justify-end gap-1">
+                          <DollarSign className="h-4 w-4 text-green-600" />
+                          {item.rate}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRowClicked(item);
+                                }}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Edit this itinerary</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+        {itinararies.length > 0 && (
+          <CardFooter className="border-t bg-muted/50">
+            <div className="flex justify-between items-center w-full">
+              <div className="text-sm text-muted-foreground">
+                Showing {itinararies.length} itinerary items
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleResetForm}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Another Itinerary
+              </Button>
+            </div>
+          </CardFooter>
         )}
-      </div>
+      </Card>
+
+      {/* File Upload Section (for international tours only) */}
+      {advance?.advance_type === "ex_country_tour_advance" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileUp className="h-5 w-5" />
+              Travel Documents
+            </CardTitle>
+            <CardDescription>
+              Upload boarding passes and relevant travel documents
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* File Upload Area */}
+            <div
+              className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer bg-muted/30"
+              onClick={() => document.getElementById("file-upload").click()}
+            >
+              <Input
+                id="file-upload"
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+              />
+              <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">
+                Upload Travel Documents
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Click to browse or drag and drop files here
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Supported formats: PDF, JPG, PNG, DOC (Max 10MB each)
+              </p>
+            </div>
+
+            {/* Upload Progress */}
+            {isUploading && (
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Uploading...</span>
+                  <span>{uploadProgress}%</span>
+                </div>
+                <Progress value={uploadProgress} className="h-2" />
+              </div>
+            )}
+
+            {/* Uploaded Files List */}
+            {tickets.tickets.length > 0 && (
+              <div className="space-y-3">
+                <h4 className="font-medium">
+                  Uploaded Documents ({tickets.tickets.length})
+                </h4>
+                <div className="space-y-2">
+                  {tickets.tickets.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-5 w-5 text-primary" />
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">
+                            {file.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {(file.size / 1024).toFixed(2)} KB • {file.type}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFile(index)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {formErrors.file_error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{formErrors.file_error}</AlertDescription>
+              </Alert>
+            )}
+
+            {/* Instructions */}
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="text-sm">
+                <strong>Required Documents:</strong> Please upload boarding
+                passes, train/bus tickets, and any other relevant travel
+                documents for your international tour.
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Final Claim Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Final DSA Claim</CardTitle>
+          <CardDescription>Review and submit your DSA claim</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {/* Amount Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="bg-green-50 border-green-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-green-800">
+                        Total DSA
+                      </p>
+                      <p className="text-2xl font-bold text-green-900">
+                        Nu {dsa_amount?.Nu}
+                      </p>
+                    </div>
+                    <DollarSign className="h-8 w-8 text-green-600" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {advance?.advance_type === "ex_country_tour_advance" && (
+                <>
+                  <Card className="bg-blue-50 border-blue-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-blue-800">
+                            INR Amount
+                          </p>
+                          <p className="text-2xl font-bold text-blue-900">
+                            ₹{dsa_amount?.INR}
+                          </p>
+                        </div>
+                        <span className="text-lg font-medium">₹</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-amber-50 border-amber-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-amber-800">
+                            USD Amount
+                          </p>
+                          <p className="text-2xl font-bold text-amber-900">
+                            ${dsa_amount?.USD}
+                          </p>
+                        </div>
+                        <span className="text-lg font-medium">$</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="border-t bg-muted/50 p-1">
+          <Alert className="w-full">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3 flex-1">
+                <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <AlertDescription className="text-sm">
+                  Once submitted, your DSA claim will be sent for approval.
+                  Please ensure all information is accurate before submitting.
+                </AlertDescription>
+              </div>
+
+              <div className="flex-shrink-0">
+                {showButton && (
+                  <Button
+                    onClick={handleClaim}
+                    disabled={isSubmitting || loading}
+                    size="lg"
+                    className="gap-2 px-8 whitespace-nowrap"
+                  >
+                    {isSubmitting || loading ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="h-5 w-5" />
+                        Submit Claim
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </Alert>
+        </CardFooter>
+      </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-red-500" />
+              Delete Itinerary
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this itinerary? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-lg bg-red-50 p-4">
+            <p className="text-sm text-red-800">
+              <strong>Itinerary Details:</strong> {selectedRow?.from} →{" "}
+              {selectedRow?.to} ({selectedRow?.days} days)
+            </p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              className="gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete Itinerary
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
+
+// Add missing ArrowRight component
+const ArrowRight = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+    width="24"
+  >
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
+  </svg>
+);
 
 export default DsaClaim;
