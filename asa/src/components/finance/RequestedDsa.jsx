@@ -59,6 +59,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AdvanceServices from "../services/AdvanceServices";
 import { advance_type } from "../datas/advance_type";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 const RequestedDsa = () => {
   const [records, setRecords] = useState([]);
@@ -67,7 +68,8 @@ const RequestedDsa = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const { toast } = useToast();
   const [selectedStatuses, setSelectedStatuses] = useState([
     "pending",
     "verified",
@@ -165,7 +167,11 @@ const RequestedDsa = () => {
       setRecords(response.data.advances);
       setTotalPages(response.data.pagy.pages);
     } catch (error) {
-      console.error("Error fetching DSA claims:", error);
+      toast({
+        title: "Error",
+        description: "Error fetching current applications.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -517,14 +523,6 @@ const RequestedDsa = () => {
                                 <DropdownMenuItem onClick={() => window.location.href = `/viewRequestedAdvance/${row.id}`}>
                                   <Eye className="mr-2 h-4 w-4" />
                                   View Details
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Download Receipt
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Receipt className="mr-2 h-4 w-4" />
-                                  Generate Certificate
                                 </DropdownMenuItem>
                               </DropdownMenuGroup>
                             </DropdownMenuContent>

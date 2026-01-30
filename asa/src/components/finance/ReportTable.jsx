@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { 
-  FileText, 
+import {  
   Eye, 
   Download, 
   Calendar,
@@ -48,7 +47,7 @@ const ReportTable = ({ data, total, filters }) => {
   };
 
   if (data.length === 0) {
-    return null; // Handled in parent component
+    return null;
   }
 
   return (

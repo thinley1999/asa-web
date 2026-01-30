@@ -5,29 +5,29 @@ import SalaryAdvance from "../employee/SalaryAdvance";
 import InCountryTour from "./InCountryTour";
 import OutCountryTour from "./OutCountryTour";
 import OtherAdvance from "../employee/OtherAdvance";
+import { useToast } from "@/hooks/use-toast";
 
 const AdvanceDetail = () => {
   let { id } = useParams();
   const [advanceData, setAdvanceData] = useState(null);
-  const [fetchError, setFetchError] = useState(null);
+  const { toast } = useToast();
 
   const fetchApplication = async () => {
     try {
       const response = await AdvanceServices.showDetail(id);
       setAdvanceData(response.data);
     } catch (error) {
-      setFetchError(error.message);
-      console.error("Error fetching data:", error);
+      toast({
+          title: "Error",
+          description: "Failed to fetch current applications.",
+          variant: "destructive",
+        });
     }
   };
 
   useEffect(() => {
     fetchApplication();
   }, [id]);
-
-  if (fetchError) {
-    return <div>Error: {fetchError}</div>;
-  }
 
   if (!advanceData) {
     return <div>Loading...</div>;

@@ -12,12 +12,14 @@ import { cn } from "@/lib/utils";
 import { departments } from "../datas/department_list";
 import ReportServices from "../services/ReportServices";
 import ReportTable from "./ReportTable";
+import { useToast } from "@/hooks/use-toast";
 
 const Reports = () => {
   const [errors, setErrors] = useState({});
   const [reportData, setReportData] = useState([]);
   const [totalAmount, setTotalAmount] = useState({});
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
   const [filters, setFilters] = useState({
     report_type: "",
     start_date: "",
@@ -121,7 +123,11 @@ const Reports = () => {
           setTotalAmount(response.data.total);
         }
       } catch (error) {
-        console.error("Error fetching report:", error);
+        toast({
+        title: "Error",
+        description: "Error fetching reports.",
+        variant: "destructive",
+      });
       }
     }
     setLoading(false);

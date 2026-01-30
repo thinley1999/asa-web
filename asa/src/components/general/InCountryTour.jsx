@@ -37,9 +37,6 @@ import {
   X,
   Download,
   Plus,
-  Eye,
-  Edit,
-  Trash2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import TravelDetails from "./TravelDetails";
@@ -59,6 +56,7 @@ const InCountryTour = ({
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState(null);
   const { toast } = useToast();
+
 
   const initialFormData = {
     firstName: "",
@@ -93,12 +91,12 @@ const InCountryTour = ({
           updateFormDataFromAPI(data);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
         toast({
           title: "Error",
           description: "Failed to load application data",
           variant: "destructive",
         });
+
       } finally {
         setLoading(false);
       }

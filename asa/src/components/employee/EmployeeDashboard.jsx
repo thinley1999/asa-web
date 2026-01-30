@@ -12,12 +12,14 @@ import { FileText, RefreshCw } from "lucide-react";
 import { ApplicationCard } from "../general/ApplicationCard";
 import { PaginationControls, SimplePaginationControls } from "../general/PaginationControls";
 import { Clock, CheckCircle, AlertCircle  } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const EmployeeApplications = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("currentapplication");
   const [currentApplications, setCurrentApplications] = useState([]);
   const [previousApplications, setPreviousApplications] = useState([]);
+  const { toast } = useToast();
   const [loading, setLoading] = useState({
     current: false,
     previous: false,
@@ -47,7 +49,6 @@ const EmployeeApplications = () => {
         per_page: 5,
       };
       const response = await AdvanceServices.get(currentParams);
-      console.log("Current response:", response);
 
       if (response && response.data) {
         setCurrentApplications(response.data.advances || []);
@@ -59,7 +60,11 @@ const EmployeeApplications = () => {
         setCurrentApplications([]);
       }
     } catch (error) {
-      console.error("Error fetching current applications:", error);
+      toast({
+          title: "Error",
+          description: "Failed to fetch current applications.",
+          variant: "destructive",
+        });
       setCurrentApplications([]);
     } finally {
       setLoading((prev) => ({ ...prev, current: false }));
@@ -89,7 +94,11 @@ const EmployeeApplications = () => {
         setPreviousApplications([]);
       }
     } catch (error) {
-      console.error("Error fetching previous applications:", error);
+      toast({
+          title: "Error",
+          description: "Error fetching previous applications.",
+          variant: "destructive",
+        });
       setPreviousApplications([]);
     } finally {
       setLoading((prev) => ({ ...prev, previous: false }));

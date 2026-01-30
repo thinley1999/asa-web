@@ -41,14 +41,14 @@ import {
 import UserServices from "../services/UserServices";
 import ResetPassword from "../general/ResetPassword";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [userPermissions, setUserPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [resetOpen, setResetOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchUserData();
@@ -70,8 +70,11 @@ const Profile = () => {
         setUserPermissions(permissionResponse.data);
       }
     } catch (error) {
-      console.error("Error fetching user data:", error);
-      setErrorMessage("Failed to load profile data. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to load profile data. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -100,12 +103,20 @@ const Profile = () => {
   };
 
   const handleResetSuccess = (message) => {
-    setSuccessMessage(message);
+    toast({
+        title: "Success",
+        description: message,
+        variant: "default",
+      });
     setResetOpen(false);
   };
 
   const handleResetError = (error) => {
-    setErrorMessage(error);
+    toast({
+        title: "Error",
+        description: "Internal Server Error",
+        variant: "destructive",
+      });
   };
 
   if (loading) {
@@ -150,27 +161,6 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-6">
-      {/* Alerts */}
-      {successMessage && (
-        <Alert className="mb-6 border-green-200 bg-green-50">
-          <Check className="h-4 w-4 text-green-600" />
-          <AlertTitle className="text-green-800">Success</AlertTitle>
-          <AlertDescription className="text-green-700">
-            {successMessage}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {errorMessage && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            {errorMessage}
-          </AlertDescription>
-        </Alert>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Profile Card */}
         <Card className="lg:col-span-1 border shadow-sm">

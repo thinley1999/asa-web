@@ -8,8 +8,7 @@ import OutCountryTour from "../general/OutCountryTour";
 import OtherAdvance from "../employee/OtherAdvance";
 import DialogBox from "../general/DialogBox";
 import { usePermissions } from "../../contexts/PermissionsContext";
-import SuccessMessage from "../general/SuccessMessage";
-import ErrorMessage from "../general/ErrorMessage";
+import { useToast } from "@/hooks/use-toast";
 
 const ViewRequestedAdvance = () => {
   const { id } = useParams();
@@ -19,15 +18,18 @@ const ViewRequestedAdvance = () => {
   const [showButtons, setShowButtons] = useState({ message: " ", show: false });
   const { permissions } = usePermissions();
   const [advancePermission, setAdvancePermission] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const { toast } = useToast();
 
   const fetchAdvance = async () => {
     try {
       const response = await AdvanceServices.showDetail(id);
       setAdvanceData(response.data);
     } catch (error) {
-      console.error("Error fetching current applications:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch advance data",
+        variant: "destructive",
+      });
     }
   };
 
@@ -75,32 +77,40 @@ const ViewRequestedAdvance = () => {
 
       if (response) {
         if (dialogMessage === "approved") {
-          setSuccessMessage("Advance approved successfully");
+          toast({
+            title: "Success",
+            description: "Advance approved successfully",
+            variant: "default",
+          });
         } else {
-          setSuccessMessage("Advance rejected successfully");
+          toast({
+            title: "Success",
+            description: "Advance rejected successfully",
+            variant: "default",
+          });
         }
         setShowButtons({ message: "", show: false });
       } else {
-        setErrorMessage("Internal Server Error");
+        toast({
+          title: "Error",
+          description: "Internal Server Issue",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      setErrorMessage("There was a clash with existing voucher. Please try again after few minutes.");
+      toast({
+        title: "Error",
+        description: "Internal Server Issue, Voucher Clash",
+        variant: "destructive",
+      });
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleCloseSuccessMessage = () => {
-    setSuccessMessage("");
-  };
-
-  const handleCloseErrorMessage = () => {
-    setErrorMessage("");
   };
 
   useEffect(() => {
     if (permissions) {
       const advancePerm = permissions.find(
-        (permission) => permission.resource === "requested_advance"
+        (permission) => permission.resource === "requested_advance",
       );
       setAdvancePermission(advancePerm);
     }
@@ -116,20 +126,6 @@ const ViewRequestedAdvance = () => {
 
   return (
     <div>
-      {successMessage && (
-        <SuccessMessage
-          message={successMessage}
-          onClose={handleCloseSuccessMessage}
-        />
-      )}
-
-      {errorMessage && (
-        <ErrorMessage
-          message={errorMessage}
-          onClose={handleCloseErrorMessage}
-        />
-      )}
-
       <div className="bg-white">
         {advanceData.advance_type === "salary_advance" && (
           <SalaryAdvance
@@ -138,10 +134,11 @@ const ViewRequestedAdvance = () => {
             handleDialogOpen={handleDialogOpen}
           />
         )}
-        {(advanceData.advance_type === "in_country_tour_advance" || advanceData.advance_type === "in_country_dsa_claim" ) && (
+        {(advanceData.advance_type === "in_country_tour_advance" ||
+          advanceData.advance_type === "in_country_dsa_claim") && (
           <InCountryTour
             data={advanceData}
-            isDSA= {advanceData.claim_dsa}
+            isDSA={advanceData.claim_dsa}
             showButtons={showButtons}
             handleDialogOpen={handleDialogOpen}
           />
@@ -153,10 +150,11 @@ const ViewRequestedAdvance = () => {
             handleDialogOpen={handleDialogOpen}
           />
         )}
-        {(advanceData.advance_type === "ex_country_tour_advance" || advanceData.advance_type === "ex_country_dsa_claim") && (
+        {(advanceData.advance_type === "ex_country_tour_advance" ||
+          advanceData.advance_type === "ex_country_dsa_claim") && (
           <OutCountryTour
             data={advanceData}
-            isDSA= {advanceData.claim_dsa}
+            isDSA={advanceData.claim_dsa}
             showButtons={showButtons}
             handleDialogOpen={handleDialogOpen}
           />

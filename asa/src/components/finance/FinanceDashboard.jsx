@@ -63,6 +63,7 @@ const FinanceDashboard = () => {
         toast({
           title: "Welcome back!",
           description: "Login successful",
+          variant: "default",
           duration: 3000,
         });
       }
@@ -79,7 +80,6 @@ const FinanceDashboard = () => {
           fetchMonthlyCount(),
         ]);
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
         toast({
           title: "Error",
           description: "Failed to load dashboard data",

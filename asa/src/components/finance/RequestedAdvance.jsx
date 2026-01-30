@@ -39,7 +39,6 @@ import {
   Filter,
   Eye,
   Edit,
-  Download,
   MoreHorizontal,
   Calendar,
   User,
@@ -57,6 +56,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AdvanceServices from "../services/AdvanceServices";
 import { advance_type } from "../datas/advance_type";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 const RequestedAdvance = () => {
   const [records, setRecords] = useState([]);
@@ -65,7 +65,8 @@ const RequestedAdvance = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState(""); // Separate state for actual search query
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const { toast } = useToast();
   const [selectedStatuses, setSelectedStatuses] = useState([
     "pending",
     "verified",
@@ -133,7 +134,11 @@ const RequestedAdvance = () => {
       setRecords(response.data.advances);
       setTotalPages(response.data.pagy.pages);
     } catch (error) {
-      console.error("Error fetching current applications:", error);
+      toast({
+        title: "Error",
+        description: "Error fetching current applications.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -512,10 +517,6 @@ const RequestedAdvance = () => {
                                     Edit Request
                                   </DropdownMenuItem>
                                 )}
-                                <DropdownMenuItem>
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Download PDF
-                                </DropdownMenuItem>
                               </DropdownMenuGroup>
                             </DropdownMenuContent>
                           </DropdownMenu>

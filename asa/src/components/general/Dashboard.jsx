@@ -8,19 +8,25 @@ import { AlertCircle, ShieldAlert } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Card, CardContent } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const { permissions, permissionsLoading } = usePermissions();
   const [dashboardPermission, setDashboardPermission] = useState(null);
   const [user, setUser] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         await fetchUserDetails();
       } catch (error) {
-        console.error("Error fetching user details:", error);
+        toast({
+          title: "Error",
+          description: "Failed to user details.",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }

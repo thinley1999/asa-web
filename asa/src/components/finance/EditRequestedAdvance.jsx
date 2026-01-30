@@ -6,21 +6,26 @@ import SalaryAdvance from "../employee/SalaryAdvance";
 import InCountryTour from "../general/InCountryTour";
 import OutCountryTour from "../general/OutCountryTour";
 import OtherAdvance from "../employee/OtherAdvance";
-import DialogBox from "../general/DialogBox";
 import { usePermissions } from "../../contexts/PermissionsContext";
+import { useToast } from "@/hooks/use-toast";
 
 const EditRequestedAdvance = () => {
   const { id } = useParams();
   const [advanceData, setAdvanceData] = useState({});
   const { permissions } = usePermissions();
   const [advancePermission, setAdvancePermission] = useState(null);
+  const { toast } = useToast();
 
   const fetchAdvance = async () => {
     try {
       const response = await AdvanceServices.showDetail(id);
       setAdvanceData(response.data);
     } catch (error) {
-      console.error("Error fetching current applications:", error);
+      toast({
+        title: "Error",
+        description: "Error fetching current applications.",
+        variant: "destructive",
+      });
     }
   };
 
