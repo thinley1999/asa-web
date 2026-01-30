@@ -44,7 +44,6 @@ import {
   Calendar,
   User,
   FileText,
-  DollarSign,
   CheckCircle,
   XCircle,
   Clock,
@@ -58,7 +57,6 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import AdvanceServices from "../services/AdvanceServices";
 import { advance_type } from "../datas/advance_type";
@@ -284,14 +282,6 @@ const RequestedDsa = () => {
     </TableRow>
   );
 
-  const getActiveFilterCount = () => {
-    let count = 0;
-    if (selectedStatuses.length < Object.keys(statusConfig).length) count++;
-    if (selectedDsaTypes.length < Object.keys(dsaTypeConfig).length) count++;
-    if (searchTerm) count++;
-    return count;
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -309,7 +299,7 @@ const RequestedDsa = () => {
             <div>
               <CardTitle>DSA Claim Applications</CardTitle>
               <CardDescription>
-                {records.length} claims • {selectedStatuses.length} statuses • {selectedDsaTypes.length} types
+                Showing {records.length} of {totalPages * rowsPerPage} total records
               </CardDescription>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -328,52 +318,27 @@ const RequestedDsa = () => {
                   <Button variant="outline" className="gap-2">
                     <Filter className="h-4 w-4" />
                     Filters
-                    {getActiveFilterCount() > 0 && (
-                      <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
-                        {getActiveFilterCount()}
-                      </Badge>
-                    )}
+                    <Badge variant="secondary" className="ml-1">
+                      {selectedStatuses.length + selectedDsaTypes.length}
+                    </Badge>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-96 p-4">
-                  <div className="space-y-6">
+                <DropdownMenuContent className="w-80 p-4">
+                  <DropdownMenuLabel>Filter Options</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  
+                  <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Filter DSA Claims</h3>
-                      <div className="flex items-center justify-between mb-4">
-                        <p className="text-sm text-muted-foreground">
-                          Apply filters to narrow down results
-                        </p>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={resetFilters}
-                          className="h-8"
-                        >
-                          Reset All
-                        </Button>
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    <div>
-                      <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Claim Status
-                      </h4>
+                      <h4 className="text-sm font-medium mb-2">Status</h4>
                       <div className="grid grid-cols-2 gap-2">
                         {Object.entries(statusConfig).map(([status, config]) => (
                           <div key={status} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`status-${status}`}
+                            <Switch
                               checked={selectedStatuses.includes(status)}
                               onCheckedChange={() => handleStatusToggle(status)}
+                              id={`status-${status}`}
                             />
-                            <Label 
-                              htmlFor={`status-${status}`} 
-                              className="text-sm cursor-pointer flex items-center gap-1"
-                            >
-                              <config.icon className="h-3 w-3" />
+                            <Label htmlFor={`status-${status}`} className="text-sm">
                               {config.label}
                             </Label>
                           </div>
@@ -384,24 +349,17 @@ const RequestedDsa = () => {
                     <Separator />
 
                     <div>
-                      <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-                        <Globe className="h-4 w-4" />
-                        DSA Type
-                      </h4>
+                      <h4 className="text-sm font-medium mb-2">DSA Type</h4>
                       <div className="grid grid-cols-2 gap-2">
                         {Object.entries(dsaTypeConfig).map(([type, config]) => (
-                          <div key={type} className="flex items-start space-x-2">
-                            <Checkbox
-                              id={`type-${type}`}
+                          <div key={type} className="flex items-center space-x-2">
+                            <Switch
                               checked={selectedDsaTypes.includes(type)}
                               onCheckedChange={() => handleDsaTypeToggle(type)}
+                              id={`type-${type}`}
                             />
-                            <Label 
-                              htmlFor={`type-${type}`} 
-                              className="text-sm cursor-pointer"
-                            >
-                              <div className="font-medium">{config.label}</div>
-                              <div className="text-xs text-muted-foreground">{config.description}</div>
+                            <Label htmlFor={`type-${type}`} className="text-sm">
+                              {config.label}
                             </Label>
                           </div>
                         ))}
@@ -410,10 +368,12 @@ const RequestedDsa = () => {
 
                     <div className="pt-2">
                       <Button
+                        variant="outline"
+                        size="sm"
                         className="w-full"
-                        onClick={() => document.querySelector('[data-radix-popper-content-wrapper]').click()}
+                        onClick={resetFilters}
                       >
-                        Apply Filters
+                        Reset Filters
                       </Button>
                     </div>
                   </div>
