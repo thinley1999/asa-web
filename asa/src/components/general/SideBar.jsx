@@ -3,47 +3,49 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import logoImage from "../../assets/img/rma-logo-white.png";
 import AuthServices from "../services/AuthServices";
 import { usePermissions } from "../../contexts/PermissionsContext";
-import { FaHome } from "react-icons/fa";
-import { FaCircleDollarToSlot } from "react-icons/fa6";
-import { FaMoneyCheckDollar } from "react-icons/fa6";
-import { FaCar } from "react-icons/fa";
-import { FaSignOutAlt } from "react-icons/fa";
-import { FaFileInvoiceDollar } from "react-icons/fa6";
-import { FaFolderOpen } from "react-icons/fa";
-import { BiSolidReport } from "react-icons/bi";
-import { GrMoney } from "react-icons/gr";
+import {
+  Home,
+  DollarSign,
+  Car,
+  FileText,
+  FolderOpen,
+  BarChart3,
+  Wallet,
+  LogOut,
+} from "lucide-react";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
+import { ScrollArea } from "../ui/scroll-area";
 
 const SideBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const navigate = useNavigate();
-  const isActive = (path) => (currentPath === path ? "active" : "");
   const { permissions } = usePermissions();
   const [dashboardPermission, setDashboardPermission] = useState(null);
-  const [requestedAdvancePermission, setRequestedAdvancePermission] =
-    useState(null);
+  const [requestedAdvancePermission, setRequestedAdvancePermission] = useState(null);
   const [menuItems, setMenuItems] = useState([
     {
       path: "/dashboard",
-      icon: <FaHome size={24} />,
+      icon: <Home className="h-5 w-5" />,
       label: "Dashboard",
       value: 1,
     },
     {
       path: "/salaryAdvance",
-      icon: <FaCircleDollarToSlot size={24} />,
+      icon: <DollarSign className="h-5 w-5" />,
       label: "Salary Advance",
       value: 3,
     },
     {
       path: "/otherAdvance",
-      icon: <FaMoneyCheckDollar size={24} />,
+      icon: <Wallet className="h-5 w-5" />,
       label: "Other Advance",
       value: 4,
     },
     {
       path: "/tourAdvance",
-      icon: <FaCar size={24} />,
+      icon: <Car className="h-5 w-5" />,
       label: "Tour Advance",
       value: 5,
     },
@@ -62,7 +64,6 @@ const SideBar = () => {
       setRequestedAdvancePermission(requestedPerm);
 
       setMenuItems((prevItems) => {
-        // Check if the path already exists in the menuItems array
         const pathExists = prevItems.some(
           (item) => item.path === "/requestedAdvance"
         );
@@ -70,36 +71,34 @@ const SideBar = () => {
           const updatedItems = [
             {
               path: "/myApplications",
-              icon: <FaFolderOpen size={24} />,
+              icon: <FolderOpen className="h-5 w-5" />,
               label: "My Applications",
               value: 2,
             },
             ...prevItems,
             {
               path: "/requestedAdvance",
-              icon: <FaFileInvoiceDollar size={24} />,
+              icon: <FileText className="h-5 w-5" />,
               label: "Requested Advance",
               value: 6,
             },
             {
               path: "/requestedDsa",
-              icon: <GrMoney size={24} />,
+              icon: <DollarSign className="h-5 w-5" />,
               label: "Requested DSA",
               value: 7,
             },
             {
               path: "/reports",
-              icon: <BiSolidReport size={24} />,
+              icon: <BarChart3 className="h-5 w-5" />,
               label: "Reports",
               value: 8,
             },
           ];
 
-          // Sort the updated items by value before returning
           return updatedItems.sort((a, b) => a.value - b.value);
         }
 
-        // Sort the existing items by value before returning
         return prevItems.sort((a, b) => a.value - b.value);
       });
     }
@@ -115,38 +114,72 @@ const SideBar = () => {
   };
 
   return (
-    <div className="sidebar fixed-sidebar d-none d-md-block">
-      <div className="header-box px-2 pt-3 pb-4 d-flex justify-content-between">
-        <div className="spancontainer">
-          <span>
-            <img
-              src={logoImage}
-              alt="Logo"
-              className="img-fluid d-block mx-auto"
-              style={{ width: "13vh" }}
-            />
-          </span>
-          <span>
-            <p className="customheading2">RMA ASA</p>
-          </span>
+    <div className="flex h-screen flex-col bg-gradient-to-b from-blue-900 to-blue-800 text-white">
+      {/* Logo Section */}
+      <div className="p-6">
+        <div className="flex flex-col items-center space-y-3">
+          <img
+            src={logoImage}
+            alt="Logo"
+            className="h-12 w-auto"
+          />
+          <div className="text-center">
+            <h2 className="text-xl font-bold tracking-tight">RMA ASA</h2>
+            <p className="text-xs text-blue-200">Advance System</p>
+          </div>
         </div>
       </div>
 
-      <ul className="list-unstyled px-2">
-        {menuItems.map(({ path, icon, label }) => (
-          <li key={path} className={isActive(path)}>
-            <Link to={path} className="text-decoration-none px-3 py-2 d-block">
-              {icon}
-              <span className="icontext">{label}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <Separator className="bg-blue-700/50" />
 
-      <div className="signoutbtn" onClick={handleLogout}>
-        <button type="button" className="btn btn-danger">
-          <FaSignOutAlt size={18} /> <span>Sign Out</span>
-        </button>
+      {/* Navigation */}
+      <ScrollArea className="flex-1 px-4 py-6">
+        <nav className="space-y-1">
+          {menuItems.map(({ path, icon, label }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`
+                flex items-center space-x-3 rounded-lg px-3 py-3 text-sm font-medium
+                transition-all duration-200
+                ${
+                  currentPath === path
+                    ? "bg-blue-700 text-white shadow-sm"
+                    : "text-blue-100 hover:bg-blue-700/50 hover:text-white"
+                }
+              `}
+            >
+              <div className="flex h-6 w-6 items-center justify-center">
+                {icon}
+              </div>
+              <span>{label}</span>
+            </Link>
+          ))}
+        </nav>
+      </ScrollArea>
+
+      <Separator className="bg-blue-700/50" />
+
+      {/* Logout Button */}
+      <div className="p-6">
+        <Button
+          variant="destructive"
+          className="w-full space-x-2"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sign Out</span>
+        </Button>
+        
+        {/* Version Info */}
+        <div className="mt-4 text-center">
+          <p className="text-xs text-blue-300">
+            Version 2.0.0
+          </p>
+          <p className="text-xs text-blue-200/70 mt-1">
+            © {new Date().getFullYear()} RMA
+          </p>
+        </div>
       </div>
     </div>
   );

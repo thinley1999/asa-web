@@ -1,9 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import UserServices from "../services/UserServices";
-import { RxHamburgerMenu } from "react-icons/rx";
-import { CiBellOn } from "react-icons/ci";
-import { FaChevronDown } from "react-icons/fa";
+import {
+  Menu,
+  Bell,
+  ChevronDown,
+  Search,
+  User,
+  Settings,
+  LogOut
+} from "lucide-react";
+import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Badge } from "../ui/badge";
+import { Input } from "../ui/input";
+import { Separator } from "../ui/separator";
 
 const Navbar = ({
   handleSidebarToggle,
@@ -21,26 +40,18 @@ const Navbar = ({
   }, []);
 
   const getHeading = () => {
-    switch (currentPath) {
-      case "/dashboard":
-        return "Dashboard";
-      case "/salaryAdvance":
-        return "Salary Advance";
-      case "/otherAdvance":
-        return "Other Advance";
-      case "/tourAdvance":
-        return "Tour Advance";
-      case "/dsaClaim":
-        return "DSA Claim";
-      case "/requestedAdvance":
-        return "Requested Advance";
-      case "/requestedDsa":
-        return "Requested DSA";
-      case "/reports":
-        return "Reports";
-      default:
-        return "Dashboard";
-    }
+    const headings = {
+      "/dashboard": "Dashboard",
+      "/salaryAdvance": "Salary Advance",
+      "/otherAdvance": "Other Advance",
+      "/tourAdvance": "Tour Advance",
+      "/dsaClaim": "DSA Claim",
+      "/requestedAdvance": "Requested Advance",
+      "/requestedDsa": "Requested DSA",
+      "/reports": "Reports",
+      "/myApplications": "My Applications",
+    };
+    return headings[currentPath] || "Dashboard";
   };
 
   const fetchUserDetails = async () => {
@@ -54,97 +65,141 @@ const Navbar = ({
     }
   };
 
+  const getInitials = () => {
+    if (!user.first_name && !user.last_name) return "U";
+    return `${user.first_name?.charAt(0) || ""}${user.last_name?.charAt(0) || ""}`;
+  };
+
   return (
-    <nav
-      className={`navbar navbar-expand-md fixed-top bg-white ${
-        isSidebarVisible ? "navbar-shift" : ""
-      }`}
-    >
-      <div className="container-fluid">
-        <div className="d-flex justify-content-between d-md-none d-block">
-          <button
-            className="btn px-1 py-0 btn1"
+    <header className="sticky top-0 z-40 border-b bg-white shadow-sm">
+      <div className="flex h-16 items-center justify-between px-4 md:px-6">
+        {/* Left Section */}
+        <div className="flex items-center space-x-4">
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
             onClick={handleMobileSidebarToggle}
           >
-            <RxHamburgerMenu className="icon-size" />
-          </button>
-          <a className="customtag" href="#">
-            {getHeading()}
-          </a>
-        </div>
+            <Menu className="h-5 w-5" />
+          </Button>
 
-        <button
-          className="p-0 border-0 d-none d-sm-block btn btn2"
-          type="button"
-          onClick={handleSidebarToggle}
-        >
-          <RxHamburgerMenu className="icon-size" />
-        </button>
-        {/* <button className="p-0 border-0 btn-responsive btn" type="button">
-          <FaChevronDown className="icon-size" />
-        </button> */}
+          {/* Desktop Toggle Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden lg:inline-flex"
+            onClick={handleSidebarToggle}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
 
-        <div className="d-block d-sm-none">
-          <span>
-            <button
-              type="button"
-              className="btn"
-              style={{ background: "#90c8ed" }}
-              id="showToastBtn"
-              onClick={showNotification}
-            >
-              <CiBellOn color="blue" size={24} />
-            </button>
-            <span className="badge">{notificationCount}</span>
-          </span>
-          <a className="profilelink text-decoration-none" href="/profile">
-            <img
-              src={user?.profile_pic?.url}
-              className="rounded-circle profile-img me-2"
-              alt="Profile"
-            />
-          </a>
-        </div>
-
-        <div className="collapse navbar-collapse justify-content-start">
-          <div className="navbar-nav mb-2 mb-lg-0">
-            <a className="customtag" href="#">
+          {/* Page Title */}
+          <div className="flex flex-col">
+            <h1 className="text-xl font-semibold text-gray-900">
               {getHeading()}
-            </a>
+            </h1>
+            <p className="text-sm text-gray-500">
+              Manage your advance requests and applications
+            </p>
           </div>
         </div>
 
-        <div className="collapse navbar-collapse justify-content-end me-5">
-          <span>
-            <button
-              type="button"
-              className="btn"
-              style={{ background: "#90c8ed" }}
-              id="showToastBtn"
-              onClick={showNotification}
-            >
-              <CiBellOn color="blue" size={24} />
-            </button>
-            <span className="badge">{notificationCount}</span>
-          </span>
-          <a className="profilelink text-decoration-none" href="/profile">
-            <img
-              src={user?.profile_pic?.url}
-              className="rounded-circle profile-img me-2"
-              alt="Profile"
-            />
-          </a>
-          <div>
-            <a className="profilelink text-decoration-none" href="/profile">
-              <p className="username">
-                {user.first_name} {user.middle_name} {user.last_name}
-              </p>
-              <p className="userrole">{user.position_title}</p>
-            </a>
+        {/* Right Section */}
+        <div className="flex items-center space-x-4">
+          {/* Search Bar (Desktop) */}
+          <div className="hidden md:flex items-center space-x-2">
+            
           </div>
+
+          {/* Notifications */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative">
+                <Bell className="h-5 w-5" />
+                {notificationCount > 0 && (
+                  <Badge
+                    className="absolute -right-1 -top-1 h-5 w-5 items-center justify-center rounded-full p-0"
+                    variant="destructive"
+                  >
+                    {notificationCount > 9 ? "9+" : notificationCount}
+                  </Badge>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <div className="max-h-60 overflow-y-auto p-2">
+                <div className="text-center py-4 text-gray-500">
+                  No new notifications
+                </div>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={showNotification}>
+                View all notifications
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Separator orientation="vertical" className="h-6" />
+
+          {/* User Profile */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="flex items-center space-x-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.profile_pic?.url} alt={getInitials()} />
+                  <AvatarFallback className="bg-blue-600 text-white">
+                    {getInitials()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="hidden md:flex flex-col items-start">
+                  <span className="text-sm font-medium">
+                    {user.first_name} {user.last_name}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {user.position_title}
+                  </span>
+                </div>
+                <ChevronDown className="hidden md:block h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {user.first_name} {user.last_name}
+                  </p>
+                  <p className="text-xs leading-none text-gray-500">
+                    {user.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <a href="/profile" className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/settings" className="cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-600">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
