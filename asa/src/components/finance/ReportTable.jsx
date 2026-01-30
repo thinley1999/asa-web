@@ -206,47 +206,6 @@ const ReportTable = ({ data, total, filters }) => {
             </Table>
           </div>
         </div>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-          <Card className="bg-blue-50 border-blue-200">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-blue-600 font-medium">Total Records</p>
-                  <p className="text-2xl font-bold text-blue-700">{data.length}</p>
-                </div>
-                <FileText className="h-8 w-8 text-blue-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-green-50 border-green-200">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-green-600 font-medium">Report Period</p>
-                  <p className="text-sm font-medium text-green-700">
-                    {format(new Date(filters?.start_date), "MMM dd")} - {format(new Date(filters?.end_date), "MMM dd, yyyy")}
-                  </p>
-                </div>
-                <Calendar className="h-8 w-8 text-green-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-purple-50 border-purple-200">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-purple-600 font-medium">Report Type</p>
-                  <p className="text-lg font-bold text-purple-700">{filters?.report_type}</p>
-                </div>
-                <FilePieChart className="h-8 w-8 text-purple-500" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </CardContent>
     </Card>
   );
