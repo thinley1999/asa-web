@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import UserServices from "../services/UserServices";
 import { processUserName } from "../utils/UserUtils";
 import AdvanceServices from "../services/AdvanceServices";
@@ -46,6 +46,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const inputRefs = useRef({});
 
   const initialFormData = {
     firstName: "",
@@ -93,7 +94,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await UserServices.showDetail(data ? data.user.id : null);
+      const response = await UserServices.showDetail(
+        data ? data.user.id : null,
+      );
       if (response && response.status) {
         setUser(response.data);
         updateFormDataWithUser(response.data);
@@ -129,13 +132,13 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   const handleFileChange = async (event) => {
     const newFiles = Array.from(event.target.files);
-    
+
     if (newFiles.length === 0) return;
 
     // Check file size (max 5MB per file)
     const maxSize = 5 * 1024 * 1024; // 5MB
-    const oversizedFiles = newFiles.filter(file => file.size > maxSize);
-    
+    const oversizedFiles = newFiles.filter((file) => file.size > maxSize);
+
     if (oversizedFiles.length > 0) {
       toast({
         title: "File too large",
@@ -156,9 +159,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         update_files: [...prev.update_files, ...newFiles],
       }));
     }
-
-    // Clear file error
-    setFormErrors((prev) => ({ ...prev, file_error: undefined }));
+    if (newFiles){
+      delete formErrors.file_error;
+    }
   };
 
   const removeFile = (indexToRemove) => {
@@ -180,7 +183,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const removeUpdateFile = (indexToRemove) => {
     setFormData((prev) => ({
       ...prev,
-      update_files: prev.update_files.filter((_, index) => index !== indexToRemove),
+      update_files: prev.update_files.filter(
+        (_, index) => index !== indexToRemove,
+      ),
     }));
   };
 
@@ -202,12 +207,14 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const focusedElement = document.activeElement;
+    const focusedInputName = focusedElement?.name;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
-    // Clear error for the field being edited
     setFormErrors((prev) => {
       const newErrors = { ...prev };
       if (name === "totalAmount" && value > 0) {
@@ -218,6 +225,17 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       }
       return newErrors;
     });
+
+    setTimeout(() => {
+      if (focusedInputName) {
+        const input = document.querySelector(`[name="${focusedInputName}"]`);
+        if (input) {
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
+      }
+    }, 0);
   };
 
   const handleSelectChange = (value) => {
@@ -225,20 +243,22 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       ...prev,
       other_advance_type: value,
     }));
-    setFormErrors((prev) => ({ ...prev, other_advance_type: undefined }));
+    if (value){
+      delete formErrors.other_advance_type;
+    }
   };
 
   const validateForm = () => {
     let errors = {};
-    
+
     if (formData.totalAmount <= 0) {
       errors.totalAmount = "Advance amount should be more than 0!";
     }
-    
+
     if (!formData.other_advance_type.trim()) {
       errors.other_advance_type = "Please select an advance type!";
     }
-    
+
     if (!formData.purpose.trim()) {
       errors.purpose = "Purpose is required.";
     }
@@ -246,7 +266,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     if (!formData.files.length && !editData && !formData.update_files.length) {
       errors.file_error = "Please upload relevant documents.";
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -257,14 +277,17 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
     setSubmitting(true);
     setUploading(true);
-    
+
     try {
       const response = await AdvanceServices.create(formData);
 
       if (response && response.id) {
         // Upload files
         if (formData.files.length > 0) {
-          const fileResponse = await FileServices.create(response.id, formData.files);
+          const fileResponse = await FileServices.create(
+            response.id,
+            formData.files,
+          );
           if (!fileResponse || fileResponse.status !== 201) {
             throw new Error("File upload failed");
           }
@@ -422,7 +445,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => isExisting ? removeFile(index) : removeUpdateFile(index)}
+            onClick={() =>
+              isExisting ? removeFile(index) : removeUpdateFile(index)
+            }
             className="h-7 w-7 p-0 text-red-500 hover:text-red-600"
           >
             <X className="h-3 w-3" />
@@ -436,9 +461,11 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     return <FormSkeleton />;
   }
 
+  console.log("fomr errors", formErrors);
   const isReadOnly = data && !editData;
   const showSubmit = !data && !editData;
-  const hasFiles = formData.files.length > 0 || formData.update_files.length > 0;
+  const hasFiles =
+    formData.files.length > 0 || formData.update_files.length > 0;
   const allFiles = [...formData.files, ...formData.update_files];
 
   return (
@@ -498,13 +525,21 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
                   onValueChange={handleSelectChange}
                   disabled={isReadOnly}
                 >
-                  <SelectTrigger className={formErrors.other_advance_type ? "border-red-500" : ""}>
+                  <SelectTrigger
+                    className={
+                      formErrors.other_advance_type ? "border-red-500" : ""
+                    }
+                  >
                     <SelectValue placeholder="Select advance type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="medical_advance">Medical Advance</SelectItem>
+                    <SelectItem value="medical_advance">
+                      Medical Advance
+                    </SelectItem>
                     <SelectItem value="study_advance">Study Advance</SelectItem>
-                    <SelectItem value="official_advance">Official Advance</SelectItem>
+                    <SelectItem value="official_advance">
+                      Official Advance
+                    </SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -599,7 +634,14 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               <Alert variant="destructive" className="mt-4">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Please fix the errors above before submitting
+                  Please fix the following errors:
+                  <ul className="list-disc pl-4 space-y-1">
+                    {Object.entries(formErrors).map(([field, error]) => (
+                      <li key={field} className="text-sm">
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
                 </AlertDescription>
               </Alert>
             )}
@@ -616,7 +658,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               disabled={submitting || uploading}
               className="w-full sm:w-auto"
             >
-              {(submitting || uploading) ? (
+              {submitting || uploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {uploading ? "Uploading..." : "Submitting..."}
@@ -639,7 +681,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               disabled={submitting || uploading}
               className="w-full sm:w-auto"
             >
-              {(submitting || uploading) ? (
+              {submitting || uploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {uploading ? "Uploading..." : "Updating..."}

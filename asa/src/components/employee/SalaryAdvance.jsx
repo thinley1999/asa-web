@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import UserServices from "../services/UserServices";
 import AdvanceServices from "../services/AdvanceServices";
 import { formatDate } from "../utils/DateUtils";
@@ -24,6 +24,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
+  const inputRefs = useRef({});
 
   const initialFormData = {
     firstName: "",
@@ -137,26 +138,26 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     }));
   };
 
-  const calculateDeduction = () => {
-    const { totalAmount, duration } = formData;
-    if (duration <= 0) {
-      return 0;
-    }
-    const deduction = Math.ceil(parseFloat(totalAmount) / parseFloat(duration));
-    setFormData(prev => ({
-      ...prev,
-      deduction: deduction,
-    }));
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+    const focusedElement = document.activeElement;
+    const focusedInputName = focusedElement?.name;
+    
+    setFormData((prev) => {
+      let newDeduction = prev.deduction;
+      if (name === "totalAmount" || name === "duration") {
+        const total = name === "totalAmount" ? parseFloat(value) : parseFloat(prev.totalAmount);
+        const duration = name === "duration" ? parseFloat(value) : parseFloat(prev.duration);
+        newDeduction = duration > 0 ? Math.ceil(total / duration) : 0;
+      }
 
-    // Clear error for the field being edited
+      return {
+        ...prev,
+        [name]: value,
+        deduction: newDeduction,
+      };
+    });
+
     setFormErrors(prev => {
       const newErrors = { ...prev };
       if (name === "totalAmount") {
@@ -178,17 +179,22 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       return newErrors;
     });
 
-    // Recalculate deduction if amount or duration changes
-    if (name === "totalAmount" || name === "duration") {
-      setTimeout(calculateDeduction, 100);
-    }
+    setTimeout(() => {
+      if (focusedInputName) {
+        const input = document.querySelector(`[name="${focusedInputName}"]`);
+        if (input) {
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
+      }
+    }, 0);
   };
 
   const validateForm = (isUpdate = false) => {
     let errors = {};
     let maxDate = monthsUntilFinYearEnd(new Date());
-
-    // Allow amount to be more than threshold during update
+    
     if (formData.totalAmount <= 0 || (!isUpdate && formData.totalAmount > formData.thresholdAmount)) {
       errors.totalAmount =
         "Advance amount should be more than 0" + (isUpdate ? "" : " and less than the threshold amount.");
