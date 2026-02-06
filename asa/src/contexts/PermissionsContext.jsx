@@ -8,7 +8,7 @@ export const usePermissions = () => useContext(PermissionsContext);
 export const PermissionsProvider = ({ children }) => {
   const [permissions, setPermissions] = useState(null);
   const [permissionsError, setPermissionsError] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ added
+  const [loading, setLoading] = useState(true);
 
   const fetchPermissions = async () => {
     try {
@@ -22,7 +22,7 @@ export const PermissionsProvider = ({ children }) => {
       console.error("Error fetching permissions:", error);
       setPermissionsError("Error fetching the permissions");
     } finally {
-      setLoading(false); // ✅ mark loading complete
+      setLoading(false);
     }
   };
 
