@@ -177,7 +177,6 @@ const RequestedDsa = () => {
     }
   }, []);
 
-  // Fetch data when page, rowsPerPage, searchQuery, selectedStatuses, or selectedDsaTypes change
   useEffect(() => {
     fetchDsaClaims(page, rowsPerPage, searchQuery, selectedStatuses, selectedDsaTypes);
   }, [page, rowsPerPage, searchQuery, selectedStatuses, selectedDsaTypes, fetchDsaClaims]);
@@ -189,13 +188,13 @@ const RequestedDsa = () => {
   const handleSearchSubmit = (e) => {
     if (e.key === 'Enter') {
       setSearchQuery(searchTerm);
-      setPage(1); // Reset to first page when searching
+      setPage(1);
     }
   };
 
   const handleSearchButtonClick = () => {
     setSearchQuery(searchTerm);
-    setPage(1); // Reset to first page when searching
+    setPage(1);
   };
 
   const handleStatusToggle = (status) => {
@@ -204,7 +203,7 @@ const RequestedDsa = () => {
         ? prev.filter(s => s !== status)
         : [...prev, status]
     );
-    setPage(1); // Reset to first page when status changes
+    setPage(1);
   };
 
   const handleDsaTypeToggle = (type) => {
@@ -213,7 +212,7 @@ const RequestedDsa = () => {
         ? prev.filter(t => t !== type)
         : [...prev, type]
     );
-    setPage(1); // Reset to first page when type changes
+    setPage(1);
   };
 
   const handleRowsPerPageChange = (value) => {
@@ -322,8 +321,8 @@ const RequestedDsa = () => {
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name, email, or ID..."
-                  className="pl-9"
+                  placeholder="Search by employee id"
+                  className="pl-9 px-8"
                   value={searchTerm}
                   onChange={handleSearchInput}
                   onKeyDown={handleSearchSubmit}

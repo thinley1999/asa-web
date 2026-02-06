@@ -206,7 +206,7 @@ const Login = () => {
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           disabled={isLoading}
-                          className="pl-10"
+                          className="pl-15 px-8"
                           required
                         />
                       </div>
@@ -226,7 +226,7 @@ const Login = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           disabled={isLoading}
-                          className="pl-10"
+                          className="pl-10 px-8"
                           required
                         />
                       </div>

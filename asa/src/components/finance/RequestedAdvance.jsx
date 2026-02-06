@@ -64,7 +64,7 @@ const RequestedAdvance = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchQuery, setSearchQuery] = useState(""); // Separate state for actual search query
+  const [searchQuery, setSearchQuery] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const { toast } = useToast();
   const [selectedStatuses, setSelectedStatuses] = useState([
@@ -111,7 +111,6 @@ const RequestedAdvance = () => {
     return <Icon className="h-4 w-4 mr-1" />;
   };
 
-  // Use useCallback to memoize the fetch function
   const fetchAdvances = useCallback(async (pageNum, perPage, search, statuses, types) => {
     if (statuses.length === 0 || types.length === 0) {
       setRecords([]);
@@ -144,7 +143,7 @@ const RequestedAdvance = () => {
     }
   }, []);
 
-  // Fetch data when page, rowsPerPage, searchQuery, selectedStatuses, or selectedAdvanceTypes change
+
   useEffect(() => {
     fetchAdvances(page, rowsPerPage, searchQuery, selectedStatuses, selectedAdvanceTypes);
   }, [page, rowsPerPage, searchQuery, selectedStatuses, selectedAdvanceTypes, fetchAdvances]);
@@ -156,13 +155,13 @@ const RequestedAdvance = () => {
   const handleSearchSubmit = (e) => {
     if (e.key === 'Enter') {
       setSearchQuery(searchTerm);
-      setPage(1); // Reset to first page when searching
+      setPage(1);
     }
   };
 
   const handleSearchButtonClick = () => {
     setSearchQuery(searchTerm);
-    setPage(1); // Reset to first page when searching
+    setPage(1);
   };
 
   const handleStatusToggle = (status) => {
@@ -171,7 +170,7 @@ const RequestedAdvance = () => {
         ? prev.filter(s => s !== status)
         : [...prev, status]
     );
-    setPage(1); // Reset to first page when status changes
+    setPage(1);
   };
 
   const handleAdvanceTypeToggle = (type) => {
@@ -180,7 +179,7 @@ const RequestedAdvance = () => {
         ? prev.filter(t => t !== type)
         : [...prev, type]
     );
-    setPage(1); // Reset to first page when type changes
+    setPage(1);
   };
 
   const handleRowsPerPageChange = (value) => {
