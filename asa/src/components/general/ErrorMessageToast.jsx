@@ -33,7 +33,7 @@ const ErrorMessageToast = ({ message, onClose, autoDismiss = true }) => {
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
       }`}
     >
-      <Alert variant="destructive" className="shadow-lg">
+      <Alert variant="destructive" className="shadow-lg bg-red-500 text-white border-red-500">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
             <AlertCircle className="h-5 w-5" />
