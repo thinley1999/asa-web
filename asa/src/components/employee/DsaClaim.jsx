@@ -973,7 +973,9 @@ const DsaClaim = () => {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
               ) : (
                 <Save className="h-4 w-4" />
               )}
@@ -1356,7 +1358,9 @@ const DsaClaim = () => {
                   >
                     {isSubmitting || loading ? (
                       <>
-                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
                         Processing...
                       </>
                     ) : (

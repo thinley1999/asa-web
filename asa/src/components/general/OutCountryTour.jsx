@@ -172,7 +172,7 @@ const OutCountryTour = ({
       ],
     }));
 
-    delete formErrors.file_error
+    delete formErrors.file_error;
   };
 
   const removeFile = (indexToRemove, key) => {
@@ -275,14 +275,14 @@ const OutCountryTour = ({
       ...prev,
       [name]: value,
     }));
-    setFormErrors(prev => {
-    const newErrors = { ...prev };
-    const errorKey = `${name}_error`;
-    if (newErrors[errorKey]) {
-      delete newErrors[errorKey];
-    }
-    return newErrors;
-  });
+    setFormErrors((prev) => {
+      const newErrors = { ...prev };
+      const errorKey = `${name}_error`;
+      if (newErrors[errorKey]) {
+        delete newErrors[errorKey];
+      }
+      return newErrors;
+    });
   };
 
   const handleCheckboxChange = (name, value) => {
@@ -359,7 +359,7 @@ const OutCountryTour = ({
 
   const validateTravelItinerary = () => {
     let errors = {};
-    delete formErrors.itinerary_error
+    delete formErrors.itinerary_error;
 
     if (rows.length === 0) {
       errors.itinerary_error = "Please add travel itinerary for the advance.";
@@ -820,7 +820,7 @@ const OutCountryTour = ({
                       index={file.id || index}
                       isExisting={true}
                       onRemove={() => removeFile(file.id, "files")}
-                      onDownload={()=> handleView(file.id)}
+                      onDownload={() => handleView(file.id)}
                     />
                   ))}
 
@@ -998,7 +998,7 @@ const OutCountryTour = ({
                         index={file.id || index}
                         isExisting={true}
                         onRemove={() => removeFile(file.id, "tickets")}
-                        onDownload={()=>handleView(file.id)}
+                        onDownload={() => handleView(file.id)}
                       />
                     ))}
 
@@ -1201,7 +1201,9 @@ const OutCountryTour = ({
             >
               {submitting || uploading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
                   {uploading ? "Uploading..." : "Submitting..."}
                 </>
               ) : (
@@ -1224,7 +1226,9 @@ const OutCountryTour = ({
             >
               {submitting || uploading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
                   {uploading ? "Uploading..." : "Updating..."}
                 </>
               ) : (

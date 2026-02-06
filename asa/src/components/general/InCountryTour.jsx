@@ -247,14 +247,14 @@ const InCountryTour = ({
       ...prev,
       [name]: value,
     }));
-    setFormErrors(prev => {
-    const newErrors = { ...prev };
-    const errorKey = `${name}_error`;
-    if (newErrors[errorKey]) {
-      delete newErrors[errorKey];
-    }
-    return newErrors;
-  });
+    setFormErrors((prev) => {
+      const newErrors = { ...prev };
+      const errorKey = `${name}_error`;
+      if (newErrors[errorKey]) {
+        delete newErrors[errorKey];
+      }
+      return newErrors;
+    });
   };
 
   const fetchUserDetails = async () => {
@@ -908,7 +908,9 @@ const InCountryTour = ({
             >
               {submitting || uploading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
                   {uploading ? "Uploading..." : "Submitting..."}
                 </>
               ) : (
@@ -931,7 +933,9 @@ const InCountryTour = ({
             >
               {submitting || uploading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
                   {uploading ? "Uploading..." : "Updating..."}
                 </>
               ) : (
