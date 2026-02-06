@@ -31,7 +31,7 @@ import {
   FileText,
   Upload,
   X,
-  Download,
+  Eye,
   Plus,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -151,7 +151,7 @@ const InCountryTour = ({
       }));
     }
 
-    delete formErrors.file_error
+    delete formErrors.file_error;
   };
 
   const removeFile = (indexToRemove) => {
@@ -179,17 +179,19 @@ const InCountryTour = ({
     }));
   };
 
-  const handleDownload = async (fileId, fileName) => {
+  const handleView = async (fileId) => {
     try {
-      toast({
-        title: "Downloading",
-        description: `Downloading ${fileName}`,
-        variant: "default"
-      });
+      const file = formData.files.find((f) => f.id === fileId);
+
+      if (file && file.url) {
+        window.open(file.url, "_blank");
+      } else {
+        throw new Error("File URL not found");
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to download file",
+        description: "Unable to open file. Please try again.",
         variant: "destructive",
       });
     }
@@ -245,8 +247,8 @@ const InCountryTour = ({
       ...prev,
       [name]: value,
     }));
-    error_name = `${name}_error`
-    delete formErrors.error_name
+    error_name = `${name}_error`;
+    delete formErrors.error_name;
   };
 
   const fetchUserDetails = async () => {
@@ -435,8 +437,6 @@ const InCountryTour = ({
             description: "Advance has been successfully updated.",
             variant: "default",
           });
-
-
         }
       } catch (error) {
         toast({
@@ -581,10 +581,10 @@ const InCountryTour = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleDownload(file.id, fileName)}
+              onClick={() => handleView(file.id)}
               className="h-7 w-7 p-0"
             >
-              <Download className="h-3 w-3" />
+              <Eye className="h-3 w-3" />
             </Button>
           )}
           <Button

@@ -36,7 +36,7 @@ import {
   FileText,
   Upload,
   X,
-  Download,
+  Eye,
   Plus,
   Plane,
   Briefcase,
@@ -205,17 +205,19 @@ const OutCountryTour = ({
     }));
   };
 
-  const handleDownload = async (fileId, fileName) => {
+  const handleView = async (fileId) => {
     try {
-      // Implement file download logic here
-      toast({
-        title: "Downloading",
-        description: `Downloading ${fileName}`,
-      });
+      const file = formData.files.find((f) => f.id === fileId);
+
+      if (file && file.url) {
+        window.open(file.url, "_blank");
+      } else {
+        throw new Error("File URL not found");
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to download file",
+        description: "Unable to open file. Please try again.",
         variant: "destructive",
       });
     }
@@ -654,7 +656,7 @@ const OutCountryTour = ({
               onClick={() => onDownload(file.id, fileName)}
               className="h-7 w-7 p-0"
             >
-              <Download className="h-3 w-3" />
+              <Eye className="h-3 w-3" />
             </Button>
           )}
           <Button
@@ -812,7 +814,7 @@ const OutCountryTour = ({
                       index={file.id || index}
                       isExisting={true}
                       onRemove={() => removeFile(file.id, "files")}
-                      onDownload={handleDownload}
+                      onDownload={()=> handleView(file.id)}
                     />
                   ))}
 
@@ -990,7 +992,7 @@ const OutCountryTour = ({
                         index={file.id || index}
                         isExisting={true}
                         onRemove={() => removeFile(file.id, "tickets")}
-                        onDownload={handleDownload}
+                        onDownload={()=>handleView(file.id)}
                       />
                     ))}
 
