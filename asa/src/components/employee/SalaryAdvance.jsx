@@ -41,9 +41,9 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     username: "",
     advance_type: "salary_advance",
     completion_month: "june 2023",
-    tour_type: "salary_advance"
+    tour_type: "salary_advance",
   };
-  
+
   const [formData, setFormData] = useState(initialFormData);
   const [formErrors, setFormErrors] = useState({});
 
@@ -77,20 +77,22 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     let financialEndYear = null;
 
     if (currentMonth < 7) {
-        financialEndYear = currentYear;
+      financialEndYear = currentYear;
     } else {
-        financialEndYear = currentYear + 1;
+      financialEndYear = currentYear + 1;
     }
 
     let monthsLeft;
 
     if (currentMonth >= 7) {
-        monthsLeft = 12 - currentMonth + 6;
+      monthsLeft = 12 - currentMonth + 6;
     } else {
-        monthsLeft = 6 - currentMonth;
+      monthsLeft = 6 - currentMonth;
     }
 
-    if (currentDay < 25) { monthsLeft += 1; }
+    if (currentDay < 25) {
+      monthsLeft += 1;
+    }
 
     return Math.min(monthsLeft, 10);
   }
@@ -98,7 +100,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const fetchUserDetails = async () => {
     try {
       const response = await UserServices.showDetail(
-        data ? data.user.id : null
+        data ? data.user.id : null,
       );
 
       if (response && response.status === 200) {
@@ -112,7 +114,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   };
 
   const updateFormDataWithUser = (userData) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       firstName: userData.first_name || "",
       middleName: userData.middle_name || "",
@@ -125,7 +127,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   };
 
   const updateFormDataFromAPI = (apiData) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       date: formatDate(apiData.created_at) || "",
       totalAmount: apiData.amount || 0,
@@ -142,12 +144,16 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     const { name, value } = e.target;
     const focusedElement = document.activeElement;
     const focusedInputName = focusedElement?.name;
-    
+
     setFormData((prev) => {
       let newDeduction = prev.deduction;
       if (name === "totalAmount" || name === "duration") {
-        const total = name === "totalAmount" ? parseFloat(value) : parseFloat(prev.totalAmount);
-        const duration = name === "duration" ? parseFloat(value) : parseFloat(prev.duration);
+        const total =
+          name === "totalAmount"
+            ? parseFloat(value)
+            : parseFloat(prev.totalAmount);
+        const duration =
+          name === "duration" ? parseFloat(value) : parseFloat(prev.duration);
         newDeduction = duration > 0 ? Math.ceil(total / duration) : 0;
       }
 
@@ -158,7 +164,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       };
     });
 
-    setFormErrors(prev => {
+    setFormErrors((prev) => {
       const newErrors = { ...prev };
       if (name === "totalAmount") {
         if (value > 0 && value <= formData.thresholdAmount) {
@@ -194,10 +200,14 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   const validateForm = (isUpdate = false) => {
     let errors = {};
     let maxDate = monthsUntilFinYearEnd(new Date());
-    
-    if (formData.totalAmount <= 0 || (!isUpdate && formData.totalAmount > formData.thresholdAmount)) {
+
+    if (
+      formData.totalAmount <= 0 ||
+      (!isUpdate && formData.totalAmount > formData.thresholdAmount)
+    ) {
       errors.totalAmount =
-        "Advance amount should be more than 0" + (isUpdate ? "" : " and less than the threshold amount.");
+        "Advance amount should be more than 0" +
+        (isUpdate ? "" : " and less than the threshold amount.");
     }
     if (formData.duration <= 0 || formData.duration > maxDate) {
       errors.duration = `Duration should be between 1 and ${maxDate} months.`;
@@ -248,7 +258,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       setSubmitting(true);
       try {
         const response = await AdvanceServices.update(data.id, formData);
-     
+
         if (response) {
           toast({
             title: "Success",
@@ -340,7 +350,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
   return (
     <Card className="w-full">
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6 pt-6">
+        <CardContent className="space-y-4 pt-4">
           {/* Employee Information Section */}
           <div>
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -348,35 +358,17 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               Employee Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <DisplayField 
-                label="First Name" 
+              <DisplayField
+                label="First Name"
                 value={formData.firstName}
                 icon={Calendar}
               />
-              <DisplayField 
-                label="Middle Name" 
-                value={formData.middleName}
-              />
-              <DisplayField 
-                label="Last Name" 
-                value={formData.lastName}
-              />
-              <DisplayField 
-                label="Employee ID" 
-                value={formData.username}
-              />
-              <DisplayField 
-                label="Application Date" 
-                value={formData.date}
-              />
-              <DisplayField 
-                label="Department" 
-                value={formData.department}
-              />
-              <DisplayField 
-                label="Designation" 
-                value={formData.designation}
-              />
+              <DisplayField label="Middle Name" value={formData.middleName} />
+              <DisplayField label="Last Name" value={formData.lastName} />
+              <DisplayField label="Employee ID" value={formData.username} />
+              <DisplayField label="Application Date" value={formData.date} />
+              <DisplayField label="Department" value={formData.department} />
+              <DisplayField label="Designation" value={formData.designation} />
             </div>
           </div>
 
@@ -387,8 +379,8 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
             <h3 className="text-lg font-semibold mb-4">Advance Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Advance Amount */}
-              <FormField 
-                label="Advance Amount (Nu)*" 
+              <FormField
+                label="Advance Amount (Nu)*"
                 error={formErrors.totalAmount}
                 required
               >
@@ -404,13 +396,17 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               </FormField>
 
               {/* Threshold Amount */}
-              <DisplayField 
-                label="Threshold Amount (Net pay × 2)" 
-                value={formData.thresholdAmount ? `Nu ${formData.thresholdAmount}` : "N/A"}
+              <DisplayField
+                label="Threshold Amount (Net pay × 2)"
+                value={
+                  formData.thresholdAmount
+                    ? `Nu ${formData.thresholdAmount}`
+                    : "N/A"
+                }
               />
 
               {/* Duration */}
-              <FormField 
+              <FormField
                 label={`Duration in months* (Max: ${maxDuration})`}
                 error={formErrors.duration}
                 required
@@ -429,16 +425,16 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               </FormField>
 
               {/* Monthly Deduction */}
-              <DisplayField 
-                label="Monthly Deduction (Nu)" 
+              <DisplayField
+                label="Monthly Deduction (Nu)"
                 value={formData.deduction ? `Nu ${formData.deduction}` : "N/A"}
               />
             </div>
 
             {/* Purpose */}
             <div className="mt-4">
-              <FormField 
-                label="Purpose of Advance*" 
+              <FormField
+                label="Purpose of Advance*"
                 error={formErrors.purpose}
                 required
               >
@@ -457,10 +453,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
             {/* Voucher Number (if dispatched) */}
             {data?.vch_no && data.status === "dispatched" && (
               <div className="mt-4">
-                <DisplayField 
-                  label="Voucher No (ICBS)" 
-                  value={data.vch_no}
-                />
+                <DisplayField label="Voucher No (ICBS)" value={data.vch_no} />
               </div>
             )}
 
@@ -480,15 +473,17 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         <CardFooter className="flex flex-col sm:flex-row gap-3 justify-between pt-6 border-t">
           {/* Submit Button (Create new) */}
           {showSubmit && (
-            <Button 
-              type="submit" 
-              size="lg" 
+            <Button
+              type="submit"
+              size="lg"
               disabled={submitting}
               className="w-full sm:w-auto"
             >
               {submitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
                   Submitting...
                 </>
               ) : (
@@ -502,7 +497,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
           {/* Update Button (Edit mode) */}
           {editData && (
-            <Button 
+            <Button
               type="button"
               size="lg"
               onClick={updateAdvance}
@@ -526,7 +521,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
           {/* Action Buttons (Approve/Reject) */}
           {showButtons?.show && (
             <div className="flex gap-3 w-full sm:w-auto">
-              <Button 
+              <Button
                 type="button"
                 size="lg"
                 variant="default"
@@ -535,7 +530,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               >
                 {showButtons.message || "Approve"}
               </Button>
-              <Button 
+              <Button
                 type="button"
                 size="lg"
                 variant="destructive"

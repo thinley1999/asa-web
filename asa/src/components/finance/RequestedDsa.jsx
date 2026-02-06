@@ -298,16 +298,7 @@ const RequestedDsa = () => {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">DSA Claims</h1>
-          <p className="text-muted-foreground">
-            Review and manage Daily Subsistence Allowance claims
-          </p>
-        </div>
-      </div>
-
+    <div className="space-y-6 p-2">
       <Card>
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

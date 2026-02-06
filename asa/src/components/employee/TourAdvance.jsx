@@ -16,12 +16,12 @@ const TourAdvance = () => {
         onValueChange={setActiveTab}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-2 h-14 mb-6">
-          <TabsTrigger value="incountrytour" className="h-12 text-base gap-2">
+        <TabsList className="grid w-full grid-cols-2 h-10 mb-6">
+          <TabsTrigger value="incountrytour" className="h-8 text-base gap-2">
             <Car className="h-5 w-5" />
             In Country Tour
           </TabsTrigger>
-          <TabsTrigger value="excountrytour" className="h-12 text-base gap-2">
+          <TabsTrigger value="excountrytour" className="h-8 text-base gap-2">
             <Plane className="h-5 w-5" />
             Ex Country Tour
           </TabsTrigger>

@@ -317,25 +317,10 @@ const FinanceDashboard = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
       {isLoggedIn && <LoginoutMessage message="Login Successful!!!" />}
-      
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            ASA Dashboard
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Overview of advance applications and activities
-          </p>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <AlertCircle className="h-4 w-4" />
-          <span>Last updated: Today</span>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 p-2">
         {loading
           ? Array.from({ length: 5 }).map((_, index) => (
               <Card key={index}>
@@ -349,7 +334,9 @@ const FinanceDashboard = () => {
               <Card key={index} className={`${stat.color} border`}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`p-2 rounded-lg ${stat.iconColor} bg-opacity-10`}>
+                    <div
+                      className={`p-2 rounded-lg ${stat.iconColor} bg-opacity-10`}
+                    >
                       <stat.icon className="h-6 w-6" />
                     </div>
                     <span className="text-sm font-medium text-gray-500">
@@ -369,7 +356,7 @@ const FinanceDashboard = () => {
             ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-2">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -399,7 +386,9 @@ const FinanceDashboard = () => {
                 <div className="h-full flex flex-col items-center justify-center text-gray-500">
                   <TrendingUp className="h-12 w-12 mb-4 opacity-50" />
                   <p className="font-medium">No data available</p>
-                  <p className="text-sm">Monthly activity data will appear here</p>
+                  <p className="text-sm">
+                    Monthly activity data will appear here
+                  </p>
                 </div>
               )}
             </div>
@@ -414,14 +403,12 @@ const FinanceDashboard = () => {
                   <PieChart className="h-5 w-5 text-purple-600" />
                   Advance Type Distribution
                 </CardTitle>
-                <CardDescription>
-                  Breakdown by advance category
-                </CardDescription>
+                <CardDescription>Breakdown by advance category</CardDescription>
               </div>
               <div className="text-sm text-gray-500">
                 {Object.values(typeCount.advance_type_count).reduce(
                   (a, b) => a + b,
-                  0
+                  0,
                 )}{" "}
                 total
               </div>
@@ -441,36 +428,46 @@ const FinanceDashboard = () => {
         </Card>
       </div>
 
-      <Card>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <p className="text-sm font-medium text-gray-600">Total Salary Advances</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {typeCount.advance_type_count.salary_advance || 0}
-              </p>
+      <div className="p-2">
+        <Card>
+          <CardContent className="p-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Salary Advances
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {typeCount.advance_type_count.salary_advance || 0}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Other Advances
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {typeCount.advance_type_count.other_advance || 0}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600">
+                  Domestic Tours
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {typeCount.advance_type_count.in_country_tour_advance || 0}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600">
+                  International Tours
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {typeCount.advance_type_count.ex_country_tour_advance || 0}
+                </p>
+              </div>
             </div>
-            <div className="text-center">
-              <p className="text-sm font-medium text-gray-600">Total Other Advances</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {typeCount.advance_type_count.other_advance || 0}
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-sm font-medium text-gray-600">Domestic Tours</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {typeCount.advance_type_count.in_country_tour_advance || 0}
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-sm font-medium text-gray-600">International Tours</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {typeCount.advance_type_count.ex_country_tour_advance || 0}
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

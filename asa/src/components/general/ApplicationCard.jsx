@@ -119,7 +119,7 @@ export const ApplicationCard = ({
 
   return (
     <Card className="mb-2 duration-200 !shadow">
-      <CardContent className="p-3">
+      <CardContent className="p-2">
         <div className="space-y-3">
           {/* Header */}
           <div className="flex items-start justify-between">
@@ -170,8 +170,8 @@ export const ApplicationCard = ({
           <Separator className="my-2" />
 
           {/* Footer */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3 text-muted-foreground" />
                 <span className="text-xs">

@@ -34,7 +34,7 @@ import {
   FileText,
   Upload,
   X,
-  Download,
+  Eye,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -157,7 +157,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         update_files: [...prev.update_files, ...newFiles],
       }));
     }
-    if (newFiles){
+    if (newFiles) {
       delete formErrors.file_error;
     }
   };
@@ -187,17 +187,19 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     }));
   };
 
-  const handleDownload = async (fileId, fileName) => {
+  const handleView = async (fileId) => {
     try {
-      // Implement file download logic here
-      toast({
-        title: "Downloading",
-        description: `Downloading ${fileName}`,
-      });
+      const file = formData.files.find((f) => f.id === fileId);
+
+      if (file && file.url) {
+        window.open(file.url, "_blank");
+      } else {
+        throw new Error("File URL not found");
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to download file",
+        description: "Unable to open file. Please try again.",
         variant: "destructive",
       });
     }
@@ -241,7 +243,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       ...prev,
       other_advance_type: value,
     }));
-    if (value){
+    if (value) {
       delete formErrors.other_advance_type;
     }
   };
@@ -293,7 +295,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
         toast({
           title: "Success",
-          description: "Advance created successfully",
+          description: "Other Advance created successfully",
           variant: "default",
         });
         resetForm();
@@ -335,7 +337,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
         toast({
           title: "Success",
-          description: "Advance updated successfully",
+          description: "Other Advance updated successfully",
           variant: "default",
         });
 
@@ -434,10 +436,10 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleDownload(file.id, fileName)}
+              onClick={() => handleView(file.id)}
               className="h-7 w-7 p-0"
             >
-              <Download className="h-3 w-3" />
+              <Eye className="h-3 w-3" />
             </Button>
           )}
           <Button
@@ -459,7 +461,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     return <FormSkeleton />;
   }
 
-  console.log("fomr errors", formErrors);
   const isReadOnly = data && !editData;
   const showSubmit = !data && !editData;
   const hasFiles =
@@ -472,7 +473,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-6 pt-6">
-          {/* Employee Information Section */}
           <div>
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Calendar className="h-5 w-5" />
@@ -491,11 +491,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
           <Separator />
 
-          {/* Advance Details Section */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Advance Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Advance Amount */}
               <FormField
                 label="Advance Amount (Nu)*"
                 error={formErrors.totalAmount}
@@ -512,7 +510,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
                 />
               </FormField>
 
-              {/* Advance Type */}
               <FormField
                 label="Advance Type*"
                 error={formErrors.other_advance_type}
@@ -544,7 +541,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               </FormField>
             </div>
 
-            {/* File Upload */}
             <div className="mt-4">
               <FormField
                 label="Relevant Documents*"
@@ -552,7 +548,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
                 required={!editData}
               >
                 <div className="space-y-3">
-                  {/* Existing Files */}
                   {formData.files.map((file, index) => (
                     <FileDisplay
                       key={file.id || index}
@@ -562,7 +557,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
                     />
                   ))}
 
-                  {/* New/Update Files */}
                   {formData.update_files.map((file, index) => (
                     <FileDisplay
                       key={`update-${index}`}
@@ -572,7 +566,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
                     />
                   ))}
 
-                  {/* Upload Button */}
                   {!isReadOnly && (
                     <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4">
                       <Label
@@ -601,7 +594,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               </FormField>
             </div>
 
-            {/* Purpose */}
             <div className="mt-4">
               <FormField
                 label="Purpose of Advance*"
@@ -620,14 +612,12 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
               </FormField>
             </div>
 
-            {/* Voucher Number (if dispatched) */}
             {data?.vch_no && data.status === "dispatched" && (
               <div className="mt-4">
                 <DisplayField label="Voucher No (ICBS)" value={data.vch_no} />
               </div>
             )}
 
-            {/* Validation Summary */}
             {Object.keys(formErrors).length > 0 && (
               <Alert variant="destructive" className="mt-4">
                 <AlertCircle className="h-4 w-4" />
@@ -646,9 +636,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
           </div>
         </CardContent>
 
-        {/* Form Actions */}
         <CardFooter className="flex flex-col sm:flex-row gap-3 justify-between pt-6 border-t">
-          {/* Submit Button (Create new) */}
           {showSubmit && (
             <Button
               type="submit"
@@ -658,7 +646,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
             >
               {submitting || uploading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
                   {uploading ? "Uploading..." : "Submitting..."}
                 </>
               ) : (
@@ -670,7 +660,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
             </Button>
           )}
 
-          {/* Update Button (Edit mode) */}
           {editData && (
             <Button
               type="button"
@@ -681,7 +670,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
             >
               {submitting || uploading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
                   {uploading ? "Uploading..." : "Updating..."}
                 </>
               ) : (
@@ -693,7 +684,6 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
             </Button>
           )}
 
-          {/* Action Buttons (Approve/Reject) */}
           {showButtons?.show && (
             <div className="flex gap-3 w-full sm:w-auto">
               <Button

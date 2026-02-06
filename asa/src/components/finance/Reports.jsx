@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Filter, X, Search, Download } from "lucide-react";
+import { CalendarIcon, Filter, X, Search } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { departments } from "../datas/department_list";
@@ -134,7 +134,7 @@ const Reports = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
+    <div className="container mx-auto p-2 md:p-4">
       <Card className="border shadow-sm">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">

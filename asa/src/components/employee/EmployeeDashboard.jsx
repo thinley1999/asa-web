@@ -82,7 +82,6 @@ const EmployeeApplications = () => {
         per_page: 5,
       };
       const response = await AdvanceServices.get(preParams);
-      console.log("Previous response:", response);
 
       if (response && response.data) {
         setPreviousApplications(response.data.advances || []);
@@ -210,9 +209,9 @@ const EmployeeApplications = () => {
   };
 
   const ApplicationSkeleton = () => (
-    <Card className="mb-3">
-      <CardContent className="p-4">
-        <div className="space-y-3">
+    <Card className="mb-2">
+      <CardContent className="p-2">
+        <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
               <Skeleton className="h-4 w-40" />
@@ -259,7 +258,7 @@ const EmployeeApplications = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen p-4 md:p-6 bg-background">
+    <div className="flex flex-col h-screen p-2 md:p-4 bg-background">
       {isLoggedIn && <LoginoutMessage message="Login Successful!" />}
 
       {/* Fixed Tabs Section */}
@@ -270,10 +269,10 @@ const EmployeeApplications = () => {
           onValueChange={setActiveTab}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-2 h-14 mb-6">
+          <TabsList className="grid w-full grid-cols-2 h-10 mb-6">
             <TabsTrigger
               value="currentapplication"
-              className="h-12 text-base gap-2"
+              className="h-8 text-base gap-2"
             >
               <FaBusinessTime className="h-5 w-5" />
               Current
@@ -288,7 +287,7 @@ const EmployeeApplications = () => {
             </TabsTrigger>
             <TabsTrigger
               value="previousapplication"
-              className="h-12 text-base gap-2"
+              className="h-8 text-base gap-2"
             >
               <FaBusinessTime className="h-5 w-5" />
               Previous
@@ -307,7 +306,7 @@ const EmployeeApplications = () => {
           <TabsContent value="currentapplication" className="mt-4">
             <div className="flex flex-col h-[calc(100vh-200px)]">
               {/* Header with title and refresh */}
-              <div className="flex items-center justify-between mb-4 flex-shrink-0">
+              <div className="flex items-center justify-between mb-2 flex-shrink-0">
                 <div>
                   <h2 className="text-lg font-semibold">
                     Current Applications

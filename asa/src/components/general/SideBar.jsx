@@ -116,7 +116,7 @@ const SideBar = () => {
   return (
     <div className="flex h-screen flex-col bg-gradient-to-b from-blue-900 to-blue-800 text-white">
       {/* Logo Section */}
-      <div className="p-6">
+      <div className="p-4">
         <div className="flex flex-col items-center space-y-3">
           <img
             src={logoImage}
@@ -140,7 +140,7 @@ const SideBar = () => {
               key={path}
               to={path}
               className={`
-                flex items-center space-x-3 rounded-lg px-3 py-3 text-sm font-medium
+                flex items-center space-x-3 rounded-lg px-2 py-2 text-sm font-medium
                 transition-all duration-200
                 ${
                   currentPath === path
@@ -161,7 +161,7 @@ const SideBar = () => {
       <Separator className="bg-blue-700/50" />
 
       {/* Logout Button */}
-      <div className="p-6">
+      <div className="p-4">
         <Button
           variant="destructive"
           className="w-full space-x-2"

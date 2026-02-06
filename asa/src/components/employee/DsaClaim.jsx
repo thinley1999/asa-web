@@ -962,19 +962,6 @@ const DsaClaim = () => {
                 )}
               </div>
             )}
-
-            {/* Notes */}
-            <div className="md:col-span-3 space-y-2">
-              <Label htmlFor="notes">Additional Notes</Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                value={formData?.notes || ""}
-                onChange={handleFormChange}
-                placeholder="Any additional information about this itinerary..."
-                rows={2}
-              />
-            </div>
           </div>
 
           {/* Action Buttons */}
