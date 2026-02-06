@@ -247,8 +247,14 @@ const InCountryTour = ({
       ...prev,
       [name]: value,
     }));
-    error_name = `${name}_error`;
-    delete formErrors.error_name;
+    setFormErrors(prev => {
+    const newErrors = { ...prev };
+    const errorKey = `${name}_error`;
+    if (newErrors[errorKey]) {
+      delete newErrors[errorKey];
+    }
+    return newErrors;
+  });
   };
 
   const fetchUserDetails = async () => {
@@ -468,7 +474,7 @@ const InCountryTour = ({
   };
 
   const handleTravelItinerary = (newData) => {
-    delete errors.itinerary_error;
+    // delete errors.itinerary_error;
 
     const dataToCheck = editData || newData;
     const currentHaltCount = haltCount();

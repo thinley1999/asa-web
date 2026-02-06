@@ -275,8 +275,14 @@ const OutCountryTour = ({
       ...prev,
       [name]: value,
     }));
-    error_name = `${name}_error`
-    delete formErrors.error_name
+    setFormErrors(prev => {
+    const newErrors = { ...prev };
+    const errorKey = `${name}_error`;
+    if (newErrors[errorKey]) {
+      delete newErrors[errorKey];
+    }
+    return newErrors;
+  });
   };
 
   const handleCheckboxChange = (name, value) => {
