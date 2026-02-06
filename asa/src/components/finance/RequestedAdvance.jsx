@@ -305,8 +305,8 @@ const RequestedAdvance = () => {
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name, email, or ID..."
-                  className="pl-9"
+                  placeholder="Search by Employee ID"
+                  className="pl-9 px-8"
                   value={searchTerm}
                   onChange={handleSearchInput}
                   onKeyDown={handleSearchSubmit}
