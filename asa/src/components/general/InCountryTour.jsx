@@ -276,8 +276,7 @@ const InCountryTour = ({
       advanceAmount: apiData.advance_amount || {},
       files: apiData?.files || [],
       tour_type: apiData.tour_type || "",
-      advance_percentage: apiData.advance_percentage || "",
-      tour_type: apiData.tour_type || "",
+      advance_percentage: apiData.advance_percentage || ""
     }));
     setRows(apiData?.travel_itinerary || []);
   };
