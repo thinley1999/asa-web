@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import UserServices from "../services/UserServices";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
-
-// ShadCN UI Components
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,7 +52,7 @@ const InCountryTour = ({
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState(null);
   const { toast } = useToast();
-
+  const focusedElementRef = useRef(null);
 
   const initialFormData = {
     firstName: "",
@@ -96,7 +92,6 @@ const InCountryTour = ({
           description: "Failed to load application data",
           variant: "destructive",
         });
-
       } finally {
         setLoading(false);
       }
@@ -132,7 +127,6 @@ const InCountryTour = ({
 
     if (newFiles.length === 0) return;
 
-    // Check file size (max 10MB per file)
     const maxSize = 10 * 1024 * 1024;
     const oversizedFiles = newFiles.filter((file) => file.size > maxSize);
 
@@ -157,7 +151,7 @@ const InCountryTour = ({
       }));
     }
 
-    setFormErrors((prev) => ({ ...prev, file_error: undefined }));
+    delete formErrors.file_error
   };
 
   const removeFile = (indexToRemove) => {
@@ -187,10 +181,10 @@ const InCountryTour = ({
 
   const handleDownload = async (fileId, fileName) => {
     try {
-      // Implement file download logic here
       toast({
         title: "Downloading",
         description: `Downloading ${fileName}`,
+        variant: "default"
       });
     } catch (error) {
       toast({
@@ -204,6 +198,9 @@ const InCountryTour = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     const keys = name.split(".");
+
+    const focusedElement = document.activeElement;
+    const focusedInputName = focusedElement?.name;
 
     setFormData((prev) => {
       if (keys.length === 1) {
@@ -222,7 +219,6 @@ const InCountryTour = ({
       }
     });
 
-    // Clear errors for the field being edited
     setFormErrors((prev) => {
       const newErrors = { ...prev };
       if (name === "office_order") delete newErrors.office_order_error;
@@ -231,6 +227,17 @@ const InCountryTour = ({
       if (name === "tour_type") delete newErrors.tour_type_error;
       return newErrors;
     });
+
+    setTimeout(() => {
+      if (focusedInputName) {
+        const input = document.querySelector(`[name="${focusedInputName}"]`);
+        if (input) {
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
+      }
+    }, 0);
   };
 
   const handleSelectChange = (name, value) => {
@@ -238,7 +245,8 @@ const InCountryTour = ({
       ...prev,
       [name]: value,
     }));
-    setFormErrors((prev) => ({ ...prev, [`${name}_error`]: undefined }));
+    error_name = `${name}_error`
+    delete formErrors.error_name
   };
 
   const fetchUserDetails = async () => {
@@ -276,7 +284,7 @@ const InCountryTour = ({
       advanceAmount: apiData.advance_amount || {},
       files: apiData?.files || [],
       tour_type: apiData.tour_type || "",
-      advance_percentage: apiData.advance_percentage || ""
+      advance_percentage: apiData.advance_percentage || "",
     }));
     setRows(apiData?.travel_itinerary || []);
   };
@@ -315,10 +323,7 @@ const InCountryTour = ({
 
   const validateTravelItinerary = () => {
     let errors = {};
-    setFormErrors((prev) => ({
-      ...prev,
-      itinerary_error: "",
-    }));
+    delete formErrors.itinerary_error;
 
     if (rows.length === 0) {
       errors.itinerary_error = "Please add travel itinerary for the advance.";
@@ -419,17 +424,19 @@ const InCountryTour = ({
             );
           }
 
+          setFormData((prev) => ({
+            ...prev,
+            delete_files: initialFormData.delete_files,
+            update_files: [],
+          }));
+
           toast({
             title: "Success",
             description: "Advance has been successfully updated.",
             variant: "default",
           });
 
-          setFormData((prev) => ({
-            ...prev,
-            delete_files: initialFormData.delete_files,
-            update_files: [],
-          }));
+
         }
       } catch (error) {
         toast({
@@ -461,10 +468,7 @@ const InCountryTour = ({
   };
 
   const handleTravelItinerary = (newData) => {
-    setFormErrors((prev) => ({
-      ...prev,
-      itinerary_error: "",
-    }));
+    delete errors.itinerary_error;
 
     const dataToCheck = editData || newData;
     const currentHaltCount = haltCount();
@@ -608,6 +612,7 @@ const InCountryTour = ({
     formData.files.length > 0 || formData.update_files.length > 0;
   const allFiles = [...formData.files, ...formData.update_files];
 
+  console.log("Form errors", formErrors);
   return (
     <Card className="w-full">
       <form onSubmit={handleSubmit}>
@@ -871,7 +876,14 @@ const InCountryTour = ({
               <Alert variant="destructive" className="mt-4">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Please fix the errors above before submitting
+                  Please fix the following errors:
+                  <ul className="list-disc pl-4 space-y-1">
+                    {Object.entries(formErrors).map(([field, error]) => (
+                      <li key={field} className="text-sm">
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
                 </AlertDescription>
               </Alert>
             )}

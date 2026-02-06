@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import UserServices from "../services/UserServices";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
@@ -28,7 +28,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertCircle,
   CheckCircle,
@@ -39,16 +38,10 @@ import {
   X,
   Download,
   Plus,
-  Eye,
-  Edit,
-  Trash2,
-  Globe,
   Plane,
   Briefcase,
   Users,
   Banknote,
-  Info,
-  ChevronRight,
   FileCheck,
   Ticket,
 } from "lucide-react";
@@ -58,7 +51,6 @@ import TravelDetailsTable from "./TravelDetailsTable";
 
 const OutCountryTour = ({
   data,
-  setActiveTab,
   isDSA,
   showButtons,
   handleDialogOpen,
@@ -74,6 +66,7 @@ const OutCountryTour = ({
   const [editIndex, setEditIndex] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const { toast } = useToast();
+  const focusedElementRef = useRef(null);
 
   const initialFormData = {
     firstName: "",
@@ -179,10 +172,7 @@ const OutCountryTour = ({
       ],
     }));
 
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      file_error: "",
-    }));
+    delete formErrors.file_error
   };
 
   const removeFile = (indexToRemove, key) => {
@@ -235,6 +225,9 @@ const OutCountryTour = ({
     const { name, value, type, checked } = e.target;
     const keys = name.split(".");
 
+    const focusedElement = document.activeElement;
+    const focusedInputName = focusedElement?.name;
+
     setFormData((prevFormData) => {
       const newValue = type === "checkbox" ? (checked ? value : 0) : value;
 
@@ -262,6 +255,17 @@ const OutCountryTour = ({
       if (name === "remark") delete newErrors.remark_error;
       return newErrors;
     });
+
+    setTimeout(() => {
+      if (focusedInputName) {
+        const input = document.querySelector(`[name="${focusedInputName}"]`);
+        if (input) {
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
+      }
+    }, 0);
   };
 
   const handleSelectChange = (name, value) => {
@@ -269,7 +273,8 @@ const OutCountryTour = ({
       ...prev,
       [name]: value,
     }));
-    setFormErrors((prev) => ({ ...prev, [`${name}_error`]: undefined }));
+    error_name = `${name}_error`
+    delete formErrors.error_name
   };
 
   const handleCheckboxChange = (name, value) => {
@@ -346,10 +351,7 @@ const OutCountryTour = ({
 
   const validateTravelItinerary = () => {
     let errors = {};
-    setFormErrors((prev) => ({
-      ...prev,
-      itinerary_error: "",
-    }));
+    delete formErrors.itinerary_error
 
     if (rows.length === 0) {
       errors.itinerary_error = "Please add travel itinerary for the advance.";

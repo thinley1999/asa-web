@@ -136,7 +136,7 @@ const TravelDetails = ({
             end_date: "End date must be greater than start date",
           }));
         } else {
-          setErrors((prevErrors) => ({ ...prevErrors, end_date: "" }));
+          delete errors.end_date
           const days = getNumberOfDays(start_date, end_date);
           setData((prevData) => ({ ...prevData, days: days }));
         }
@@ -145,7 +145,7 @@ const TravelDetails = ({
     
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+      delete errors.name
     }
     
     // Clear calculation error when user makes changes
@@ -159,14 +159,14 @@ const TravelDetails = ({
     
     // Clear error when user makes a selection
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+      delete errors.name
     }
     
     // Clear mileage when mode changes from Private Vehicle
     if (name === "mode" && value !== "Private Vehicle") {
       setData(prev => ({ ...prev, mileage: "" }));
       if (errors.mileage) {
-        setErrors(prev => ({ ...prev, mileage: undefined }));
+        delete errors.mileage
       }
     }
     
@@ -192,18 +192,15 @@ const TravelDetails = ({
         halt_at: "",
         return: false,
       }));
-      // Clear related errors
-      setErrors(prev => ({
-        ...prev,
-        from: undefined,
-        from_place: undefined,
-        to: undefined,
-        to_place: undefined,
-        stop_at: undefined,
-        mode: undefined,
-        mileage: undefined,
-        halt_at: undefined,
-      }));
+
+      delete errors.from
+      delete errors.from_place
+      delete errors.to
+      delete errors.to_place
+      delete errors.stop_at
+      delete errors.mode
+      delete errors.mileage
+      delete errors.halt_at
       setStopChecked(false);
     }
   };
@@ -215,12 +212,9 @@ const TravelDetails = ({
       stop_at: "",
       return: checked,
     }));
-    // Clear related errors
-    setErrors(prev => ({
-      ...prev,
-      halt_at: undefined,
-      stop_at: undefined,
-    }));
+
+    delete errors.halt_at
+    delete errors.stop_at
     setHaltChecked(false);
     setStopChecked(false);
   };
@@ -233,22 +227,15 @@ const TravelDetails = ({
         return: false,
         stop_at: "",
       }));
-      // Clear related errors
-      setErrors(prev => ({
-        ...prev,
-        return: undefined,
-        stop_at: undefined,
-      }));
+      delete errors.return
+      delete errors.stop_at
       setHaltChecked(false);
     } else {
       setData(prevData => ({
         ...prevData,
         stop_at: "",
       }));
-      setErrors(prev => ({
-        ...prev,
-        stop_at: undefined,
-      }));
+      delete errors.stop_at
     }
   };
 
@@ -535,6 +522,7 @@ const TravelDetails = ({
 
   const isDisabled = existingData ? (edit ? false : true) : false;
   const travelType = type === "inCountry" ? "Domestic" : "International";
+  console.log("errors", errors);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -1174,6 +1162,13 @@ const TravelDetails = ({
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               Please fix the errors in the form before proceeding. {showCalculationError && "Click the links above to navigate to missing fields."}
+              <ul className="list-disc pl-4 space-y-1">
+                    {Object.entries(errors).map(([field, error]) => (
+                      <li key={field} className="text-sm">
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
             </AlertDescription>
           </Alert>
         )}
