@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -28,7 +27,6 @@ import {
   Upload,
   Plane,
   Car,
-  Train,
   Bus,
   Plus,
   Edit,
@@ -71,7 +69,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
 
 import ItenararyService from "../services/ItenararyService";
 import RateServices from "../services/RateServices";
@@ -132,7 +129,6 @@ const DsaClaim = () => {
           setCountries(response.data);
         }
       } catch (error) {
-        console.error("Error fetching countries:", error);
         toast.error("Failed to fetch countries");
       }
     }
@@ -201,7 +197,6 @@ const DsaClaim = () => {
         setSelectedRow(null);
       }
     } catch (error) {
-      console.error("Error updating itinerary:", error);
       toast.error("Failed to update itinerary");
     }
   };
@@ -218,7 +213,6 @@ const DsaClaim = () => {
         setSelectedRow(null);
       }
     } catch (error) {
-      console.error("Error deleting itinerary:", error);
       toast.error("Failed to delete itinerary");
     }
   };
@@ -258,7 +252,6 @@ const DsaClaim = () => {
         setNewForm(false);
       }
     } catch (error) {
-      console.error("Error adding itinerary:", error);
       toast.error("Failed to add itinerary");
     }
   };
@@ -394,7 +387,6 @@ const DsaClaim = () => {
         setIsLoading(false);
       }
     } catch (error) {
-      console.error("Error fetching current applications:", error);
       toast.error("Failed to fetch itineraries");
       setIsLoading(false);
     }
@@ -407,7 +399,6 @@ const DsaClaim = () => {
         setAdvance(response.data);
       }
     } catch (error) {
-      console.error("Error fetching advance:", error);
       toast.error("Failed to fetch advance details");
     }
   };
@@ -457,10 +448,9 @@ const DsaClaim = () => {
       }
 
       if (response) {
-        return dsaPercentage * days * response.rate;
+        return eval(dsaPercentage) * days * response.rate;
       }
     } catch (error) {
-      console.error("Error fetching rates:", error);
       throw error;
     }
   };
@@ -569,8 +559,6 @@ const DsaClaim = () => {
     switch (mode) {
       case "Airplane":
         return <Plane className="h-4 w-4" />;
-      case "Train":
-        return <Train className="h-4 w-4" />;
       case "Bus":
         return <Bus className="h-4 w-4" />;
       case "Private Vehicle":
@@ -802,12 +790,6 @@ const DsaClaim = () => {
                       Airplane
                     </div>
                   </SelectItem>
-                  <SelectItem value="Train">
-                    <div className="flex items-center gap-2">
-                      <Train className="h-4 w-4" />
-                      Train
-                    </div>
-                  </SelectItem>
                   <SelectItem value="Bus">
                     <div className="flex items-center gap-2">
                       <Bus className="h-4 w-4" />
@@ -879,16 +861,22 @@ const DsaClaim = () => {
                   <SelectValue placeholder="Select percentage" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="100">
-                    <div className="flex items-center gap-2">
-                      <Check className="h-4 w-4" />
-                      100% (Full Day)
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="50">
+                  <SelectItem value="1">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
-                      50% (Half Day)
+                      100% (No meals & lodging)
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="1/2">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      50% (Lodging provided)
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="3/10">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      30% (Both meals & lodging provided)
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -1104,7 +1092,7 @@ const DsaClaim = () => {
                               : "secondary"
                           }
                         >
-                          {(parseFloat(item.dsa_percentage) * 100).toFixed(2)}%
+                          {(eval(item.dsa_percentage) * 100).toFixed(2)}%
                         </Badge>
                       </TableCell>
                       <TableCell>
