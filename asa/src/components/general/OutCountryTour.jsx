@@ -531,10 +531,7 @@ const OutCountryTour = ({
   };
 
   const handleTravelItinerary = (newData) => {
-    setFormErrors((prev) => ({
-      ...prev,
-      itinerary_error: "",
-    }));
+    delete formErrors.itinerary_error
 
     const dataToCheck = editData || newData;
     const currentHaltCount = haltCount();
