@@ -56,6 +56,7 @@ const Login = () => {
         const token = response.headers.authorization;
         const user = response.data.user;
 
+        console.log("token", token);
         localStorage.setItem("token", token);
         localStorage.setItem("id", user.id);
         navigate("/dashboard");

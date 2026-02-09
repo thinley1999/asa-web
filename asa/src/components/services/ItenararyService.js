@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_APP_BACKEND_URL;
-const token = localStorage.getItem("token");
 
 const getItineraries = async (id) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.get(`${API_URL}/api/itineraries`, {
       params: {
@@ -20,6 +20,7 @@ const getItineraries = async (id) => {
 };
 
 const updateRow = async (params) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.put(
       `${API_URL}/api/itineraries/${params.id}`,
@@ -39,6 +40,7 @@ const updateRow = async (params) => {
 };
 
 const deleteRow = async (id) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.delete(`${API_URL}/api/itineraries/${id}`, {
       headers: {
@@ -52,6 +54,7 @@ const deleteRow = async (id) => {
 };
 
 const addRow = async (params) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.post(
       `${API_URL}/api/itineraries`,
