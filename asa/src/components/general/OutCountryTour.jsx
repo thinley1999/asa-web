@@ -104,7 +104,6 @@ const OutCountryTour = ({
           updateFormDataFromAPI(data);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
         toast({
           title: "Error",
           description: "Failed to load application data",
@@ -302,7 +301,6 @@ const OutCountryTour = ({
         updateFormDataWithUserName(response.data);
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
       throw error;
     }
   };

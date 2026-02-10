@@ -16,7 +16,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, Pencil, Trash2, MoreHorizontal, Calendar, MapPin, DollarSign } from "lucide-react";
+import {
+  Eye,
+  Pencil,
+  Trash2,
+  MoreHorizontal,
+  Calendar,
+  MapPin,
+  DollarSign,
+} from "lucide-react";
 import { convertToDateTime } from "../utils/dateTime";
 
 const TravelDetailsTable = ({
@@ -31,7 +39,7 @@ const TravelDetailsTable = ({
   // Format currency display
   const formatCurrency = (amount) => {
     if (!amount) return "N/A";
-    return `Nu. ${parseFloat(amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `Nu. ${parseFloat(amount).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   // Get status badge variant
@@ -49,7 +57,9 @@ const TravelDetailsTable = ({
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <div className="text-sm">
-            <div className="font-medium">{convertToDateTime(row.start_date)}</div>
+            <div className="font-medium">
+              {convertToDateTime(row.start_date)}
+            </div>
             <div className="text-xs text-muted-foreground">to</div>
             <div className="font-medium">{convertToDateTime(row.end_date)}</div>
           </div>
@@ -93,12 +103,8 @@ const TravelDetailsTable = ({
         if (row.halt_at) label = "Halt";
         if (row.stop_at) label = "Stop Over";
         if (row.return) label = "Return";
-        
-        return (
-          <Badge variant={getStatusVariant(row)}>
-            {label}
-          </Badge>
-        );
+
+        return <Badge variant={getStatusVariant(row)}>{label}</Badge>;
       },
     },
     {
@@ -110,7 +116,11 @@ const TravelDetailsTable = ({
               variant="outline"
               size="sm"
               className="h-8 w-8 p-0"
-              onClick={() => editRow(row, index)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                editRow(row, index);
+              }}
               title="Preview"
             >
               <Eye className="h-4 w-4" />
@@ -121,7 +131,11 @@ const TravelDetailsTable = ({
                 variant="outline"
                 size="sm"
                 className="h-8 w-8 p-0"
-                onClick={() => editRow(row, index)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  editRow(row, index);
+                }}
                 title="Edit"
               >
                 <Pencil className="h-4 w-4" />
@@ -130,7 +144,11 @@ const TravelDetailsTable = ({
                 variant="destructive"
                 size="sm"
                 className="h-8 w-8 p-0"
-                onClick={() => removeRow(row.id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  removeRow(row.id);
+                }}
                 title="Delete"
               >
                 <Trash2 className="h-4 w-4" />
@@ -150,7 +168,9 @@ const TravelDetailsTable = ({
             <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
               <MapPin className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium mb-2">No Travel Itinerary Added</h3>
+            <h3 className="text-lg font-medium mb-2">
+              No Travel Itinerary Added
+            </h3>
             <p className="text-muted-foreground mb-4">
               Add travel details to see them listed here
             </p>
@@ -179,7 +199,7 @@ const TravelDetailsTable = ({
                 <TableRow key={rowIndex} className="hover:bg-muted/50">
                   {columns.map((column, colIndex) => (
                     <TableCell key={colIndex}>
-                      {typeof column.accessor === 'function' 
+                      {typeof column.accessor === "function"
                         ? column.accessor(row, rowIndex)
                         : row[column.accessor]}
                     </TableCell>
@@ -189,14 +209,21 @@ const TravelDetailsTable = ({
             </TableBody>
           </Table>
         </div>
-        
+
         {/* Summary Footer */}
         <div className="mt-4 flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            {tableData.length} {tableData.length === 1 ? 'itinerary' : 'itineraries'} added
+            {tableData.length}{" "}
+            {tableData.length === 1 ? "itinerary" : "itineraries"} added
           </div>
           <div className="text-sm font-medium">
-            Total: {formatCurrency(tableData.reduce((sum, row) => sum + (parseFloat(row.rate) || 0), 0))}
+            Total:{" "}
+            {formatCurrency(
+              tableData.reduce(
+                (sum, row) => sum + (parseFloat(row.rate) || 0),
+                0,
+              ),
+            )}
           </div>
         </div>
       </CardContent>
