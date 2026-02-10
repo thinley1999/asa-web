@@ -705,7 +705,7 @@ const OutCountryTour = ({
 
   return (
     <Card className="w-full">
-      <form onSubmit={handleSubmit}>
+      <form>
         <CardContent className="space-y-6 pt-6">
           {/* Employee Information Section */}
           <div>
@@ -1191,8 +1191,9 @@ const OutCountryTour = ({
           {/* Submit Button (Create new) */}
           {showSubmit && (
             <Button
-              type="submit"
+              type="button"
               size="lg"
+              onClick={handleSubmit}
               disabled={submitting || uploading}
               className="w-full sm:w-auto"
             >

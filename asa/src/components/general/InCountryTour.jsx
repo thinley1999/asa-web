@@ -618,10 +618,9 @@ const InCountryTour = ({
     formData.files.length > 0 || formData.update_files.length > 0;
   const allFiles = [...formData.files, ...formData.update_files];
 
-  console.log("Form errors", formErrors);
   return (
     <Card className="w-full">
-      <form onSubmit={handleSubmit}>
+      <form>
         <CardContent className="space-y-6 pt-6">
           {/* Employee Information Section */}
           <div>
@@ -901,9 +900,10 @@ const InCountryTour = ({
           {/* Submit Button (Create new) */}
           {showSubmit && (
             <Button
-              type="submit"
+              type="button"
               size="lg"
               disabled={submitting || uploading}
+              onClick={handleSubmit}
               className="w-full sm:w-auto"
             >
               {submitting || uploading ? (
