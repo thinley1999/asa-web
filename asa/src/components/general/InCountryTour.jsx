@@ -822,7 +822,7 @@ const InCountryTour = ({
                   <Input
                     type="number"
                     name="advanceAmount.Nu"
-                    value={formData.advanceAmount?.Nu || ""}
+                    value={formData.advanceAmount?.Nu ?? ""}
                     onChange={handleChange}
                     disabled={isReadOnly}
                     className={
@@ -954,7 +954,11 @@ const InCountryTour = ({
                 type="button"
                 size="lg"
                 variant="default"
-                onClick={() => handleDialogOpen("approved")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleDialogOpen("approved");
+                }}
                 className="flex-1 sm:flex-none"
               >
                 {showButtons.message || "Approve"}
@@ -963,7 +967,11 @@ const InCountryTour = ({
                 type="button"
                 size="lg"
                 variant="destructive"
-                onClick={() => handleDialogOpen("rejected")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleDialogOpen("rejected");
+                }}
                 className="flex-1 sm:flex-none"
               >
                 Reject

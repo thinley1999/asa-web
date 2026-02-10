@@ -55,7 +55,11 @@ const ViewRequestedAdvance = () => {
     }
   };
 
-  const handleDialogOpen = (message) => {
+  const handleDialogOpen = (message, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setDialogMessage(message);
     setShowDialog(true);
   };
@@ -140,7 +144,7 @@ const ViewRequestedAdvance = () => {
             data={advanceData}
             isDSA={advanceData.claim_dsa}
             showButtons={showButtons}
-            handleDialogOpen={handleDialogOpen}
+            handleDialogOpen={(message, e) => handleDialogOpen(message, e)}
           />
         )}
         {advanceData.advance_type === "other_advance" && (
@@ -156,7 +160,7 @@ const ViewRequestedAdvance = () => {
             data={advanceData}
             isDSA={advanceData.claim_dsa}
             showButtons={showButtons}
-            handleDialogOpen={handleDialogOpen}
+            handleDialogOpen={(message, e) => handleDialogOpen(message, e)}
           />
         )}
         {showDialog && (
