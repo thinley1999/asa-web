@@ -471,7 +471,7 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     <Card className="w-full">
       <Separator />
 
-      <form onSubmit={handleSubmit}>
+      <form>
         <CardContent className="space-y-6 pt-6">
           <div>
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -639,8 +639,9 @@ const OtherAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
         <CardFooter className="flex flex-col sm:flex-row gap-3 justify-between pt-6 border-t">
           {showSubmit && (
             <Button
-              type="submit"
+              type="button"
               size="lg"
+              onClick={handleSubmit}
               disabled={submitting || uploading}
               className="w-full sm:w-auto"
             >
