@@ -206,7 +206,11 @@ const OutCountryTour = ({
 
   const handleView = async (fileId) => {
     try {
-      const file = formData.files.find((f) => f.id === fileId);
+      let file = formData.tickets?.find((f) => f.id === fileId);
+
+      if (!file) {
+        file = formData.files?.find((f) => f.id === fileId);
+      }
 
       if (file && file.url) {
         window.open(file.url, "_blank");
