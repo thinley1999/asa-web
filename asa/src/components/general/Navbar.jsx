@@ -8,7 +8,7 @@ import {
   Search,
   User,
   Settings,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -23,6 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
+import AuthServices from "../services/AuthServices";
 
 const Navbar = ({
   handleSidebarToggle,
@@ -52,6 +53,15 @@ const Navbar = ({
       "/myApplications": "My Applications",
     };
     return headings[currentPath] || "Dashboard";
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AuthServices.logout();
+      navigate("/");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   const fetchUserDetails = async () => {
@@ -109,9 +119,7 @@ const Navbar = ({
         {/* Right Section */}
         <div className="flex items-center space-x-4">
           {/* Search Bar (Desktop) */}
-          <div className="hidden md:flex items-center space-x-2">
-            
-          </div>
+          <div className="hidden md:flex items-center space-x-2"></div>
 
           {/* Notifications */}
           <DropdownMenu>
@@ -150,7 +158,10 @@ const Navbar = ({
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center space-x-2">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.profile_pic?.url} alt={getInitials()} />
+                  <AvatarImage
+                    src={user?.profile_pic?.url}
+                    alt={getInitials()}
+                  />
                   <AvatarFallback className="bg-blue-600 text-white">
                     {getInitials()}
                   </AvatarFallback>
@@ -184,16 +195,18 @@ const Navbar = ({
                   <span>Profile</span>
                 </a>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
+              {/* <DropdownMenuItem asChild>
                 <a href="/settings" className="cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>
                 </a>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <a onClick={handleLogout} className="cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </a>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
