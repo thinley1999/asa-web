@@ -25,6 +25,7 @@ import TourAdvanceForm from "./components/forms/TourAdvanceForm";
 import DsaClaimForm from "./components/forms/DsaClaimForm";
 import IndividualReport from "./components/forms/IndividualReport";
 import ResetPassword from "./components/ResetPassword";
+import User from "./components/finance/User";
 
 const routes = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -57,6 +58,11 @@ const routes = createBrowserRouter([
         path: "tourAdvance",
         element: <PrivateRoute />,
         children: [{ path: "", element: <TourAdvance /> }],
+      },
+      {
+        path: "users",
+        element: <PrivateRoute />,
+        children: [{ path: "", element: <User /> }],
       },
       {
         path: "/advanceDetail/:id",
