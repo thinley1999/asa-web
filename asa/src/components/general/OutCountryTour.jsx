@@ -441,6 +441,14 @@ const OutCountryTour = ({
   };
 
   const updateFormDataFromAPI = (apiData) => {
+    const mappedFundings = (apiData.fundings || []).map(funding => ({
+      funding_agency_id: funding.funding_agency?.id ? String(funding.funding_agency.id) : "",
+      funding_agency_name: funding.funding_agency?.name || "",
+      funding_agency_code: funding.funding_agency?.code || "",
+      funded_amount: funding.funded_amount?.amount || funding.funded_amount || "",
+      currency: funding.funded_amount?.currency || funding.currency || "Nu",
+    }));
+
     setFormData((prev) => ({
       ...prev,
       office_order: apiData.office_order || "",
@@ -451,6 +459,7 @@ const OutCountryTour = ({
       tour_type: apiData.tour_type || "",
       advance_percentage: apiData.advance_percentage || "",
       additional_expense: apiData.additional_expense || "",
+      fundings: mappedFundings,
     }));
     setRows(apiData?.travel_itinerary || []);
   };
