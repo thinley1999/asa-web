@@ -33,10 +33,14 @@ import {
   X,
   Eye,
   Plus,
+  Building,
+  Trash2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import TravelDetails from "./TravelDetails";
 import TravelDetailsTable from "./TravelDetailsTable";
+import FundingAgencyPopup from "./FundingAgencyPopup";
+import FundingAgencyServices from "../services/FundingAgencyServices";
 
 const InCountryTour = ({
   data,
@@ -72,17 +76,29 @@ const InCountryTour = ({
     advance_percentage: "",
     office_order: "",
     tour_type: "",
+    fundings: [],
   };
 
   const [formData, setFormData] = useState(initialFormData);
   const [formErrors, setFormErrors] = useState({});
   const [rows, setRows] = useState([]);
+  const [showFundingPopup, setShowFundingPopup] = useState(false);
+  const [selectedFundingIndex, setSelectedFundingIndex] = useState(null);
+  const [fundingAgencies, setFundingAgencies] = useState([]);
+  const [loadingAgencies, setLoadingAgencies] = useState(false);
+
+  const currencies = [
+  { value: "Nu", label: "Nu (Ngultrum)" },
+  { value: "INR", label: "INR (Indian Rupee)" },
+  { value: "USD", label: "USD (US Dollar)" },
+];
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         await fetchUserDetails();
+        await fetchFundingAgencies();
         if (data) {
           updateFormDataFromAPI(data);
         }
@@ -179,6 +195,88 @@ const InCountryTour = ({
     }));
   };
 
+  // Funding handlers
+  const handleFundingChange = (index, field, value) => {
+    const updatedFundings = [...formData.fundings];
+    
+    if (field === 'funding_agency_id' && value && value !== 'new') {
+      const selectedAgency = fundingAgencies.find(a => String(a.id) === value);
+      if (selectedAgency) {
+        updatedFundings[index] = {
+          ...updatedFundings[index],
+          funding_agency_id: value,
+          funding_agency_name: selectedAgency.name,
+          funding_agency_code: selectedAgency.code,
+        };
+      }
+    } else {
+      updatedFundings[index] = {
+        ...updatedFundings[index],
+        [field]: value,
+      };
+    }
+    
+    setFormData({ ...formData, fundings: updatedFundings });
+  };
+
+  const addFunding = () => {
+    setFormData({
+      ...formData,
+      fundings: [
+        ...formData.fundings,
+        {
+          funding_agency_id: "",
+          funding_agency_name: "",
+          funding_agency_code: "",
+          funded_amount: "",
+          currency: "Nu",
+        },
+      ],
+    });
+  };
+
+  const removeFunding = (index) => {
+    const updatedFundings = formData.fundings.filter((_, i) => i !== index);
+    setFormData({ ...formData, fundings: updatedFundings });
+  };
+
+  const handleOpenPopup = (index) => {
+    setSelectedFundingIndex(index);
+    setShowFundingPopup(true);
+  };
+
+  const handlePopupSave = (newAgency) => {
+    if (selectedFundingIndex !== null) {
+      const updatedFundings = [...formData.fundings];
+      updatedFundings[selectedFundingIndex] = {
+        ...updatedFundings[selectedFundingIndex],
+        funding_agency_id: String(newAgency.id),
+        funding_agency_name: newAgency.name,
+        funding_agency_code: newAgency.code,
+      };
+      setFormData({ ...formData, fundings: updatedFundings });
+      
+      // Add the new agency to the list if it doesn't exist
+      const agencyExists = fundingAgencies.some(a => a.id === newAgency.id);
+      if (!agencyExists) {
+        setFundingAgencies((prev) => [...prev, newAgency]);
+      }
+    }
+    setShowFundingPopup(false);
+    setSelectedFundingIndex(null);
+  };
+
+  const handlePopupClose = () => {
+    setShowFundingPopup(false);
+    setSelectedFundingIndex(null);
+    // If user cancels and no agency selected, remove the empty funding entry
+    if (selectedFundingIndex !== null && 
+        !formData.fundings[selectedFundingIndex]?.funding_agency_id &&
+        !formData.fundings[selectedFundingIndex]?.funding_agency_name) {
+      removeFunding(selectedFundingIndex);
+    }
+  };
+
   const handleView = async (fileId) => {
     try {
       const file = formData.files.find((f) => f.id === fileId);
@@ -271,6 +369,20 @@ const InCountryTour = ({
     }
   };
 
+  const fetchFundingAgencies = async () => {
+  setLoadingAgencies(true);
+  try {
+    const response = await FundingAgencyServices.getActiveFundingAgencies();
+    if (response && response.success) {
+      setFundingAgencies(response.data || []);
+    }
+  } catch (error) {
+    console.error("Error fetching funding agencies:", error);
+  } finally {
+    setLoadingAgencies(false);
+  }
+};
+
   const updateFormDataWithUser = (userData) => {
     setFormData((prev) => ({
       ...prev,
@@ -323,6 +435,15 @@ const InCountryTour = ({
       errors.advance_amount_error =
         "Advance amount cannot be greater than total amount.";
     }
+
+      formData.fundings.forEach((funding, index) => {
+      if (!funding.funding_agency_id && !funding.funding_agency_name) {
+        errors[`funding_${index}_agency_error`] = "Please select or enter a funding agency.";
+      }
+      if (!funding.funded_amount || parseFloat(funding.funded_amount) <= 0) {
+        errors[`funding_${index}_amount_error`] = "Please enter a valid funded amount.";
+      }
+    });
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -535,9 +656,8 @@ const InCountryTour = ({
     </Card>
   );
 
-  // Form Field Component
   const FormField = ({ label, children, error, required = false }) => (
-    <div className="space-y-2">
+    <div className="space-y-2 pt-2">
       <Label className="flex items-center gap-1">
         {label}
         {required && <span className="text-red-500">*</span>}
@@ -552,7 +672,6 @@ const InCountryTour = ({
     </div>
   );
 
-  // Display read-only field
   const DisplayField = ({ label, value, icon: Icon }) => (
     <div className="space-y-2">
       <Label className="text-sm font-medium text-muted-foreground">
@@ -565,7 +684,6 @@ const InCountryTour = ({
     </div>
   );
 
-  // File Display Component
   const FileDisplay = ({ file, index, isExisting = false }) => {
     const fileName = file.name || file.filename || `File ${index + 1}`;
     const fileSize = file.size ? `(${(file.size / 1024).toFixed(1)} KB)` : "";
@@ -748,7 +866,6 @@ const InCountryTour = ({
               </FormField>
             </div>
 
-            {/* Travel Itinerary */}
             <div className="mt-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -808,42 +925,202 @@ const InCountryTour = ({
               )}
             </div>
 
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h4 className="text-lg font-semibold flex items-center gap-2">
+                    External Funding Agencies
+                  </h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Add funding agencies that are contributing to this advance
+                  </p>
+                </div>
+                {!isReadOnly && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addFunding}
+                    className="gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Funding
+                  </Button>
+                )}
+              </div>
+
+              {formData.fundings.length > 0 && (
+                <div className="space-y-4">
+                  {formData.fundings.map((funding, index) => (
+                    <div
+                      key={index}
+                      className="border rounded-lg p-4 space-y-3 relative"
+                    >
+                      {!isReadOnly && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFunding(index)}
+                          className="absolute top-2 right-2 text-red-500 hover:text-red-600 h-7 w-7 p-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {/* Funding Agency Selection */}
+                        <FormField
+                          label="Funding Agency*"
+                          error={formErrors[`funding_${index}_agency_error`]}
+                          required
+                        >
+                          <div className="flex gap-2">
+                            <Select
+                              value={funding.funding_agency_id || ""}
+                              onValueChange={(value) => {
+                                if (value === "new") {
+                                  handleOpenPopup(index);
+                                } else {
+                                  handleFundingChange(index, "funding_agency_id", value);
+                                }
+                              }}
+                              disabled={isReadOnly}
+                              className="flex-1"
+                              >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select funding agency" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {fundingAgencies.map((agency) => (
+                                  <SelectItem
+                                    key={agency.id}
+                                    value={String(agency.id)}
+                                  >
+                                    {agency.name} {agency.code && `(${agency.code})`}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="new" className="text-primary font-medium">
+                                  + Add New Agency
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </FormField>
+
+                        {/* Funded Amount */}
+                        <FormField
+                          label="Funded Amount*"
+                          error={formErrors[`funding_${index}_amount_error`]}
+                          required
+                        >
+                          <div className="flex gap-2">
+                            <Input
+                              type="number"
+                              value={funding.funded_amount || ""}
+                              onChange={(e) =>
+                                handleFundingChange(index, "funded_amount", e.target.value)
+                              }
+                              placeholder="Enter amount"
+                              disabled={isReadOnly}
+                              className="flex-1"
+                            />
+                            <Select
+                              value={funding.currency || "Nu"}
+                              onValueChange={(value) =>
+                                handleFundingChange(index, "currency", value)
+                              }
+                              disabled={isReadOnly}
+                              className="w-24"
+                            >
+                              <SelectTrigger className="w-24">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {currencies.map((curr) => (
+                                  <SelectItem key={curr.value} value={curr.value}>
+                                    {curr.value}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </FormField>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {formData.fundings.length === 0 && !isReadOnly && (
+                <div className="text-center py-8 border-2 border-dashed rounded-lg">
+                  <Building className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    No funding agencies added yet
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addFunding}
+                    className="mt-2 gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Funding Agency
+                  </Button>
+                </div>
+              )}
+            </div>
+
             {/* Amount Section */}
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Advance Amount */}
-              {!isDSA && (
-                <FormField
-                  label="Advance Amount (Nu)*"
-                  error={formErrors.advance_amount_error}
-                  required
-                >
-                  <Input
-                    type="number"
-                    name="advanceAmount.Nu"
-                    value={formData.advanceAmount?.Nu ?? ""}
-                    onChange={handleChange}
-                    disabled={isReadOnly}
-                    className={
-                      formErrors.advance_amount_error ? "border-red-500" : ""
-                    }
-                    placeholder="Enter advance amount"
+            <div className="mt-6 space-y-4">
+              {/* Amount Summary Header */}
+              <div>
+                <h4 className="text-lg font-semibold flex items-center gap-2">
+                  Amount Summary
+                </h4>
+                <p className="text-sm text-muted-foreground mt-1">
+                  * Amount receivable is the Total amount minus the total amount funded by external agencies.
+                </p>
+              </div>
+
+              {/* Amount Fields Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Advance Amount */}
+                {!isDSA && (
+                  <FormField
+                    label="Advance Amount (Nu)*"
+                    error={formErrors.advance_amount_error}
+                    required
+                  >
+                    <Input
+                      type="number"
+                      name="advanceAmount.Nu"
+                      value={formData.advanceAmount?.Nu ?? ""}
+                      onChange={handleChange}
+                      disabled={isReadOnly}
+                      className={
+                        formErrors.advance_amount_error ? "border-red-500" : ""
+                      }
+                      placeholder="Enter advance amount"
+                    />
+                  </FormField>
+                )}
+
+                {/* DSA Amount */}
+                {isDSA && (
+                  <DisplayField
+                    label="DSA Amount (Nu)"
+                    value={data.dsa_amount?.Nu || "N/A"}
                   />
-                </FormField>
-              )}
+                )}
 
-              {/* DSA Amount */}
-              {isDSA && (
+                {/* Total Amount */}
                 <DisplayField
-                  label="DSA Amount (Nu)"
-                  value={data.dsa_amount?.Nu || "N/A"}
+                  label="Total Amount (Nu)"
+                  value={formData.totalAmount}
                 />
-              )}
-
-              {/* Total Amount */}
-              <DisplayField
-                label="Total Amount (Nu)"
-                value={formData.totalAmount}
-              />
+              </div>
             </div>
 
             {/* Remarks */}
@@ -993,6 +1270,13 @@ const InCountryTour = ({
           edit={edit}
           username={user?.username}
           department={formData.department}
+        />
+      )}
+      {showFundingPopup && (
+        <FundingAgencyPopup
+          isOpen={showFundingPopup}
+          onClose={handlePopupClose}
+          onSave={handlePopupSave}
         />
       )}
     </Card>
