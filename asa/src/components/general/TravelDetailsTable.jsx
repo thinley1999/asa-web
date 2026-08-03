@@ -11,19 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Eye,
   Pencil,
   Trash2,
-  MoreHorizontal,
   Calendar,
   MapPin,
-  DollarSign,
 } from "lucide-react";
 import { convertToDateTime } from "../utils/dateTime";
 
@@ -36,13 +28,25 @@ const TravelDetailsTable = ({
 }) => {
   const tableData = existingData ? (edit ? data : existingData) : data;
 
-  // Format currency display
-  const formatCurrency = (amount) => {
-    if (!amount) return "N/A";
-    return `Nu. ${parseFloat(amount).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const getCurrencySymbol = (currency) => {
+    const symbols = {
+      'Nu': 'Nu.',
+      'INR': '₹',
+      'USD': '$',
+    };
+    return symbols[currency] || currency || 'Nu.';
   };
 
-  // Get status badge variant
+  const formatCurrency = (amount, currency) => {
+    if (!amount) return "N/A";
+    const symbol = getCurrencySymbol(currency);
+    const formattedAmount = parseFloat(amount).toLocaleString("en-IN", { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    });
+    return `${symbol} ${formattedAmount}`;
+  };
+
   const getStatusVariant = (row) => {
     if (row.halt_at) return "warning";
     if (row.stop_at) return "secondary";
@@ -91,9 +95,21 @@ const TravelDetailsTable = ({
       header: "Amount",
       accessor: (row) => (
         <div className="flex items-center gap-2">
-          <DollarSign className="h-4 w-4 text-green-600" />
-          <span className="font-semibold">{formatCurrency(row.rate)}</span>
+          <span className="font-semibold">
+            {formatCurrency(row.rate, row.currency)}
+          </span>
         </div>
+      ),
+    },
+    {
+      header: "Currency",
+      accessor: (row) => (
+        <Badge variant="outline" className="font-mono">
+          {row.currency || "Nu"}
+          <span className="ml-1 text-muted-foreground">
+            ({getCurrencySymbol(row.currency)})
+          </span>
+        </Badge>
       ),
     },
     {
@@ -218,12 +234,23 @@ const TravelDetailsTable = ({
           </div>
           <div className="text-sm font-medium">
             Total:{" "}
-            {formatCurrency(
-              tableData.reduce(
-                (sum, row) => sum + (parseFloat(row.rate) || 0),
-                0,
-              ),
-            )}
+            {(() => {
+              // Group by currency and show totals
+              const totals = {};
+              tableData.forEach(row => {
+                const currency = row.currency || 'Nu';
+                if (!totals[currency]) {
+                  totals[currency] = 0;
+                }
+                totals[currency] += parseFloat(row.rate) || 0;
+              });
+              
+              return Object.entries(totals).map(([currency, amount]) => (
+                <span key={currency} className="ml-2">
+                  {formatCurrency(amount, currency)}
+                </span>
+              ));
+            })()}
           </div>
         </div>
       </CardContent>
