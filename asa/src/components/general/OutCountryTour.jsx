@@ -7,10 +7,8 @@ import FileServices from "../services/FileServices";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -138,6 +136,7 @@ const OutCountryTour = ({
     let INR = 0;
     let USD = formData?.additional_expense == 200 ? 200 : 0;
 
+    // Calculate totals from itinerary
     rows.forEach((row) => {
       if (row.currency == "Nu") {
         Nu += parseFloat(row.rate);
@@ -150,13 +149,35 @@ const OutCountryTour = ({
       }
     });
 
+    // Calculate total funding from agencies for each currency
+    let fundingNu = 0;
+    let fundingINR = 0;
+    let fundingUSD = 0;
+    
+    formData.fundings.forEach((funding) => {
+      if (funding.currency === "Nu" && funding.funded_amount) {
+        fundingNu += parseFloat(funding.funded_amount) || 0;
+      }
+      if (funding.currency === "INR" && funding.funded_amount) {
+        fundingINR += parseFloat(funding.funded_amount) || 0;
+      }
+      if (funding.currency === "USD" && funding.funded_amount) {
+        fundingUSD += parseFloat(funding.funded_amount) || 0;
+      }
+    });
+
+    // Subtract funding from itinerary totals (don't go below 0)
+    const netNu = Nu - fundingNu > 0 ? Nu - fundingNu : 0;
+    const netINR = INR - fundingINR > 0 ? INR - fundingINR : 0;
+    const netUSD = USD - fundingUSD > 0 ? USD - fundingUSD : 0;
+
     setFormData((prevFormData) => ({
       ...prevFormData,
       advanceAmount: {
-        Nu: Nu * 0,
-        INR: INR * (parseFloat(formData.advance_percentage) || 0),
-        USD: USD * (parseFloat(formData.advance_percentage) || 0),
-        Total: { Nu, INR, USD },
+        Nu: netNu * 0,
+        INR: netINR * (parseFloat(formData.advance_percentage) || 0),
+        USD: netUSD * (parseFloat(formData.advance_percentage) || 0),
+        Total: { Nu: netNu, INR: netINR, USD: netUSD },
       },
     }));
   };
@@ -699,7 +720,7 @@ const OutCountryTour = ({
 
   useEffect(() => {
     totalAmount();
-  }, [rows, formData.advance_percentage, formData.additional_expense]);
+  }, [rows, formData.advance_percentage, formData.additional_expense, formData.fundings]);
 
   // Loading Skeleton
   const FormSkeleton = () => (
@@ -1314,11 +1335,13 @@ const OutCountryTour = ({
 
             {/* Amount Summary */}
             <div className="mt-6">
-              <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
                 <Banknote className="h-5 w-5 text-green-600" />
                 Amount Summary
               </h4>
-
+               <p className="text-sm text-muted-foreground mt-1 mb-2">
+                  * Amount receivable is the Total amount minus the total amount funded by external agencies.
+                </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <CurrencyDisplay
                   currency="Nu"

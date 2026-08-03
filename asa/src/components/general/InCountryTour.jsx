@@ -89,8 +89,6 @@ const InCountryTour = ({
 
   const currencies = [
   { value: "Nu", label: "Nu (Ngultrum)" },
-  { value: "INR", label: "INR (Indian Rupee)" },
-  { value: "USD", label: "USD (US Dollar)" },
 ];
 
   useEffect(() => {
@@ -132,9 +130,19 @@ const InCountryTour = ({
       }
     });
 
+    let totalFunding = 0;
+    formData.fundings.forEach((funding) => {
+      if (funding.currency === "Nu" && funding.funded_amount) {
+        totalFunding += parseFloat(funding.funded_amount) || 0;
+      }
+    });
+
+    // Subtract funding from total
+    const netTotal = total - totalFunding;
+
     setFormData((prev) => ({
       ...prev,
-      totalAmount: total,
+      totalAmount: netTotal,
     }));
   };
 
@@ -633,7 +641,7 @@ const InCountryTour = ({
 
   useEffect(() => {
     totalAmount();
-  }, [rows, formData.advance_percentage]);
+  }, [rows, formData.advance_percentage, formData.fundings]);
 
   // Loading Skeleton
   const FormSkeleton = () => (
