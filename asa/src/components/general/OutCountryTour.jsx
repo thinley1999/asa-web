@@ -1084,6 +1084,54 @@ const OutCountryTour = ({
               )}
             </div>
 
+             {/* Management Additional Expense */}
+            {isManagement && (
+              <div className="mt-4">
+                <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+                  <CardContent className="pt-4">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-amber-100 p-2 rounded-full">
+                        <Briefcase className="h-5 w-5 text-amber-600" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h5 className="font-semibold text-amber-800">
+                              Management Additional Expense
+                            </h5>
+                            <p className="text-sm text-amber-600">
+                              Local conveyance and communication expenses
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Checkbox
+                              id="additional_expense"
+                              checked={
+                                parseFloat(formData.additional_expense) === 200
+                              }
+                              onCheckedChange={(checked) =>
+                                handleCheckboxChange(
+                                  "additional_expense",
+                                  checked ? "200" : "",
+                                )
+                              }
+                              disabled={isReadOnly}
+                            />
+                            <Label
+                              htmlFor="additional_expense"
+                              className="font-bold text-lg text-amber-700"
+                            >
+                              200 USD
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
             {/* Funding Agencies Section */}
             <div className="mt-6">
               <div className="flex items-center justify-between mb-4">
@@ -1232,54 +1280,6 @@ const OutCountryTour = ({
                 </div>
               )}
             </div>
-
-            {/* Management Additional Expense */}
-            {isManagement && (
-              <div className="mt-4">
-                <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-                  <CardContent className="pt-4">
-                    <div className="flex items-start gap-3">
-                      <div className="bg-amber-100 p-2 rounded-full">
-                        <Briefcase className="h-5 w-5 text-amber-600" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h5 className="font-semibold text-amber-800">
-                              Management Additional Expense
-                            </h5>
-                            <p className="text-sm text-amber-600">
-                              Local conveyance and communication expenses
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Checkbox
-                              id="additional_expense"
-                              checked={
-                                parseFloat(formData.additional_expense) === 200
-                              }
-                              onCheckedChange={(checked) =>
-                                handleCheckboxChange(
-                                  "additional_expense",
-                                  checked ? "200" : "",
-                                )
-                              }
-                              disabled={isReadOnly}
-                            />
-                            <Label
-                              htmlFor="additional_expense"
-                              className="font-bold text-lg text-amber-700"
-                            >
-                              200 USD
-                            </Label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
 
             {/* Travel Documents for DSA */}
             {isDSA && (
