@@ -36,7 +36,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
     totalAmount: 0,
     thresholdAmount: "",
     duration: 0,
-    deduction: 0.0,
+    deduction: 0.00,
     purpose: "",
     username: "",
     advance_type: "salary_advance",
@@ -120,7 +120,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
       middleName: userData.middle_name || "",
       lastName: userData.last_name || "",
       designation: userData.position_title || "",
-      thresholdAmount: userData.net_pay * 2 || "",
+      thresholdAmount: userData.net_pay * 2 || 0,
       department: userData.department_name || "",
       username: userData.username || "",
     }));
@@ -154,7 +154,14 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
             : parseFloat(prev.totalAmount);
         const duration =
           name === "duration" ? parseFloat(value) : parseFloat(prev.duration);
-        newDeduction = duration > 0 ? Math.ceil(total / duration) : 0;
+        
+        // Calculate deduction with 2 decimal places
+        if (duration > 0 && total > 0) {
+          const calculatedDeduction = total / duration;
+          newDeduction = parseFloat(calculatedDeduction.toFixed(2));
+        } else {
+          newDeduction = 0;
+        }
       }
 
       return {
@@ -311,7 +318,7 @@ const SalaryAdvance = ({ data, showButtons, handleDialogOpen, editData }) => {
 
   // Form Field Component
   const FormField = ({ label, children, error, required = false }) => (
-    <div className="space-y-2">
+    <div className="space-y-2 pt-2">
       <Label className="flex items-center gap-1">
         {label}
         {required && <span className="text-red-500">*</span>}

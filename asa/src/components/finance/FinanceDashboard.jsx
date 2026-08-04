@@ -60,12 +60,6 @@ const FinanceDashboard = () => {
       if (!isLoggedIn) {
         localStorage.setItem("isLoggedIn", "true");
         setIsLoggedIn(true);
-        toast({
-          title: "Welcome back!",
-          description: "Login successful",
-          variant: "default",
-          duration: 3000,
-        });
       }
     }
   }, []);
