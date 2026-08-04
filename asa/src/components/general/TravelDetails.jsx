@@ -33,12 +33,12 @@ import {
   Plane,
   Bed,
   Home,
-  Percent,
   Calculator,
   Route,
   Building,
   Globe,
   ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
@@ -70,6 +70,7 @@ const TravelDetails = ({
   const [calculatedRate, setCalculatedRate] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showCalculationError, setShowCalculationError] = useState(false);
+  const [currentTab, setCurrentTab] = useState("basic");
   
   const [data, setData] = useState(
     initialData || {
@@ -84,7 +85,7 @@ const TravelDetails = ({
       rate: "",
       currency: "",
       halt_at: "",
-      dsa_percentage: "",
+      dsa_percentage: "1", // Always 100%
       days: "",
       stop_at: "",
       return: false,
@@ -123,6 +124,33 @@ const TravelDetails = ({
     return Math.ceil(differenceInDays);
   };
 
+  const handleTabChange = (tab) => {
+    setCurrentTab(tab);
+  };
+
+  const handleNext = () => {
+    // Validate current tab before proceeding
+    if (currentTab === "basic") {
+      const { start_date, end_date } = data;
+      if (!start_date || !end_date) {
+        setErrors(prev => ({
+          ...prev,
+          start_date: !start_date ? "Start date is required" : "",
+          end_date: !end_date ? "End date is required" : ""
+        }));
+        return;
+      }
+      // Clear errors if validation passes
+      delete errors.start_date;
+      delete errors.end_date;
+    }
+    setCurrentTab("route");
+  };
+
+  const handleBack = () => {
+    setCurrentTab("basic");
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
@@ -143,12 +171,10 @@ const TravelDetails = ({
       }
     }
     
-    // Clear error when user starts typing
     if (errors[name]) {
       delete errors.name
     }
     
-    // Clear calculation error when user makes changes
     if (showCalculationError) {
       setShowCalculationError(false);
     }
@@ -157,12 +183,10 @@ const TravelDetails = ({
   const handleSelectChange = (name, value) => {
     setData((prevData) => ({ ...prevData, [name]: value }));
     
-    // Clear error when user makes a selection
     if (errors[name]) {
       delete errors.name
     }
     
-    // Clear mileage when mode changes from Private Vehicle
     if (name === "mode" && value !== "Private Vehicle") {
       setData(prev => ({ ...prev, mileage: "" }));
       if (errors.mileage) {
@@ -170,7 +194,6 @@ const TravelDetails = ({
       }
     }
     
-    // Clear calculation error when user makes changes
     if (showCalculationError) {
       setShowCalculationError(false);
     }
@@ -179,7 +202,6 @@ const TravelDetails = ({
   const handleHaltCheckChange = (checked) => {
     setHaltChecked(checked);
     if (checked) {
-      // Clear all route-related fields when halt is checked
       setData(prevData => ({
         ...prevData,
         from: "",
@@ -249,7 +271,6 @@ const TravelDetails = ({
       mileage,
       halt_at,
       stop_at,
-      dsa_percentage,
       from_place,
       to_place,
     } = data;
@@ -257,8 +278,6 @@ const TravelDetails = ({
 
     if (!start_date) newErrors.start_date = "Start date is required";
     if (!end_date) newErrors.end_date = "End date is required";
-    if (!dsa_percentage)
-      newErrors.dsa_percentage = "DSA percentage is required";
 
     if (mode === "Private Vehicle" && !mileage) {
       newErrors.mileage = "Mileage is required for private vehicle";
@@ -307,7 +326,6 @@ const TravelDetails = ({
   const fetchRate = async (
     from,
     to,
-    dsaPercentage,
     days,
     mode,
     mileage,
@@ -326,9 +344,7 @@ const TravelDetails = ({
             to,
             edit ? username : ""
           );
-          const rate =
-            16 * mileage +
-            eval(`${dsaPercentage} * ${days} * ${response.rate}`);
+          const rate = 16 * mileage + days * response.rate; // 100% DSA
 
           return {
             rate,
@@ -336,7 +352,7 @@ const TravelDetails = ({
           };
         } else {
           response = await RateServices.getRate(from, to, edit ? username : "");
-          const rate = eval(`${dsaPercentage} * ${days} * ${response.rate}`);
+          const rate = days * response.rate; // 100% DSA
           return {
             rate,
             currency: "Nu",
@@ -391,9 +407,7 @@ const TravelDetails = ({
           }
         }
         return {
-          rate:
-            eval(`${dsaPercentage} * ${days} * ${response.rate}`) +
-            (stop_response ? stop_response.rate : 0),
+          rate: days * response.rate + (stop_response ? stop_response.rate : 0), // 100% DSA
           currency: response.currency,
         };
       }
@@ -403,7 +417,6 @@ const TravelDetails = ({
   };
 
   const calculateRate = async () => {
-    // First validate all fields and show errors
     const isValid = validateData(true);
     if (!isValid) {
       setShowCalculationError(true);
@@ -412,13 +425,12 @@ const TravelDetails = ({
 
     setIsCalculating(true);
     try {
-      const { from, to, dsa_percentage, days, mode, mileage, halt_at, stop_at } = data;
+      const { from, to, days, mode, mileage, halt_at, stop_at } = data;
       const destination = type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
 
       const rateData = await fetchRate(
         destination.from,
         destination.to,
-        dsa_percentage,
         days,
         mode,
         mileage,
@@ -446,7 +458,7 @@ const TravelDetails = ({
     if (!isValid) return;
 
     try {
-      const { from, to, dsa_percentage, days, mode, mileage, halt_at, stop_at } = data;
+      const { from, to, days, mode, mileage, halt_at, stop_at } = data;
       const destination = type === "outCountry" ? { from, to } : { from: "Bhutan", to: "Bhutan" };
 
       let rateData;
@@ -454,7 +466,6 @@ const TravelDetails = ({
         rateData = await fetchRate(
           destination.from,
           destination.to,
-          dsa_percentage,
           days,
           mode,
           mileage,
@@ -478,7 +489,7 @@ const TravelDetails = ({
         rate: "",
         currency: "",
         halt_at: "",
-        dsa_percentage: "",
+        dsa_percentage: "1",
         days: "",
         stop_at: "",
         return: false,
@@ -510,7 +521,6 @@ const TravelDetails = ({
     }
   }, [type]);
 
-  // Auto-calculate days when dates change
   useEffect(() => {
     if (data.start_date && data.end_date) {
       const days = getNumberOfDays(data.start_date, data.end_date);
@@ -522,7 +532,6 @@ const TravelDetails = ({
 
   const isDisabled = existingData ? (edit ? false : true) : false;
   const travelType = type === "inCountry" ? "Domestic" : "International";
-  console.log("errors", errors);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -543,8 +552,8 @@ const TravelDetails = ({
           </div>
         </DialogHeader>
 
-        <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="basic" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Basic Info
@@ -552,10 +561,6 @@ const TravelDetails = ({
             <TabsTrigger value="route" className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
               Route Details
-            </TabsTrigger>
-            <TabsTrigger value="calculation" className="flex items-center gap-2">
-              <Calculator className="h-4 w-4" />
-              Calculation
             </TabsTrigger>
           </TabsList>
 
@@ -947,228 +952,120 @@ const TravelDetails = ({
                       </p>
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          {/* Calculation Tab */}
-          <TabsContent value="calculation" className="space-y-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="space-y-6">
-                  {/* DSA Percentage */}
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Percent className="h-4 w-4 text-orange-600" />
-                      DSA Percentage
-                    </Label>
-                    <Select
-                      value={data.dsa_percentage}
-                      onValueChange={(value) => handleSelectChange("dsa_percentage", value)}
-                      disabled={isDisabled}
-                    >
-                      <SelectTrigger className={errors.dsa_percentage ? "border-red-500" : ""}>
-                        <SelectValue placeholder="Select DSA percentage" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">
-                          <div className="flex justify-between w-full">
-                            <span className="font-medium">100%</span>
-                            <span className="text-muted-foreground">No meals & lodging</span>
-                          </div>
-                        </SelectItem>
-                        {department === "Management" && type === "inCountry" && (
-                          <SelectItem value="7/10">
-                            <div className="flex justify-between w-full">
-                              <span className="font-medium">70%</span>
-                              <span className="text-muted-foreground">Lodging provided</span>
-                            </div>
-                          </SelectItem>
+                  {/* Calculate Button & Result - Simplified */}
+                  <div className="md:col-span-2 space-y-4">
+                    <div className="flex items-center gap-4">
+                      <Button
+                        onClick={calculateRate}
+                        disabled={isCalculating || isDisabled}
+                        className="flex-1"
+                      >
+                        {isCalculating ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            Calculating...
+                          </>
+                        ) : (
+                          <>
+                            <Calculator className="mr-2 h-4 w-4" />
+                            Calculate Amount
+                          </>
                         )}
-                        {department === "Management" && type === "outCountry" && (
-                          <SelectItem value="7/12">
-                            <div className="flex justify-between w-full">
-                              <span className="font-medium">58.33%</span>
-                              <span className="text-muted-foreground">Lodging provided</span>
+                      </Button>
+                    </div>
+
+                    {/* Calculation Error Alert */}
+                    {showCalculationError && Object.keys(errors).length > 0 && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          Please fill in all required fields before calculating.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {/* Calculated Amount Display */}
+                    {calculatedRate && (
+                      <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+                        <CardContent className="pt-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-bold text-green-800">Calculated Amount</h4>
+                              <p className="text-sm text-green-600">
+                                Based on your travel configuration (100% DSA)
+                              </p>
                             </div>
-                          </SelectItem>
-                        )}
-                        <SelectItem value="1/2">
-                          <div className="flex justify-between w-full">
-                            <span className="font-medium">50%</span>
-                            <span className="text-muted-foreground">Lodging provided</span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="3/10">
-                          <div className="flex justify-between w-full">
-                            <span className="font-medium">30%</span>
-                            <span className="text-muted-foreground">Both meals & lodging provided</span>
-                          </div>
-                        </SelectItem>
-                        {type === "outCountry" && (
-                          <SelectItem value="1/5">
-                            <div className="flex justify-between w-full">
-                              <span className="font-medium">20%</span>
-                              <span className="text-muted-foreground">Partially funded</span>
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-green-800">
+                                {calculatedRate.currency} {calculatedRate.rate?.toLocaleString('en-IN', {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2
+                                })}
+                              </div>
                             </div>
-                          </SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    {errors.dsa_percentage && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {errors.dsa_percentage}
-                      </p>
+                          </div>
+                        </CardContent>
+                      </Card>
                     )}
                   </div>
-
-                  {/* Calculation Error Alert */}
-                  {showCalculationError && Object.keys(errors).length > 0 && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>
-                        Please fill in all required fields before calculating. Check all tabs for missing information.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {/* Calculate Button */}
-                  <Button
-                    onClick={calculateRate}
-                    disabled={isCalculating || isDisabled}
-                    className="w-full"
-                  >
-                    {isCalculating ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Calculating...
-                      </>
-                    ) : (
-                      <>
-                        <Calculator className="mr-2 h-4 w-4" />
-                        Calculate Amount
-                      </>
-                    )}
-                  </Button>
-
-                  {/* Calculated Amount Display */}
-                  {calculatedRate && (
-                    <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-                      <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-bold text-green-800">Calculated Amount</h4>
-                            <p className="text-sm text-green-600">
-                              Based on your travel configuration
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-green-800">
-                              {calculatedRate.currency} {calculatedRate.rate?.toLocaleString('en-IN', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                              })}
-                            </div>
-                            <p className="text-sm text-green-600">
-                              Ready to save
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Navigation to fix errors */}
-                  {showCalculationError && Object.keys(errors).length > 0 && (
-                    <Card className="border-amber-200 bg-amber-50">
-                      <CardContent className="pt-4">
-                        <div className="space-y-2">
-                          <p className="font-medium text-amber-800">Missing Required Fields:</p>
-                          <div className="space-y-1">
-                            {errors.start_date && (
-                              <div className="flex items-center gap-2 text-sm text-amber-700">
-                                <ChevronRight className="h-3 w-3" />
-                                <span>Start Date - </span>
-                                <Button
-                                  variant="link"
-                                  className="p-0 h-auto text-amber-700 hover:text-amber-800"
-                                  onClick={() => document.querySelector('[data-tab="basic"]').click()}
-                                >
-                                  Go to Basic Info
-                                </Button>
-                              </div>
-                            )}
-                            {errors.end_date && (
-                              <div className="flex items-center gap-2 text-sm text-amber-700">
-                                <ChevronRight className="h-3 w-3" />
-                                <span>End Date - </span>
-                                <Button
-                                  variant="link"
-                                  className="p-0 h-auto text-amber-700 hover:text-amber-800"
-                                  onClick={() => document.querySelector('[data-tab="basic"]').click()}
-                                >
-                                  Go to Basic Info
-                                </Button>
-                              </div>
-                            )}
-                            {(errors.from || errors.to || errors.mode || errors.mileage) && (
-                              <div className="flex items-center gap-2 text-sm text-amber-700">
-                                <ChevronRight className="h-3 w-3" />
-                                <span>Route Details - </span>
-                                <Button
-                                  variant="link"
-                                  className="p-0 h-auto text-amber-700 hover:text-amber-800"
-                                  onClick={() => document.querySelector('[data-tab="route"]').click()}
-                                >
-                                  Go to Route Details
-                                </Button>
-                              </div>
-                            )}
-                            {errors.halt_at && (
-                              <div className="flex items-center gap-2 text-sm text-amber-700">
-                                <ChevronRight className="h-3 w-3" />
-                                <span>Halt Location - </span>
-                                <Button
-                                  variant="link"
-                                  className="p-0 h-auto text-amber-700 hover:text-amber-800"
-                                  onClick={() => document.querySelector('[data-tab="route"]').click()}
-                                >
-                                  Go to Route Details
-                                </Button>
-                              </div>
-                            )}
-                            {errors.dsa_percentage && (
-                              <div className="flex items-center gap-2 text-sm text-amber-700">
-                                <ChevronRight className="h-3 w-3" />
-                                <span>DSA Percentage - Already on Calculation tab</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
 
+        {/* Navigation Buttons */}
+        <div className="flex justify-between items-center mt-4">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <div className={`h-2 w-2 rounded-full ${currentTab === "basic" ? "bg-primary" : "bg-muted"}`} />
+              <span className="text-xs text-muted-foreground">Basic Info</span>
+            </div>
+            <div className="w-8 h-px bg-muted" />
+            <div className="flex items-center gap-2">
+              <div className={`h-2 w-2 rounded-full ${currentTab === "route" ? "bg-primary" : "bg-muted"}`} />
+              <span className="text-xs text-muted-foreground">Route Details</span>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {currentTab === "route" && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+                className="gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Back
+              </Button>
+            )}
+            {currentTab === "basic" && (
+              <Button
+                type="button"
+                onClick={handleNext}
+                className="gap-2"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+
         {/* Global Error Display */}
         {Object.keys(errors).length > 0 && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" className="mt-4">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Please fix the errors in the form before proceeding. {showCalculationError && "Click the links above to navigate to missing fields."}
+              Please fix the errors in the form before proceeding.
               <ul className="list-disc pl-4 space-y-1">
-                    {Object.entries(errors).map(([field, error]) => (
-                      <li key={field} className="text-sm">
-                        {error}
-                      </li>
-                    ))}
-                  </ul>
+                {Object.entries(errors).map(([field, error]) => (
+                  <li key={field} className="text-sm">
+                    {error}
+                  </li>
+                ))}
+              </ul>
             </AlertDescription>
           </Alert>
         )}
