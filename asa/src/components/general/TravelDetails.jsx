@@ -39,6 +39,7 @@ import {
   Globe,
   ChevronRight,
   ChevronLeft,
+  Percent,
 } from "lucide-react";
 import { dzongkhags } from "../../components/datas/dzongkhag_lists";
 import RateServices from "../services/RateServices";
@@ -71,6 +72,7 @@ const TravelDetails = ({
   const [isCalculating, setIsCalculating] = useState(false);
   const [showCalculationError, setShowCalculationError] = useState(false);
   const [currentTab, setCurrentTab] = useState("basic");
+  const [calculatedDSARate, setCalculatedDSARate] = useState(null);
   
   const [data, setData] = useState(
     initialData || {
@@ -85,7 +87,7 @@ const TravelDetails = ({
       rate: "",
       currency: "",
       halt_at: "",
-      dsa_percentage: "1", // Always 100%
+      dsa_percentage: "1", // Default to 100%
       days: "",
       stop_at: "",
       return: false,
@@ -125,12 +127,8 @@ const TravelDetails = ({
   };
 
   const handleTabChange = (tab) => {
-    setCurrentTab(tab);
-  };
-
-  const handleNext = () => {
     // Validate current tab before proceeding
-    if (currentTab === "basic") {
+    if (tab === "route" && currentTab === "basic") {
       const { start_date, end_date } = data;
       if (!start_date || !end_date) {
         setErrors(prev => ({
@@ -144,11 +142,82 @@ const TravelDetails = ({
       delete errors.start_date;
       delete errors.end_date;
     }
-    setCurrentTab("route");
+    
+    setCurrentTab(tab);
+  };
+
+  const validateRouteData = () => {
+    const {
+      from,
+      to,
+      mode,
+      mileage,
+      halt_at,
+      stop_at,
+      from_place,
+      to_place,
+    } = data;
+    const newErrors = {};
+
+    // Only validate route fields if not on halt journey
+    if (!haltChecked) {
+      if (!from) newErrors.from = "From location is required";
+      if (!to) newErrors.to = "To location is required";
+      if (!mode) newErrors.mode = "Mode of travel is required";
+    }
+
+    if (haltChecked && !halt_at) {
+      newErrors.halt_at = "Halt location is required when halt is checked";
+    }
+
+    if (stopChecked && !stop_at) {
+      newErrors.stop_at =
+        "Stop Over location is required when stop over is checked";
+    }
+
+    // Only validate place details for international travel when not on halt journey
+    if (outCountry && !haltChecked) {
+      if (!from_place) newErrors.from_place = "From Place is required";
+      if (!to_place) newErrors.to_place = "To Place is required";
+    }
+
+    if (mode === "Private Vehicle" && !mileage) {
+      newErrors.mileage = "Mileage is required for private vehicle";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (currentTab === "basic") {
+      const { start_date, end_date } = data;
+      if (!start_date || !end_date) {
+        setErrors(prev => ({
+          ...prev,
+          start_date: !start_date ? "Start date is required" : "",
+          end_date: !end_date ? "End date is required" : ""
+        }));
+        return;
+      }
+      // Clear errors if validation passes
+      delete errors.start_date;
+      delete errors.end_date;
+      setCurrentTab("route");
+    } else if (currentTab === "route") {
+      const isValid = validateRouteData();
+      if (isValid) {
+        setCurrentTab("dsa");
+      }
+    }
   };
 
   const handleBack = () => {
-    setCurrentTab("basic");
+    if (currentTab === "dsa") {
+      setCurrentTab("route");
+    } else if (currentTab === "route") {
+      setCurrentTab("basic");
+    }
   };
 
   const handleChange = (e) => {
@@ -417,6 +486,7 @@ const TravelDetails = ({
   };
 
   const calculateRate = async () => {
+    // Validate all data before calculating
     const isValid = validateData(true);
     if (!isValid) {
       setShowCalculationError(true);
@@ -440,6 +510,9 @@ const TravelDetails = ({
 
       setCalculatedRate(rateData);
       setShowCalculationError(false);
+      
+      // Calculate DSA amount based on selected percentage
+      calculateDSAAmount(rateData);
     } catch (error) {
       console.error("Error calculating rate:", error);
       setErrors(prev => ({
@@ -450,6 +523,32 @@ const TravelDetails = ({
     } finally {
       setIsCalculating(false);
     }
+  };
+
+  const calculateDSAAmount = (rateData) => {
+    if (!rateData) {
+      setShowCalculationError(true);
+      return;
+    }
+
+    const percentageMap = {
+      "1": 1.0,
+      "7/10": 0.7,
+      "7/12": 0.5833,
+      "1/2": 0.5,
+      "3/10": 0.3,
+      "1/5": 0.2
+    };
+
+    const percentage = percentageMap[data.dsa_percentage] || 1.0;
+    const dsaAmount = rateData.rate * percentage;
+
+    setCalculatedDSARate({
+      ...rateData,
+      dsaAmount: dsaAmount,
+      percentage: percentage,
+      percentageLabel: data.dsa_percentage
+    });
   };
 
   const handleSubmit = async () => {
@@ -476,7 +575,24 @@ const TravelDetails = ({
         rateData = calculatedRate;
       }
 
-      onSave({ ...data, ...rateData });
+      // Apply DSA percentage
+      const percentageMap = {
+        "1": 1.0,
+        "7/10": 0.7,
+        "7/12": 0.5833,
+        "1/2": 0.5,
+        "3/10": 0.3,
+        "1/5": 0.2
+      };
+      const percentage = percentageMap[data.dsa_percentage] || 1.0;
+      
+      onSave({ 
+        ...data, 
+        ...rateData,
+        dsa_percentage: data.dsa_percentage,
+        calculated_dsa_amount: rateData.rate * percentage
+      });
+      
       setData({
         start_date: "",
         end_date: "",
@@ -495,6 +611,7 @@ const TravelDetails = ({
         return: false,
       });
       setCalculatedRate(null);
+      setCalculatedDSARate(null);
       onClose();
     } catch (error) {
       console.error("Error while submitting:", error);
@@ -505,10 +622,30 @@ const TravelDetails = ({
     if (initialData) {
       setData(initialData);
       if (initialData.rate) {
-        setCalculatedRate({
+        const rateData = {
           rate: initialData.rate,
           currency: initialData.currency
-        });
+        };
+        setCalculatedRate(rateData);
+        // Calculate DSA amount if dsa_percentage exists
+        if (initialData.dsa_percentage) {
+          const percentageMap = {
+            "1": 1.0,
+            "7/10": 0.7,
+            "7/12": 0.5833,
+            "1/2": 0.5,
+            "3/10": 0.3,
+            "1/5": 0.2
+          };
+          const percentage = percentageMap[initialData.dsa_percentage] || 1.0;
+          setCalculatedDSARate({
+            rate: initialData.rate,
+            currency: initialData.currency,
+            dsaAmount: initialData.rate * percentage,
+            percentage: percentage,
+            percentageLabel: initialData.dsa_percentage
+          });
+        }
       }
     }
   }, [initialData]);
@@ -528,10 +665,52 @@ const TravelDetails = ({
     }
   }, [data.start_date, data.end_date]);
 
+  // Recalculate DSA amount when percentage changes
+  useEffect(() => {
+    if (calculatedRate) {
+      calculateDSAAmount(calculatedRate);
+    }
+  }, [data.dsa_percentage]);
+
   if (!isOpen) return null;
 
   const isDisabled = existingData ? (edit ? false : true) : false;
   const travelType = type === "inCountry" ? "Domestic" : "International";
+
+  // Get DSA percentage options based on department and type
+  const getDSAPercentageOptions = () => {
+    const options = [
+      { value: "1", label: "100% - No meals & lodging" }
+    ];
+
+    if (department === "Management" && type === "inCountry") {
+      options.push({ 
+        value: "7/10", 
+        label: "70% - Lodging provided" 
+      });
+    }
+
+    if (department === "Management" && type === "outCountry") {
+      options.push({ 
+        value: "7/12", 
+        label: "58.33% - Lodging provided" 
+      });
+    }
+
+    options.push(
+      { value: "1/2", label: "50% - Lodging provided" },
+      { value: "3/10", label: "30% - Both meals & lodging provided" }
+    );
+
+    if (type === "outCountry") {
+      options.push({ 
+        value: "1/5", 
+        label: "20% - Partially funded" 
+      });
+    }
+
+    return options;
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -553,7 +732,7 @@ const TravelDetails = ({
         </DialogHeader>
 
         <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="basic" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Basic Info
@@ -561,6 +740,10 @@ const TravelDetails = ({
             <TabsTrigger value="route" className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
               Route Details
+            </TabsTrigger>
+            <TabsTrigger value="dsa" className="flex items-center gap-2">
+              <Percent className="h-4 w-4" />
+              DSA Settings
             </TabsTrigger>
           </TabsList>
 
@@ -952,28 +1135,69 @@ const TravelDetails = ({
                       </p>
                     </div>
                   )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-                  {/* Calculate Button & Result - Simplified */}
-                  <div className="md:col-span-2 space-y-4">
-                    <div className="flex items-center gap-4">
-                      <Button
-                        onClick={calculateRate}
-                        disabled={isCalculating || isDisabled}
-                        className="flex-1"
+          {/* DSA Settings Tab */}
+          <TabsContent value="dsa" className="space-y-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Percent className="h-5 w-5 text-blue-600" />
+                    <h3 className="text-lg font-semibold">DSA Settings</h3>
+                  </div>
+
+                  {/* DSA Percentage Dropdown */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Percent className="h-4 w-4" />
+                        Select DSA Percentage
+                      </Label>
+                      <Select
+                        value={data.dsa_percentage}
+                        onValueChange={(value) => handleSelectChange("dsa_percentage", value)}
+                        disabled={isDisabled}
                       >
-                        {isCalculating ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Calculating...
-                          </>
-                        ) : (
-                          <>
-                            <Calculator className="mr-2 h-4 w-4" />
-                            Calculate Amount
-                          </>
-                        )}
-                      </Button>
+                        <SelectTrigger className={errors.dsa_percentage ? "border-red-500" : ""}>
+                          <SelectValue placeholder="Select DSA percentage" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getDSAPercentageOptions().map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              <div className="flex justify-between w-full">
+                                <span className="font-medium">{option.label}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
+                  </div>
+
+                  {/* Calculate Button */}
+                  <div className="space-y-4">
+                    <Button
+                      onClick={calculateRate}
+                      disabled={isCalculating || isDisabled}
+                      className="w-full"
+                      size="lg"
+                    >
+                      {isCalculating ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Calculating...
+                        </>
+                      ) : (
+                        <>
+                          <Calculator className="mr-2 h-5 w-5" />
+                          Calculate DSA Amount
+                        </>
+                      )}
+                    </Button>
 
                     {/* Calculation Error Alert */}
                     {showCalculationError && Object.keys(errors).length > 0 && (
@@ -981,34 +1205,87 @@ const TravelDetails = ({
                         <AlertCircle className="h-4 w-4" />
                         <AlertDescription>
                           Please fill in all required fields before calculating.
+                          <ul className="list-disc pl-4 space-y-1 mt-1">
+                            {Object.entries(errors).map(([field, error]) => (
+                              <li key={field} className="text-sm">
+                                {error}
+                              </li>
+                            ))}
+                          </ul>
                         </AlertDescription>
                       </Alert>
                     )}
-
-                    {/* Calculated Amount Display */}
-                    {calculatedRate && (
-                      <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-                        <CardContent className="pt-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="font-bold text-green-800">Calculated Amount</h4>
-                              <p className="text-sm text-green-600">
-                                Based on your travel configuration (100% DSA)
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-bold text-green-800">
-                                {calculatedRate.currency} {calculatedRate.rate?.toLocaleString('en-IN', {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2
-                                })}
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
                   </div>
+
+                  {/* DSA Calculation Result */}
+                  {calculatedDSARate && (
+                    <div className="mt-4 space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card className="bg-gray-50">
+                          <CardContent className="pt-4">
+                            <p className="text-sm text-muted-foreground">Base Amount</p>
+                            <p className="text-xl font-bold">
+                              {calculatedDSARate.currency} {calculatedDSARate.rate?.toLocaleString('en-IN', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              })}
+                            </p>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-blue-50">
+                          <CardContent className="pt-4">
+                            <p className="text-sm text-muted-foreground">DSA Percentage</p>
+                            <p className="text-xl font-bold text-blue-700">
+                              {(() => {
+                                const percentageMap = {
+                                  "1": "100%",
+                                  "7/10": "70%",
+                                  "7/12": "58.33%",
+                                  "1/2": "50%",
+                                  "3/10": "30%",
+                                  "1/5": "20%"
+                                };
+                                return percentageMap[data.dsa_percentage] || "100%";
+                              })()}
+                            </p>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="bg-green-50 border-green-200">
+                          <CardContent className="pt-4">
+                            <p className="text-sm text-muted-foreground">DSA Amount</p>
+                            <p className="text-xl font-bold text-green-700">
+                              {calculatedDSARate.currency} {calculatedDSARate.dsaAmount?.toLocaleString('en-IN', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              })}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      <Alert className="bg-green-50 border-green-200">
+                        <AlertCircle className="h-4 w-4 text-green-600" />
+                        <AlertDescription className="text-sm text-green-700">
+                          DSA amount calculated as {(() => {
+                            const percentageMap = {
+                              "1": "100%",
+                              "7/10": "70%",
+                              "7/12": "58.33%",
+                              "1/2": "50%",
+                              "3/10": "30%",
+                              "1/5": "20%"
+                            };
+                            return percentageMap[data.dsa_percentage] || "100%";
+                          })()} of the base amount ({calculatedDSARate.currency} {calculatedDSARate.rate?.toLocaleString('en-IN', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          })})
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -1018,18 +1295,23 @@ const TravelDetails = ({
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center mt-4">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-2`}>
               <div className={`h-2 w-2 rounded-full ${currentTab === "basic" ? "bg-primary" : "bg-muted"}`} />
               <span className="text-xs text-muted-foreground">Basic Info</span>
             </div>
             <div className="w-8 h-px bg-muted" />
-            <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-2`}>
               <div className={`h-2 w-2 rounded-full ${currentTab === "route" ? "bg-primary" : "bg-muted"}`} />
               <span className="text-xs text-muted-foreground">Route Details</span>
             </div>
+            <div className="w-8 h-px bg-muted" />
+            <div className={`flex items-center gap-2`}>
+              <div className={`h-2 w-2 rounded-full ${currentTab === "dsa" ? "bg-primary" : "bg-muted"}`} />
+              <span className="text-xs text-muted-foreground">DSA Settings</span>
+            </div>
           </div>
           <div className="flex gap-2">
-            {currentTab === "route" && (
+            {currentTab !== "basic" && (
               <Button
                 type="button"
                 variant="outline"
@@ -1040,7 +1322,7 @@ const TravelDetails = ({
                 Back
               </Button>
             )}
-            {currentTab === "basic" && (
+            {currentTab !== "dsa" ? (
               <Button
                 type="button"
                 onClick={handleNext}
@@ -1049,12 +1331,12 @@ const TravelDetails = ({
                 Next
                 <ChevronRight className="h-4 w-4" />
               </Button>
-            )}
+            ) : null}
           </div>
         </div>
 
         {/* Global Error Display */}
-        {Object.keys(errors).length > 0 && (
+        {Object.keys(errors).length > 0 && currentTab !== "dsa" && (
           <Alert variant="destructive" className="mt-4">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
