@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import UserServices from "../services/UserServices";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
@@ -41,6 +41,135 @@ import TravelDetails from "./TravelDetails";
 import TravelDetailsTable from "./TravelDetailsTable";
 import FundingAgencyPopup from "./FundingAgencyPopup";
 import FundingAgencyServices from "../services/FundingAgencyServices";
+
+// Memoized Funding Item Component to prevent unnecessary re-renders
+const FundingItem = memo((({ 
+  funding, 
+  index, 
+  fundingAgencies, 
+  currencies, 
+  isReadOnly, 
+  onFundingChange, 
+  onRemoveFunding, 
+  onOpenPopup,
+  errors 
+}) => {
+  return (
+    <div className="border rounded-lg p-4 space-y-3 relative">
+      {!isReadOnly && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => onRemoveFunding(index)}
+          className="absolute top-2 right-2 text-red-500 hover:text-red-600 h-7 w-7 p-0"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Funding Agency Selection */}
+        <div className="space-y-2 pt-2">
+          <Label className="flex items-center gap-1">
+            Funding Agency*
+            <span className="text-red-500">*</span>
+          </Label>
+          <div className="flex gap-2">
+            <Select
+              value={funding.funding_agency_id || ""}
+              onValueChange={(value) => {
+                if (value === "new") {
+                  onOpenPopup(index);
+                } else {
+                  onFundingChange(index, "funding_agency_id", value);
+                }
+              }}
+              disabled={isReadOnly}
+              className="flex-1"
+            >
+              <SelectTrigger
+                className={
+                  errors[`funding_${index}_agency_error`] ? "border-red-500" : ""
+                }
+              >
+                <SelectValue placeholder="Select funding agency" />
+              </SelectTrigger>
+              <SelectContent>
+                {fundingAgencies.map((agency) => (
+                  <SelectItem
+                    key={agency.id}
+                    value={String(agency.id)}
+                  >
+                    {agency.name} {agency.code && `(${agency.code})`}
+                  </SelectItem>
+                ))}
+                <SelectItem value="new" className="text-primary font-medium">
+                  + Add New Agency
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {errors[`funding_${index}_agency_error`] && (
+            <p className="text-sm text-red-500 flex items-center gap-1">
+              <AlertCircle className="h-3 w-3" />
+              {errors[`funding_${index}_agency_error`]}
+            </p>
+          )}
+        </div>
+
+        {/* Funded Amount */}
+        <div className="space-y-2 pt-2">
+          <Label className="flex items-center gap-1">
+            Funded Amount*
+            <span className="text-red-500">*</span>
+          </Label>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              value={funding.funded_amount || ""}
+              onChange={(e) =>
+                onFundingChange(index, "funded_amount", e.target.value)
+              }
+              placeholder="Enter amount"
+              disabled={isReadOnly}
+              className={
+                errors[`funding_${index}_amount_error`] ? "border-red-500" : "flex-1"
+              }
+            />
+            <Select
+              value={funding.currency || "Nu"}
+              onValueChange={(value) =>
+                onFundingChange(index, "currency", value)
+              }
+              disabled={isReadOnly}
+              className="w-24"
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {currencies.map((curr) => (
+                  <SelectItem key={curr.value} value={curr.value}>
+                    {curr.value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {errors[`funding_${index}_amount_error`] && (
+            <p className="text-sm text-red-500 flex items-center gap-1">
+              <AlertCircle className="h-3 w-3" />
+              {errors[`funding_${index}_amount_error`]}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}));
+
+FundingItem.displayName = 'FundingItem';
 
 const InCountryTour = ({
   data,
@@ -88,8 +217,8 @@ const InCountryTour = ({
   const [loadingAgencies, setLoadingAgencies] = useState(false);
 
   const currencies = [
-  { value: "Nu", label: "Nu (Ngultrum)" },
-];
+    { value: "Nu", label: "Nu (Ngultrum)" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,7 +251,8 @@ const InCountryTour = ({
         : data.advance_amount?.Nu
       : formData.advanceAmount?.Nu;
 
-  const totalAmount = () => {
+  // Memoize totalAmount calculation
+  const totalAmount = useCallback(() => {
     let total = 0;
     rows.forEach((row) => {
       if (row.rate) {
@@ -144,7 +274,7 @@ const InCountryTour = ({
       ...prev,
       totalAmount: netTotal,
     }));
-  };
+  }, [rows, formData.fundings]);
 
   const handleFileChange = async (event) => {
     const newFiles = Array.from(event.target.files);
@@ -203,35 +333,40 @@ const InCountryTour = ({
     }));
   };
 
-  // Funding handlers
-  const handleFundingChange = (index, field, value) => {
-    const updatedFundings = [...formData.fundings];
-    
-    if (field === 'funding_agency_id' && value && value !== 'new') {
-      const selectedAgency = fundingAgencies.find(a => String(a.id) === value);
-      if (selectedAgency) {
+  // Memoized funding handlers to prevent recreation on every render
+  const handleFundingChange = useCallback((index, field, value) => {
+    setFormData(prev => {
+      const updatedFundings = [...prev.fundings];
+      
+      if (field === 'funding_agency_id' && value && value !== 'new') {
+        const selectedAgency = fundingAgencies.find(a => String(a.id) === value);
+        if (selectedAgency) {
+          updatedFundings[index] = {
+            ...updatedFundings[index],
+            funding_agency_id: value,
+            funding_agency_name: selectedAgency.name,
+            funding_agency_code: selectedAgency.code,
+          };
+        }
+      } else {
         updatedFundings[index] = {
           ...updatedFundings[index],
-          funding_agency_id: value,
-          funding_agency_name: selectedAgency.name,
-          funding_agency_code: selectedAgency.code,
+          [field]: value,
         };
       }
-    } else {
-      updatedFundings[index] = {
-        ...updatedFundings[index],
-        [field]: value,
+      
+      return {
+        ...prev,
+        fundings: updatedFundings,
       };
-    }
-    
-    setFormData({ ...formData, fundings: updatedFundings });
-  };
+    });
+  }, [fundingAgencies]);
 
-  const addFunding = () => {
-    setFormData({
-      ...formData,
+  const addFunding = useCallback(() => {
+    setFormData(prev => ({
+      ...prev,
       fundings: [
-        ...formData.fundings,
+        ...prev.fundings,
         {
           funding_agency_id: "",
           funding_agency_name: "",
@@ -240,41 +375,48 @@ const InCountryTour = ({
           currency: "Nu",
         },
       ],
+    }));
+  }, []);
+
+  const removeFunding = useCallback((index) => {
+    setFormData(prev => {
+      const updatedFundings = prev.fundings.filter((_, i) => i !== index);
+      return { ...prev, fundings: updatedFundings };
     });
-  };
+  }, []);
 
-  const removeFunding = (index) => {
-    const updatedFundings = formData.fundings.filter((_, i) => i !== index);
-    setFormData({ ...formData, fundings: updatedFundings });
-  };
-
-  const handleOpenPopup = (index) => {
+  const handleOpenPopup = useCallback((index) => {
     setSelectedFundingIndex(index);
     setShowFundingPopup(true);
-  };
+  }, []);
 
-  const handlePopupSave = (newAgency) => {
+  const handlePopupSave = useCallback((newAgency) => {
     if (selectedFundingIndex !== null) {
-      const updatedFundings = [...formData.fundings];
-      updatedFundings[selectedFundingIndex] = {
-        ...updatedFundings[selectedFundingIndex],
-        funding_agency_id: String(newAgency.id),
-        funding_agency_name: newAgency.name,
-        funding_agency_code: newAgency.code,
-      };
-      setFormData({ ...formData, fundings: updatedFundings });
+      setFormData(prev => {
+        const updatedFundings = [...prev.fundings];
+        updatedFundings[selectedFundingIndex] = {
+          ...updatedFundings[selectedFundingIndex],
+          funding_agency_id: String(newAgency.id),
+          funding_agency_name: newAgency.name,
+          funding_agency_code: newAgency.code,
+        };
+        return { ...prev, fundings: updatedFundings };
+      });
       
       // Add the new agency to the list if it doesn't exist
-      const agencyExists = fundingAgencies.some(a => a.id === newAgency.id);
-      if (!agencyExists) {
-        setFundingAgencies((prev) => [...prev, newAgency]);
-      }
+      setFundingAgencies(prev => {
+        const agencyExists = prev.some(a => a.id === newAgency.id);
+        if (!agencyExists) {
+          return [...prev, newAgency];
+        }
+        return prev;
+      });
     }
     setShowFundingPopup(false);
     setSelectedFundingIndex(null);
-  };
+  }, [selectedFundingIndex]);
 
-  const handlePopupClose = () => {
+  const handlePopupClose = useCallback(() => {
     setShowFundingPopup(false);
     setSelectedFundingIndex(null);
     // If user cancels and no agency selected, remove the empty funding entry
@@ -283,7 +425,7 @@ const InCountryTour = ({
         !formData.fundings[selectedFundingIndex]?.funding_agency_name) {
       removeFunding(selectedFundingIndex);
     }
-  };
+  }, [selectedFundingIndex, formData.fundings, removeFunding]);
 
   const handleView = async (fileId) => {
     try {
@@ -378,18 +520,18 @@ const InCountryTour = ({
   };
 
   const fetchFundingAgencies = async () => {
-  setLoadingAgencies(true);
-  try {
-    const response = await FundingAgencyServices.getActiveFundingAgencies();
-    if (response && response.success) {
-      setFundingAgencies(response.data || []);
+    setLoadingAgencies(true);
+    try {
+      const response = await FundingAgencyServices.getActiveFundingAgencies();
+      if (response && response.success) {
+        setFundingAgencies(response.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching funding agencies:", error);
+    } finally {
+      setLoadingAgencies(false);
     }
-  } catch (error) {
-    console.error("Error fetching funding agencies:", error);
-  } finally {
-    setLoadingAgencies(false);
-  }
-};
+  };
 
   const updateFormDataWithUser = (userData) => {
     setFormData((prev) => ({
@@ -408,8 +550,8 @@ const InCountryTour = ({
       funding_agency_id: funding.funding_agency?.id ? String(funding.funding_agency.id) : "",
       funding_agency_name: funding.funding_agency?.name || "",
       funding_agency_code: funding.funding_agency?.code || "",
-      funded_amount: funding.funded_amount['amount'] || "",
-      currency: funding.funded_amount['currency'] || "",
+      funded_amount: funding.funded_amount?.amount || "",
+      currency: funding.funded_amount?.currency || "",
     }));
 
     setFormData((prev) => ({
@@ -453,7 +595,7 @@ const InCountryTour = ({
         "Advance amount cannot be greater than total amount.";
     }
 
-      formData.fundings.forEach((funding, index) => {
+    formData.fundings.forEach((funding, index) => {
       if (!funding.funding_agency_id && !funding.funding_agency_name) {
         errors[`funding_${index}_agency_error`] = "Please select or enter a funding agency.";
       }
@@ -611,8 +753,6 @@ const InCountryTour = ({
   };
 
   const handleTravelItinerary = (newData) => {
-    // delete errors.itinerary_error;
-
     const dataToCheck = editData || newData;
     const currentHaltCount = haltCount();
 
@@ -650,7 +790,7 @@ const InCountryTour = ({
 
   useEffect(() => {
     totalAmount();
-  }, [rows, formData.advance_percentage, formData.fundings]);
+  }, [rows, formData.advance_percentage, formData.fundings, totalAmount]);
 
   // Loading Skeleton
   const FormSkeleton = () => (
@@ -969,102 +1109,18 @@ const InCountryTour = ({
               {formData.fundings.length > 0 && (
                 <div className="space-y-4">
                   {formData.fundings.map((funding, index) => (
-                    <div
-                      key={index}
-                      className="border rounded-lg p-4 space-y-3 relative"
-                    >
-                      {!isReadOnly && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeFunding(index)}
-                          className="absolute top-2 right-2 text-red-500 hover:text-red-600 h-7 w-7 p-0"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {/* Funding Agency Selection */}
-                        <FormField
-                          label="Funding Agency*"
-                          error={formErrors[`funding_${index}_agency_error`]}
-                          required
-                        >
-                          <div className="flex gap-2">
-                            <Select
-                              value={funding.funding_agency_id || ""}
-                              onValueChange={(value) => {
-                                if (value === "new") {
-                                  handleOpenPopup(index);
-                                } else {
-                                  handleFundingChange(index, "funding_agency_id", value);
-                                }
-                              }}
-                              disabled={isReadOnly}
-                              className="flex-1"
-                              >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select funding agency" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {fundingAgencies.map((agency) => (
-                                  <SelectItem
-                                    key={agency.id}
-                                    value={String(agency.id)}
-                                  >
-                                    {agency.name} {agency.code && `(${agency.code})`}
-                                  </SelectItem>
-                                ))}
-                                <SelectItem value="new" className="text-primary font-medium">
-                                  + Add New Agency
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </FormField>
-
-                        {/* Funded Amount */}
-                        <FormField
-                          label="Funded Amount*"
-                          error={formErrors[`funding_${index}_amount_error`]}
-                          required
-                        >
-                          <div className="flex gap-2">
-                            <Input
-                              type="number"
-                              value={funding.funded_amount || ""}
-                              onChange={(e) =>
-                                handleFundingChange(index, "funded_amount", e.target.value)
-                              }
-                              placeholder="Enter amount"
-                              disabled={isReadOnly}
-                              className="flex-1"
-                            />
-                            <Select
-                              value={funding.currency || "Nu"}
-                              onValueChange={(value) =>
-                                handleFundingChange(index, "currency", value)
-                              }
-                              disabled={isReadOnly}
-                              className="w-24"
-                            >
-                              <SelectTrigger className="w-24">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {currencies.map((curr) => (
-                                  <SelectItem key={curr.value} value={curr.value}>
-                                    {curr.value}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </FormField>
-                      </div>
-                    </div>
+                    <FundingItem
+                      key={`funding-${index}-${funding.funding_agency_id || 'new'}`}
+                      funding={funding}
+                      index={index}
+                      fundingAgencies={fundingAgencies}
+                      currencies={currencies}
+                      isReadOnly={isReadOnly}
+                      onFundingChange={handleFundingChange}
+                      onRemoveFunding={removeFunding}
+                      onOpenPopup={handleOpenPopup}
+                      errors={formErrors}
+                    />
                   ))}
                 </div>
               )}

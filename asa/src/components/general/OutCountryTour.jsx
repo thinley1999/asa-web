@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import UserServices from "../services/UserServices";
 import AdvanceServices from "../services/AdvanceServices";
 import FileServices from "../services/FileServices";
@@ -50,6 +50,135 @@ import TravelDetails from "./TravelDetails";
 import TravelDetailsTable from "./TravelDetailsTable";
 import FundingAgencyPopup from "./FundingAgencyPopup";
 import FundingAgencyServices from "../services/FundingAgencyServices";
+
+// Memoized Funding Item Component
+const FundingItem = memo(({ 
+  funding, 
+  index, 
+  fundingAgencies, 
+  currencies, 
+  isReadOnly, 
+  onFundingChange, 
+  onRemoveFunding, 
+  onOpenPopup,
+  errors 
+}) => {
+  return (
+    <div className="border rounded-lg p-4 space-y-3 relative">
+      {!isReadOnly && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => onRemoveFunding(index)}
+          className="absolute top-2 right-2 text-red-500 hover:text-red-600 h-7 w-7 p-0"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Funding Agency Selection */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1">
+            Funding Agency*
+            <span className="text-red-500">*</span>
+          </Label>
+          <div className="flex gap-2">
+            <Select
+              value={funding.funding_agency_id || ""}
+              onValueChange={(value) => {
+                if (value === "new") {
+                  onOpenPopup(index);
+                } else {
+                  onFundingChange(index, "funding_agency_id", value);
+                }
+              }}
+              disabled={isReadOnly}
+              className="flex-1"
+            >
+              <SelectTrigger
+                className={
+                  errors[`funding_${index}_agency_error`] ? "border-red-500" : ""
+                }
+              >
+                <SelectValue placeholder="Select funding agency" />
+              </SelectTrigger>
+              <SelectContent>
+                {fundingAgencies.map((agency) => (
+                  <SelectItem
+                    key={agency.id}
+                    value={String(agency.id)}
+                  >
+                    {agency.name} {agency.code && `(${agency.code})`}
+                  </SelectItem>
+                ))}
+                <SelectItem value="new" className="text-primary font-medium">
+                  + Add New Agency
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {errors[`funding_${index}_agency_error`] && (
+            <p className="text-sm text-red-500 flex items-center gap-1">
+              <AlertCircle className="h-3 w-3" />
+              {errors[`funding_${index}_agency_error`]}
+            </p>
+          )}
+        </div>
+
+        {/* Funded Amount */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1">
+            Funded Amount*
+            <span className="text-red-500">*</span>
+          </Label>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              value={funding.funded_amount || ""}
+              onChange={(e) =>
+                onFundingChange(index, "funded_amount", e.target.value)
+              }
+              placeholder="Enter amount"
+              disabled={isReadOnly}
+              className={
+                errors[`funding_${index}_amount_error`] ? "border-red-500" : "flex-1"
+              }
+            />
+            <Select
+              value={funding.currency || "Nu"}
+              onValueChange={(value) =>
+                onFundingChange(index, "currency", value)
+              }
+              disabled={isReadOnly}
+              className="w-24"
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {currencies.map((curr) => (
+                  <SelectItem key={curr.value} value={curr.value}>
+                    {curr.value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {errors[`funding_${index}_amount_error`] && (
+            <p className="text-sm text-red-500 flex items-center gap-1">
+              <AlertCircle className="h-3 w-3" />
+              {errors[`funding_${index}_amount_error`]}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+FundingItem.displayName = 'FundingItem';
 
 const OutCountryTour = ({
   data,
@@ -131,7 +260,8 @@ const OutCountryTour = ({
     fetchData();
   }, [data]);
 
-  const totalAmount = () => {
+  // Memoized totalAmount calculation
+  const totalAmount = useCallback(() => {
     let Nu = 0;
     let INR = 0;
     let USD = formData?.additional_expense == 200 ? 200 : 0;
@@ -180,37 +310,42 @@ const OutCountryTour = ({
         Total: { Nu: netNu, INR: netINR, USD: netUSD },
       },
     }));
-  };
+  }, [rows, formData.advance_percentage, formData.additional_expense, formData.fundings]);
 
-  // Funding handlers
-  const handleFundingChange = (index, field, value) => {
-    const updatedFundings = [...formData.fundings];
-    
-    if (field === 'funding_agency_id' && value && value !== 'new') {
-      const selectedAgency = fundingAgencies.find(a => String(a.id) === value);
-      if (selectedAgency) {
+  // Memoized funding handlers
+  const handleFundingChange = useCallback((index, field, value) => {
+    setFormData(prev => {
+      const updatedFundings = [...prev.fundings];
+      
+      if (field === 'funding_agency_id' && value && value !== 'new') {
+        const selectedAgency = fundingAgencies.find(a => String(a.id) === value);
+        if (selectedAgency) {
+          updatedFundings[index] = {
+            ...updatedFundings[index],
+            funding_agency_id: value,
+            funding_agency_name: selectedAgency.name,
+            funding_agency_code: selectedAgency.code,
+          };
+        }
+      } else {
         updatedFundings[index] = {
           ...updatedFundings[index],
-          funding_agency_id: value,
-          funding_agency_name: selectedAgency.name,
-          funding_agency_code: selectedAgency.code,
+          [field]: value,
         };
       }
-    } else {
-      updatedFundings[index] = {
-        ...updatedFundings[index],
-        [field]: value,
+      
+      return {
+        ...prev,
+        fundings: updatedFundings,
       };
-    }
-    
-    setFormData({ ...formData, fundings: updatedFundings });
-  };
+    });
+  }, [fundingAgencies]);
 
-  const addFunding = () => {
-    setFormData({
-      ...formData,
+  const addFunding = useCallback(() => {
+    setFormData(prev => ({
+      ...prev,
       fundings: [
-        ...formData.fundings,
+        ...prev.fundings,
         {
           funding_agency_id: "",
           funding_agency_name: "",
@@ -219,41 +354,48 @@ const OutCountryTour = ({
           currency: "Nu",
         },
       ],
+    }));
+  }, []);
+
+  const removeFunding = useCallback((index) => {
+    setFormData(prev => {
+      const updatedFundings = prev.fundings.filter((_, i) => i !== index);
+      return { ...prev, fundings: updatedFundings };
     });
-  };
+  }, []);
 
-  const removeFunding = (index) => {
-    const updatedFundings = formData.fundings.filter((_, i) => i !== index);
-    setFormData({ ...formData, fundings: updatedFundings });
-  };
-
-  const handleOpenPopup = (index) => {
+  const handleOpenPopup = useCallback((index) => {
     setSelectedFundingIndex(index);
     setShowFundingPopup(true);
-  };
+  }, []);
 
-  const handlePopupSave = (newAgency) => {
+  const handlePopupSave = useCallback((newAgency) => {
     if (selectedFundingIndex !== null) {
-      const updatedFundings = [...formData.fundings];
-      updatedFundings[selectedFundingIndex] = {
-        ...updatedFundings[selectedFundingIndex],
-        funding_agency_id: String(newAgency.id),
-        funding_agency_name: newAgency.name,
-        funding_agency_code: newAgency.code,
-      };
-      setFormData({ ...formData, fundings: updatedFundings });
+      setFormData(prev => {
+        const updatedFundings = [...prev.fundings];
+        updatedFundings[selectedFundingIndex] = {
+          ...updatedFundings[selectedFundingIndex],
+          funding_agency_id: String(newAgency.id),
+          funding_agency_name: newAgency.name,
+          funding_agency_code: newAgency.code,
+        };
+        return { ...prev, fundings: updatedFundings };
+      });
       
       // Add the new agency to the list if it doesn't exist
-      const agencyExists = fundingAgencies.some(a => a.id === newAgency.id);
-      if (!agencyExists) {
-        setFundingAgencies((prev) => [...prev, newAgency]);
-      }
+      setFundingAgencies(prev => {
+        const agencyExists = prev.some(a => a.id === newAgency.id);
+        if (!agencyExists) {
+          return [...prev, newAgency];
+        }
+        return prev;
+      });
     }
     setShowFundingPopup(false);
     setSelectedFundingIndex(null);
-  };
+  }, [selectedFundingIndex]);
 
-  const handlePopupClose = () => {
+  const handlePopupClose = useCallback(() => {
     setShowFundingPopup(false);
     setSelectedFundingIndex(null);
     // If user cancels and no agency selected, remove the empty funding entry
@@ -262,7 +404,7 @@ const OutCountryTour = ({
         !formData.fundings[selectedFundingIndex]?.funding_agency_name) {
       removeFunding(selectedFundingIndex);
     }
-  };
+  }, [selectedFundingIndex, formData.fundings, removeFunding]);
 
   const handleFileChange = async (event, key) => {
     const newFiles = Array.from(event.target.files);
@@ -729,7 +871,7 @@ const OutCountryTour = ({
 
   useEffect(() => {
     totalAmount();
-  }, [rows, formData.advance_percentage, formData.additional_expense, formData.fundings]);
+  }, [rows, formData.advance_percentage, formData.additional_expense, formData.fundings, totalAmount]);
 
   // Loading Skeleton
   const FormSkeleton = () => (
@@ -1084,7 +1226,7 @@ const OutCountryTour = ({
               )}
             </div>
 
-             {/* Management Additional Expense */}
+            {/* Management Additional Expense */}
             {isManagement && (
               <div className="mt-4">
                 <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
@@ -1161,102 +1303,18 @@ const OutCountryTour = ({
               {formData.fundings.length > 0 && (
                 <div className="space-y-4">
                   {formData.fundings.map((funding, index) => (
-                    <div
-                      key={index}
-                      className="border rounded-lg p-4 space-y-3 relative"
-                    >
-                      {!isReadOnly && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeFunding(index)}
-                          className="absolute top-2 right-2 text-red-500 hover:text-red-600 h-7 w-7 p-0"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {/* Funding Agency Selection */}
-                        <FormField
-                          label="Funding Agency*"
-                          error={formErrors[`funding_${index}_agency_error`]}
-                          required
-                        >
-                          <div className="flex gap-2">
-                            <Select
-                              value={funding.funding_agency_id || ""}
-                              onValueChange={(value) => {
-                                if (value === "new") {
-                                  handleOpenPopup(index);
-                                } else {
-                                  handleFundingChange(index, "funding_agency_id", value);
-                                }
-                              }}
-                              disabled={isReadOnly}
-                              className="flex-1"
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select funding agency" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {fundingAgencies.map((agency) => (
-                                  <SelectItem
-                                    key={agency.id}
-                                    value={String(agency.id)}
-                                  >
-                                    {agency.name} {agency.code && `(${agency.code})`}
-                                  </SelectItem>
-                                ))}
-                                <SelectItem value="new" className="text-primary font-medium">
-                                  + Add New Agency
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </FormField>
-
-                        {/* Funded Amount */}
-                        <FormField
-                          label="Funded Amount*"
-                          error={formErrors[`funding_${index}_amount_error`]}
-                          required
-                        >
-                          <div className="flex gap-2">
-                            <Input
-                              type="text"
-                              value={funding.funded_amount || ""}
-                              onChange={(e) =>
-                                handleFundingChange(index, "funded_amount", e.target.value)
-                              }
-                              placeholder="Enter amount"
-                              disabled={isReadOnly}
-                              className="flex-1"
-                            />
-                            <Select
-                              value={funding.currency || "Nu"}
-                              onValueChange={(value) =>
-                                handleFundingChange(index, "currency", value)
-                              }
-                              disabled={isReadOnly}
-                              className="w-24"
-                            >
-                              <SelectTrigger className="w-24">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {currencies.map((curr) => (
-                                  <SelectItem key={curr.value} value={curr.value}>
-                                    {curr.value}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </FormField>
-                      </div>
-                    </div>
+                    <FundingItem
+                      key={`funding-${index}-${funding.funding_agency_id || 'new'}`}
+                      funding={funding}
+                      index={index}
+                      fundingAgencies={fundingAgencies}
+                      currencies={currencies}
+                      isReadOnly={isReadOnly}
+                      onFundingChange={handleFundingChange}
+                      onRemoveFunding={removeFunding}
+                      onOpenPopup={handleOpenPopup}
+                      errors={formErrors}
+                    />
                   ))}
                 </div>
               )}
@@ -1348,9 +1406,9 @@ const OutCountryTour = ({
                 <Banknote className="h-5 w-5 text-green-600" />
                 Amount Summary
               </h4>
-               <p className="text-sm text-muted-foreground mt-1 mb-2">
-                  * Amount receivable is the Total amount minus the total amount funded by external agencies.
-                </p>
+              <p className="text-sm text-muted-foreground mt-1 mb-2">
+                * Amount receivable is the Total amount minus the total amount funded by external agencies.
+              </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <CurrencyDisplay
                   currency="Nu"
