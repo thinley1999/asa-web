@@ -62,6 +62,14 @@ const create = async (params, travel_itinerary = []) => {
       ({ id, ...rest }) => rest
     );
 
+    const fundingData = params.fundings && params.fundings.length > 0 
+      ? params.fundings.map(funding => ({
+          funding_agency_id: parseInt(funding.funding_agency_id),
+          funded_amount: parseFloat(funding.funded_amount) || 0,
+          currency: funding.currency || "Nu"
+        }))
+      : [];
+
     const response = await axios.post(
       `${API_URL}/api/advances`,
       {
@@ -84,6 +92,7 @@ const create = async (params, travel_itinerary = []) => {
           completion_month: params.completion_month,
         },
         travel_itinerary: filteredTravelItinerary,
+        fundings: fundingData,
       },
       {
         headers: {
@@ -102,6 +111,14 @@ const update = async (id, params, travel_itinerary = []) => {
   try {
     const token = localStorage.getItem("token");
 
+    const fundingData = params.fundings && params.fundings.length > 0 
+      ? params.fundings.map(funding => ({
+          funding_agency_id: parseInt(funding.funding_agency_id),
+          funded_amount: parseFloat(funding.funded_amount) || 0,
+          currency: funding.currency || "Nu"
+        }))
+      : [];
+
     const response = await axios.put(
       `${API_URL}/api/advances/${id}`,
       {
@@ -115,7 +132,7 @@ const update = async (id, params, travel_itinerary = []) => {
           advance_percentage: parseFloat(params.advance_percentage),
           office_order: params.office_order,
           tour_type: params.tour_type,
-          additional_expense: params.additional_expense,
+          additional_expense: params.additional_expense
         },
         salary_advance: {
           duration: params.duration,
@@ -124,6 +141,7 @@ const update = async (id, params, travel_itinerary = []) => {
           completion_month: params.completion_month,
         },
         travel_itinerary: travel_itinerary,
+        fundings: fundingData,
       },
       {
         headers: {

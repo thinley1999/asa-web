@@ -2,6 +2,43 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
+const getUsers = async (params) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`${API_URL}/api/users`, {
+      params: {
+        query: params.search_query,
+        role_id: params.role_id,
+        department: params.department,
+        page: params.page,
+        per_page: params.per_page,
+      },
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getUser = async (id) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`${API_URL}/api/users/${id}`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getUserPermission = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -34,9 +71,47 @@ const showDetail = async (id) => {
   }
 };
 
-const create = async () => {};
+const createUser = async (userData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/users`,
+      {
+        user: userData,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    );
 
-const update = async () => {};
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const updateUser = async (id, userData) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.put(
+      `${API_URL}/api/users/${id}`,
+      {
+        user: userData,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const resetpassword = async (params) => {
   const token = localStorage.getItem("token");
@@ -99,12 +174,30 @@ const acceptTerms = async (id) => {
   }
 };
 
+const getRoles = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`${API_URL}/api/roles`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
+  getUsers,
+  getUser,
   getUserPermission,
   showDetail,
-  create,
-  update,
+  createUser,
+  updateUser,
   resetpassword,
   changePassword,
-  acceptTerms
+  acceptTerms,
+  getRoles
 };

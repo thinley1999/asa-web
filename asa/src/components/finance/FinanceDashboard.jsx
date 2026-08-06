@@ -1,15 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import "chartjs-plugin-datalabels";
-import "../../assets/css/main.css";
-import { FaSackDollar } from "react-icons/fa6";
-import { FaHandHoldingUsd } from "react-icons/fa";
-import { FaFileInvoiceDollar } from "react-icons/fa6";
-import { PiPiggyBankFill } from "react-icons/pi";
+import {
+  Wallet,
+  Clock,
+  CheckCircle,
+  Truck,
+  FolderClosed,
+  TrendingUp,
+  PieChart,
+  AlertCircle,
+} from "lucide-react";
 import AdvanceServices from "../services/AdvanceServices";
 import LoginoutMessage from "../general/LoginoutMessage";
-import { FaCartShopping } from "react-icons/fa6";
-import { FaFolderClosed } from "react-icons/fa6";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Skeleton } from "../ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 const FinanceDashboard = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,9 +36,11 @@ const FinanceDashboard = () => {
       verified: 0,
       rejected: 0,
       approved: 0,
+      confirmed: 0,
+      dispatched: 0,
+      closed: 0,
     },
   });
-
   const [typeCount, setTypeCount] = useState({
     advance_type_count: {
       salary_advance: 0,
@@ -34,17 +49,14 @@ const FinanceDashboard = () => {
       ex_country_tour_advance: 0,
     },
   });
-
   const [monthlycount, setMonthlyCount] = useState([]);
-
-  const [applicationDetails, setApplicationDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token) {
       const isLoggedIn = localStorage.getItem("isLoggedIn");
-
       if (!isLoggedIn) {
         localStorage.setItem("isLoggedIn", "true");
         setIsLoggedIn(true);
@@ -53,52 +65,77 @@ const FinanceDashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetchStatusCount();
-    fetchTypeCount();
-    fetchMonthlyCount();
+    const fetchAllData = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([
+          fetchStatusCount(),
+          fetchTypeCount(),
+          fetchMonthlyCount(),
+        ]);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load dashboard data",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllData();
   }, []);
 
   const fetchStatusCount = async () => {
     try {
       const response = await AdvanceServices.statusCount();
-      if (response && response.status == 200) {
+      if (response && response.status === 200) {
         setStatusCount(response.data);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error fetching status count:", error);
+      throw error;
     }
   };
 
   const fetchTypeCount = async () => {
     try {
       const response = await AdvanceServices.typeCount();
-      if (response && response.status == 200) {
+      if (response && response.status === 200) {
         setTypeCount(response.data);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error fetching type count:", error);
+      throw error;
     }
   };
 
   const fetchMonthlyCount = async () => {
     try {
       const response = await AdvanceServices.monthlyCount();
-      if (response && response.status == 200) {
+      if (response && response.status === 200) {
         setMonthlyCount(response.data);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error fetching monthly count:", error);
+      throw error;
     }
   };
 
   useEffect(() => {
-    if (barChartRef.current && barChartRef.current.getContext("2d")) {
+    if (loading) return;
+
+    // Destroy existing charts
+    if (barChartInstanceRef.current) {
+      barChartInstanceRef.current.destroy();
+    }
+    if (pieChartInstanceRef.current) {
+      pieChartInstanceRef.current.destroy();
+    }
+
+    // Create Bar Chart
+    if (barChartRef.current && monthlycount.length > 0) {
       const barCtx = barChartRef.current.getContext("2d");
-
-      if (barChartInstanceRef.current) {
-        barChartInstanceRef.current.destroy();
-      }
-
       const labels = monthlycount.map((item) => item.month);
       const data = monthlycount.map((item) => item.count);
 
@@ -108,12 +145,13 @@ const FinanceDashboard = () => {
           labels: labels,
           datasets: [
             {
-              backgroundColor: window.theme?.primary || "rgb(24, 20, 243)",
-              hoverBackgroundColor: window.theme?.primary || "rgb(24, 20, 243)",
+              label: "Applications",
               data: data,
-              barPercentage: 0.75,
-              categoryPercentage: 0.5,
-              borderRadius: 10,
+              backgroundColor: "rgba(59, 130, 246, 0.8)",
+              borderColor: "rgb(59, 130, 246)",
+              borderWidth: 1,
+              borderRadius: 8,
+              hoverBackgroundColor: "rgba(29, 78, 216, 0.9)",
             },
           ],
         },
@@ -124,82 +162,99 @@ const FinanceDashboard = () => {
             legend: {
               display: false,
             },
+            tooltip: {
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              titleColor: "#1f2937",
+              bodyColor: "#4b5563",
+              borderColor: "#e5e7eb",
+              borderWidth: 1,
+              padding: 12,
+              cornerRadius: 6,
+            },
           },
           scales: {
             y: {
+              beginAtZero: true,
               grid: {
-                display: false,
+                color: "rgba(229, 231, 235, 0.5)",
               },
-              stacked: false,
+              ticks: {
+                color: "#6b7280",
+              },
             },
             x: {
               grid: {
-                color: "transparent",
+                display: false,
               },
-              stacked: false,
+              ticks: {
+                color: "#6b7280",
+              },
             },
           },
         },
       });
-
-      // Force resize
-      window.dispatchEvent(new Event("resize"));
     }
 
-    if (pieChartRef.current && pieChartRef.current.getContext("2d")) {
+    // Create Pie Chart
+    if (pieChartRef.current) {
       const pieCtx = pieChartRef.current.getContext("2d");
+      const data = [
+        typeCount.advance_type_count.salary_advance,
+        typeCount.advance_type_count.other_advance,
+        typeCount.advance_type_count.in_country_tour_advance,
+        typeCount.advance_type_count.ex_country_tour_advance,
+      ];
 
-      if (pieChartInstanceRef.current) {
-        pieChartInstanceRef.current.destroy();
+      if (data.some((value) => value > 0)) {
+        pieChartInstanceRef.current = new Chart(pieCtx, {
+          type: "pie",
+          data: {
+            labels: [
+              "Salary Advance",
+              "Other Advance",
+              "Domestic Tour",
+              "International Tour",
+            ],
+            datasets: [
+              {
+                data: data,
+                backgroundColor: [
+                  "rgb(59, 130, 246)",
+                  "rgb(249, 115, 22)",
+                  "rgb(16, 185, 129)",
+                  "rgb(168, 85, 247)",
+                ],
+                borderWidth: 2,
+                borderColor: "white",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  padding: 20,
+                  usePointStyle: true,
+                  pointStyle: "circle",
+                  color: "#4b5563",
+                },
+              },
+              tooltip: {
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                titleColor: "#1f2937",
+                bodyColor: "#4b5563",
+                borderColor: "#e5e7eb",
+                borderWidth: 1,
+                padding: 12,
+                cornerRadius: 6,
+              },
+            },
+          },
+        });
       }
-
-      pieChartInstanceRef.current = new Chart(pieCtx, {
-        type: "pie",
-        data: {
-          labels: [
-            "Salary Advance",
-            "Other Advance",
-            "In country tour advance",
-            "Out country tour advance",
-          ],
-          datasets: [
-            {
-              data: [
-                typeCount.advance_type_count.salary_advance,
-                typeCount.advance_type_count.other_advance,
-                typeCount.advance_type_count.in_country_tour_advance,
-                typeCount.advance_type_count.ex_country_tour_advance,
-              ],
-              backgroundColor: ["#343c6a", "#fc7900", "#1814f3", "#fa00ff"],
-              borderColor: "transparent",
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutoutPercentage: 65,
-          plugins: {
-            datalabels: {
-              display: false,
-            },
-          },
-          tooltips: {
-            enabled: false,
-          },
-          legend: {
-            display: false,
-          },
-          layout: {
-            padding: {
-              top: 20,
-            },
-          },
-        },
-      });
-
-      // Force resize
-      window.dispatchEvent(new Event("resize"));
     }
 
     return () => {
@@ -210,158 +265,202 @@ const FinanceDashboard = () => {
         pieChartInstanceRef.current.destroy();
       }
     };
-  }, [typeCount, monthlycount]);
+  }, [monthlycount, typeCount, loading]);
+
+  const statCards = [
+    {
+      title: "Pending Applications",
+      value: statusCount.status_count.pending || 0,
+      icon: Clock,
+      color: "bg-amber-50 border-amber-200",
+      iconColor: "text-amber-600",
+      description: "Awaiting review",
+    },
+    {
+      title: "Verified Applications",
+      value: statusCount.status_count.verified || 0,
+      icon: CheckCircle,
+      color: "bg-blue-50 border-blue-200",
+      iconColor: "text-blue-600",
+      description: "Approved by verifiers",
+    },
+    {
+      title: "Confirmed Applications",
+      value: statusCount.status_count.confirmed || 0,
+      icon: Wallet,
+      color: "bg-emerald-50 border-emerald-200",
+      iconColor: "text-emerald-600",
+      description: "Ready for processing",
+    },
+    {
+      title: "Dispatched Applications",
+      value: statusCount.status_count.dispatched || 0,
+      icon: Truck,
+      color: "bg-purple-50 border-purple-200",
+      iconColor: "text-purple-600",
+      description: "Sent for payment",
+    },
+    {
+      title: "Closed Applications",
+      value: statusCount.status_count.closed || 0,
+      icon: FolderClosed,
+      color: "bg-gray-50 border-gray-200",
+      iconColor: "text-gray-600",
+      description: "Completed requests",
+    },
+  ];
 
   return (
-    <div className="container">
+    <div className="space-y-2">
       {isLoggedIn && <LoginoutMessage message="Login Successful!!!" />}
-      <div className="row my-2">
-        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-          <div className="card pt-3 pe-2 mb-2 pb-4">
-            <div className="d-flex justify-content-between">
-              <div className="ms-3">
-                <h6 className="mb-0 c-details">Pending Application</h6>
-              </div>
-              <div className="dashboardicon1">
-                <FaSackDollar size={18} />
-              </div>
-            </div>
-            <div className="text-center">
-              <h1 className="cardheading">
-                {statusCount &&
-                statusCount.status_count &&
-                statusCount.status_count.pending
-                  ? statusCount.status_count.pending
-                  : 0}
-              </h1>
-            </div>
-          </div>
-        </div>
 
-        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-          <div className="card pt-3 pe-2 mb-2 pb-4">
-            <div className="d-flex justify-content-between">
-              <div className="ms-3">
-                <h6 className="mb-0 c-details">Verified Application</h6>
-              </div>
-              <div className="dashboardicon2">
-                <FaHandHoldingUsd size={18} />
-              </div>
-            </div>
-            <div className="text-center">
-              <h1 className="cardheading">
-                {statusCount &&
-                statusCount.status_count &&
-                statusCount.status_count.verified
-                  ? statusCount.status_count.verified
-                  : 0}
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-          <div className="card pt-3 pe-2 mb-2 pb-4">
-            <div className="d-flex justify-content-between">
-              <div className="ms-3">
-                <h6 className="mb-0 c-details">Confirmed Application</h6>
-              </div>
-              <div className="dashboardicon4">
-                <PiPiggyBankFill size={18} />
-              </div>
-            </div>
-            <div className="text-center">
-              <h1 className="cardheading">
-                {statusCount &&
-                statusCount.status_count &&
-                statusCount.status_count.confirmed
-                  ? statusCount.status_count.confirmed
-                  : 0}
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-          <div className="card pt-3 pe-2 mb-2 pb-4">
-            <div className="d-flex justify-content-between">
-              <div className="ms-3">
-                <h6 className="mb-0 c-details">Dispatched Application</h6>
-              </div>
-              <div className="dashboardicon5">
-                <FaCartShopping size={18} />
-              </div>
-            </div>
-            <div className="text-center">
-              <h1 className="cardheading">
-                {statusCount &&
-                statusCount.status_count &&
-                statusCount.status_count.dispatched
-                  ? statusCount.status_count.dispatched
-                  : 0}
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-          <div className="card pt-3 pe-2 mb-2 pb-4">
-            <div className="d-flex justify-content-between">
-              <div className="ms-3">
-                <h6 className="mb-0 c-details">Closed Application</h6>
-              </div>
-              <div className="dashboardicon6">
-                <FaFolderClosed size={18} />
-              </div>
-            </div>
-            <div className="text-center">
-              <h1 className="cardheading">
-                {statusCount &&
-                statusCount.status_count &&
-                statusCount.status_count.closed
-                  ? statusCount.status_count.closed
-                  : 0}
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        {/* <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-          <div className="card pt-3 pe-2 mb-2 pb-4">
-            <div className="d-flex justify-content-between">
-              <div className="ms-3">
-                <h6 className="mb-0 c-details">Rejected Application</h6>
-              </div>
-              <div className="dashboardicon3">
-                <FaFileInvoiceDollar size={18} />
-              </div>
-            </div>
-            <div className="text-center">
-              <h1 className="cardheading">
-                {statusCount &&
-                statusCount.status_count &&
-                statusCount.status_count.rejected
-                  ? statusCount.status_count.rejected
-                  : 0}
-              </h1>
-            </div>
-          </div>
-        </div> */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 p-2">
+        {loading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <Card key={index}>
+                <CardContent className="p-6">
+                  <Skeleton className="h-8 w-20 mb-2" />
+                  <Skeleton className="h-4 w-32" />
+                </CardContent>
+              </Card>
+            ))
+          : statCards.map((stat, index) => (
+              <Card key={index} className={`${stat.color} border`}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className={`p-2 rounded-lg ${stat.iconColor} bg-opacity-10`}
+                    >
+                      <stat.icon className="h-6 w-6" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-500">
+                      {stat.description}
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-gray-600">
+                      {stat.title}
+                    </p>
+                    <h3 className="text-3xl font-bold text-gray-900">
+                      {stat.value}
+                    </h3>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
       </div>
 
-      <div className="row my-2">
-        <div className="col-xl-7 col-lg-7 col-md-7 col-12">
-          <h6 className="custon-h6 py-2">Monthly Activity</h6>
-          <div className="bargraph bg-white">
-            <canvas id="chartjs-bar" ref={barChartRef}></canvas>
-          </div>
-        </div>
-        <div className="col-xl-5 col-lg-5 col-md-5 col-12">
-          <h6 className="custon-h6 py-2">Type of Advance</h6>
-          <div className="bargraph bg-white">
-            <canvas id="chartjs-pie" ref={pieChartRef}></canvas>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-2">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                  Monthly Activity
+                </CardTitle>
+                <CardDescription>
+                  Advance applications over time
+                </CardDescription>
+              </div>
+              <div className="text-sm text-gray-500">
+                {monthlycount.length} months
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              {loading ? (
+                <div className="h-full flex items-center justify-center">
+                  <Skeleton className="h-full w-full" />
+                </div>
+              ) : monthlycount.length > 0 ? (
+                <canvas ref={barChartRef} />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                  <TrendingUp className="h-12 w-12 mb-4 opacity-50" />
+                  <p className="font-medium">No data available</p>
+                  <p className="text-sm">
+                    Monthly activity data will appear here
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <PieChart className="h-5 w-5 text-purple-600" />
+                  Advance Type Distribution
+                </CardTitle>
+                <CardDescription>Breakdown by advance category</CardDescription>
+              </div>
+              <div className="text-sm text-gray-500">
+                {Object.values(typeCount.advance_type_count).reduce(
+                  (a, b) => a + b,
+                  0,
+                )}{" "}
+                total
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              {loading ? (
+                <div className="h-full flex items-center justify-center">
+                  <Skeleton className="h-full w-full rounded-full" />
+                </div>
+              ) : (
+                <canvas ref={pieChartRef} />
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="p-2">
+        <Card>
+          <CardContent className="p-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Salary Advances
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {typeCount.advance_type_count.salary_advance || 0}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Other Advances
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {typeCount.advance_type_count.other_advance || 0}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600">
+                  Domestic Tours
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {typeCount.advance_type_count.in_country_tour_advance || 0}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-600">
+                  International Tours
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {typeCount.advance_type_count.ex_country_tour_advance || 0}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

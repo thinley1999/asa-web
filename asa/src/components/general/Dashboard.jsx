@@ -1,20 +1,37 @@
 import React, { useState, useEffect } from "react";
-import "chartjs-plugin-datalabels";
-import "../../assets/css/main.css";
 import { usePermissions } from "../../contexts/PermissionsContext";
 import EmployeeApplications from "../employee/EmployeeDashboard";
 import FinanceDashboard from "../finance/FinanceDashboard";
 import LoadingPage from "./LoadingPage";
 import UserServices from "../services/UserServices";
-import { CgDanger } from "react-icons/cg";
+import { AlertCircle, ShieldAlert } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Card, CardContent } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
-  const { permissions, permissionsLoading} = usePermissions();
+  const { permissions, permissionsLoading } = usePermissions();
   const [dashboardPermission, setDashboardPermission] = useState(null);
   const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchUserDetails();
+    const fetchData = async () => {
+      try {
+        await fetchUserDetails();
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to user details.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -25,7 +42,6 @@ const Dashboard = () => {
       setDashboardPermission(dashboardPerm || {});
     }
   }, [permissions]);
-  
 
   const fetchUserDetails = async () => {
     try {
@@ -35,32 +51,36 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
+      throw error;
     }
   };
 
+  if (loading || permissionsLoading) {
+    return <LoadingPage />;
+  }
+
   return (
-    <div>
+    <div className="space-y-6">
+      {/* Password Reset Alert */}
       {user?.reset_password && (
-        <div className="container-fluid p-1 mt-2">
-          <div
-            className="card text-white w-100 p-0 m-0"
-            style={{ backgroundColor: "#dc3545", border: "none" }}
-          >
-            <div className="card-body">
-              <p className="card-text" style={{ fontSize: "14px" }}>
-              <CgDanger size ={24}/> { ' '}
-                Please reset your password for security purposes and choose a
-                strong password. To reset your password, click on your profile
-                in the top-right corner of the navigation bar.
-              </p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="destructive" className="border-red-200 bg-red-50">
+          <ShieldAlert className="h-4 w-4" />
+          <AlertTitle>Security Alert</AlertTitle>
+          <AlertDescription className="flex flex-col gap-2">
+            <p className="font-medium">
+              Please reset your password for security purposes.
+            </p>
+            <p className="text-sm">
+              Choose a strong password to protect your account. To reset your
+              password, click on your profile in the top-right corner of the
+              navigation bar and select "Change Password".
+            </p>
+          </AlertDescription>
+        </Alert>
       )}
 
-      { permissionsLoading ? (
-        <LoadingPage />
-      ) : dashboardPermission?.actions?.view ? (
+      {/* Dashboard Content */}
+      {dashboardPermission?.actions?.view ? (
         <FinanceDashboard />
       ) : (
         <EmployeeApplications />

@@ -9,10 +9,10 @@ else
 fi
 
 echo 'Switching to the master branch...'
-git checkout master
+git checkout feature/revamp
 
 echo 'Building the app...'
 npm run build
 
 echo 'Deploying the app on the server...'
-scp -r dist/* user@192.168.0.144:/var/www/asa-web/
+scp -r dist/* asa@192.168.0.135:/var/www/asa-web/
